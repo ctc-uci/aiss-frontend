@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { instanceOf } from 'prop-types';
-import { Cookies, withCookies } from '../utils/cookie_utils';
-import { logInWithEmailAndPassword, useNavigate } from '../utils/auth_utils';
+import { Cookies, withCookies } from '../../utils/cookie_utils';
+import { logInWithEmailAndPassword, useNavigate } from '../../utils/auth_utils';
 // import { logInWithEmailAndPassword , signInWithGoogle, useNavigate } from '../utils/auth_utils';
 
 const Login = ({ cookies }) => {

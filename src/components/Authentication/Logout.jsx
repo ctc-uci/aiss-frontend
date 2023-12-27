@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { instanceOf } from 'prop-types';
-import { logout, useNavigate } from '../utils/auth_utils';
-import { Cookies, withCookies } from '../utils/cookie_utils';
+import { logout, useNavigate } from '../../utils/auth_utils';
+import { Cookies, withCookies } from '../../utils/cookie_utils';
 
 const Logout = ({ cookies }) => {
   const navigate = useNavigate();

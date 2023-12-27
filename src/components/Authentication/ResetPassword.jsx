@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { confirmNewPassword } from '../utils/auth_utils';
+import { confirmNewPassword } from '../../utils/auth_utils';
 
 const ResetPassword = ({ code }) => {
   const [password, setPassword] = useState();
