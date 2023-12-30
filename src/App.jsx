@@ -3,12 +3,12 @@ import './App.css';
 import { ChakraProvider } from '@chakra-ui/react'
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
-import Login from './components/Login';
-import Logout from './components/Logout';
-import Register from './components/Register/register';
+import Login from './components/Authentication/Login';
+import Logout from './components/Authentication/Logout';
+import Register from './components/Authentication/register';
 import Dashboard from './pages/Dashboard/Dashboard';
-import ForgotPassword from './components/ForgotPassword';
-import EmailAction from './components/EmailAction';
+import ForgotPassword from './components/Authentication/ForgotPassword';
+import EmailAction from './components/Authentication/EmailAction';
 import AUTH_ROLES from './utils/auth_config';
 import ProtectedRoute from './utils/ProtectedRoute';
 

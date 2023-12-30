@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { sendPasswordReset } from '../utils/auth_utils';
+import { sendPasswordReset } from '../../utils/auth_utils';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState();
