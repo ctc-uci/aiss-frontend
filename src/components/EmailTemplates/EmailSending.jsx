@@ -11,9 +11,6 @@ const AISSBackend = axios.create({
   withCredentials: true,
 });
 
-console.log(import.meta.env.NODE_ENV);
-console.log(import.meta.env.VITE_BACKEND_HOST);
-
 const sendEmail = async (subject, newEmail, emailtemplate) => {
   const response = await AISSBackend.post('/nodemailer/send', {
     email: newEmail,
