@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import {
+  Box,
   FormLabel,
   Input,
   Select,
@@ -11,8 +12,6 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import styles from './CreateEventForm.module.css';
-
 
 const schema = yup.object({
     id: yup.string().required('ID required').max(10, "ID exceeds 10 character limit"),
@@ -25,10 +24,9 @@ const schema = yup.object({
 });
 
 
-function CreateEventForm() {
+const CreateEventForm = () => {
     const {
       register,
-    //   control,
       handleSubmit,
       formState: { errors },
     } = useForm({
@@ -37,43 +35,42 @@ function CreateEventForm() {
 
 
     return (
-      <div className={styles['form-padding']}>
-        {/* eslint-disable-next-line no-console */}
-        {/* <form onSubmit={handleSubmit((data) => console.log(data))}> */}
+      <Box p="2vw">
         <form onSubmit={handleSubmit(data => console.log(data))}>
-          <div className={styles['field-section']}>
+
+          <Box mb="4vh">
 
             {/* ID */}
-            <div className={styles.form}>
+            <Box mb="4vh">
               <FormControl isInvalid={errors && errors.id} width="47%">
-                <FormLabel className={styles.title}>Id</FormLabel>
-                <Input {...register('id')} />
+                <FormLabel fontWeight="bold">Id</FormLabel>
+                <Input {...register('id')} border="1px solid"/>
                 <FormErrorMessage>{errors.id && errors.id.message}</FormErrorMessage>
               </FormControl>
-            </div>
+            </Box>
 
             {/* HOST */}
-            <div className={styles.form}>
+            <Box mb="4vh">
               <FormControl isInvalid={errors && errors.host} width="80%">
-                  <FormLabel className={styles.title}>Host</FormLabel>
-                  <Textarea {...register('host')} />
+                  <FormLabel fontWeight="bold">Host</FormLabel>
+                  <Textarea {...register('host')} border="1px solid"/>
                   <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
               </FormControl>
-            </div>
+            </Box>
             
             {/* TITLE */}
-            <div className={styles.form}>
+            <Box mb="4vh">
               <FormControl isInvalid={errors && errors.title} width="80%">
-                  <FormLabel className={styles.title}>Title</FormLabel>
-                  <Textarea {...register('title')} />
+                  <FormLabel fontWeight="bold">Title</FormLabel>
+                  <Textarea {...register('title')} border="1px solid"/>
                   <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
               </FormControl>
-            </div>
+            </Box>
 
             {/* EVENT TYPE*/}
-            <div className={styles.form}>
+            <Box mb="4vh">
               <FormControl width="47%">
-                <FormLabel className={styles.title}>Event Type</FormLabel>
+                <FormLabel fontWeight="bold">Event Type</FormLabel>
                 <Select {...register('event_type')}>
                   <option>Guest Speaker</option>
                   <option>Study Trip</option>
@@ -82,12 +79,12 @@ function CreateEventForm() {
                 </Select>
                 <FormErrorMessage>{errors.event_type && errors.event_type.message}</FormErrorMessage>
               </FormControl>
-            </div>
+            </Box>
 
             {/* SUBJECT */}
-            <div className={styles.form}>
+            <Box mb="4vh">
               <FormControl width="47%">
-                <FormLabel className={styles.title}>Subject</FormLabel>
+                <FormLabel fontWeight="bold">Subject</FormLabel>
                 <Select {...register('subject')}>
                   <option>Life Skills</option>
                   <option>Science</option>
@@ -98,35 +95,35 @@ function CreateEventForm() {
                 </Select>
                 <FormErrorMessage>{errors.subject && errors.subject.message}</FormErrorMessage>
               </FormControl>
-            </div>
+            </Box>
 
-          {/* DESCRIPTION */}
-            <div className={styles.form}>
+            {/* DESCRIPTION */}
+            <Box mb="4vh">
               <FormControl isInvalid={errors && errors.description} width="47%">
-                <FormLabel className={styles.title}>Description</FormLabel>
-                <Input {...register('description')} />
+                <FormLabel fontWeight="bold">Description</FormLabel>
+                <Input {...register('description')} border="1px solid"/>
                 <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
               </FormControl>
-            </div>
+            </Box>
 
-          {/* YEAR */}
-          <div className={styles.form}>
-            <FormControl width="47%">
-              <FormLabel className={styles.title}>Year</FormLabel>
-              <Select {...register('year')}>
-                <option>Junior</option>
-                <option>Senior</option>
-                <option>Both</option>
-              </Select>
-              <FormErrorMessage>{errors.year && errors.year.message}</FormErrorMessage>
-            </FormControl>
-          </div>
+            {/* YEAR */}
+            <Box mb="4vh">
+              <FormControl width="47%">
+                <FormLabel fontWeight="bold">Year</FormLabel>
+                <Select {...register('year')}>
+                  <option>Junior</option>
+                  <option>Senior</option>
+                  <option>Both</option>
+                </Select>
+                <FormErrorMessage>{errors.year && errors.year.message}</FormErrorMessage>
+              </FormControl>
+            </Box>
 
-        </div>
-        <Button type="submit">Submit</Button>
-      </form>
-    </div>
-  );
+          </Box>
+
+          <Button type="submit">Submit</Button>
+        </form>
+      </Box>
+    );
 }
-  
-  export default CreateEventForm;
+export default CreateEventForm;
