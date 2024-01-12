@@ -11,7 +11,6 @@ import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
 import AUTH_ROLES from './utils/auth_config';
 import ProtectedRoute from './utils/ProtectedRoute';
-import CreateEventForm from './components/CreateEventForm/CreateEventForm';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
@@ -33,17 +32,6 @@ const App = () => {
               element={
                 <ProtectedRoute
                   Component={Dashboard}
-                  redirectPath="/"
-                  roles={[ADMIN_ROLE, USER_ROLE]}
-                />
-              }
-            />
-            <Route
-              exact
-              path="/create-event"
-              element={
-                <ProtectedRoute
-                  Component={CreateEventForm}
                   redirectPath="/"
                   roles={[ADMIN_ROLE, USER_ROLE]}
                 />
