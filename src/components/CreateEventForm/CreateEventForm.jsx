@@ -44,6 +44,7 @@ const CreateEventForm = () => {
   const submitData = async data => {
     console.log('function is being called');
     console.log(data);
+    // comments
   };
 
   return (
