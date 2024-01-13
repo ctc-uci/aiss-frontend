@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { useEffect , useState} from 'react';
 import {
     Table,
     Thead,
@@ -5,17 +7,37 @@ import {
     Tfoot,
     Tr,
     Th,
-    // Td,
+    Td,
     // TableCaption,
     TableContainer,
   } from '@chakra-ui/react'
 
+
+const AISSBackend = axios.create({
+  baseURL:
+      ! import.meta.env.NODE_ENV || import.meta.env.NODE_ENV === 'development'
+      ? import.meta.env.REACT_APP_BACKEND_HOST
+      : import.meta.env.REACT_APP_BACKEND_HOST_PROD,
+  withCredentials: true,
+});
+
+
 const PublishedSchedule = () => {
     // get data from database
+    const [items, setItems] = useState([]);
+    
+    useEffect(() => {
+      const renderTable = async () => {
+        const { data } = await AISSBackend.get('/published-schedule');
+        setItems(data);
+      };
+      renderTable();
+    }, []);
+
     //update chakra table container accordingly
     return (
     <TableContainer>
-        <Table size='sm'>
+        <Table variant='striped' colorScheme = 'blue'>
           <Thead>
             <Tr>
               <Th>Title</Th>
@@ -27,21 +49,18 @@ const PublishedSchedule = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {/* <Tr>
-              <Td>inches</Td>
-              <Td>millimetres (mm)</Td>
-              <Td isNumeric>25.4</Td>
-            </Tr>
-            <Tr>
-              <Td>feet</Td>
-              <Td>centimetres (cm)</Td>
-              <Td isNumeric>30.48</Td>
-            </Tr>
-            <Tr>
-              <Td>yards</Td>
-              <Td>metres (m)</Td>
-              <Td isNumeric>0.91444</Td>
-            </Tr> */}
+          {
+            items.map((item) => (
+              <Tr key = {item.id} >
+                <Td>{item.title}</Td>
+                <Td>{item.host}</Td>
+                <Td isNumeric>{item.cohort}</Td>
+                <Td>{item.confirmed}</Td>
+                <Td>{item.start_time}</Td>
+                <Td>{item.end_time}</Td>
+              </Tr>
+            ))
+          }
           </Tbody>
           <Tfoot>
             <Tr>
@@ -55,7 +74,7 @@ const PublishedSchedule = () => {
           </Tfoot>
         </Table>
       </TableContainer>
-      )
-}
+      );
+};
 
-export default PublishedSchedule
+export default PublishedSchedule;
