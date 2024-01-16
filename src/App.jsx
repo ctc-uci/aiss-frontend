@@ -1,13 +1,13 @@
 import './App.css';
 import EmailSending from './components/EmailTemplates/EmailSending';
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import Login from './components/Authentication/Login';
 import Logout from './components/Authentication/Logout';
 import Register from './components/Authentication/register';
 import Dashboard from './pages/Dashboard/Dashboard';
-import PublishedSchedule from './pages/Dashboard/PublishedSchedule/PublishedSchedule';
+import PublishedSchedule from './pages/PublishedSchedule/PublishedSchedule';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
 import AUTH_ROLES from './utils/auth_config';
@@ -17,32 +17,32 @@ const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 const App = () => {
   return (
-      <ChakraProvider>
-        <EmailSending />
-        <CookiesProvider>
-          <Router>
-            <Routes>
-              <Route exact path="/" element={<Login />} />
-              <Route exact path="/logout" element={<Logout />} />
-              <Route exact path="/forgotpassword" element={<ForgotPassword />} />
-              <Route exact path="/register" element={<Register />} />
-              <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
-              <Route exact path="/publishedSchedule" element={<PublishedSchedule />} />
-              <Route
-                exact
-                path="/dashboard"
-                element={
-                  <ProtectedRoute
-                    Component={Dashboard}
-                    redirectPath="/"
-                    roles={[ADMIN_ROLE, USER_ROLE]}
-                  />
-                }
-              />
-            </Routes>
-          </Router>
-        </CookiesProvider>
-      </ChakraProvider>
+    <ChakraProvider>
+      <EmailSending />
+      <CookiesProvider>
+        <Router>
+          <Routes>
+            <Route exact path="/" element={<Login />} />
+            <Route exact path="/logout" element={<Logout />} />
+            <Route exact path="/forgotpassword" element={<ForgotPassword />} />
+            <Route exact path="/register" element={<Register />} />
+            <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
+            <Route exact path="/publishedSchedule" element={<PublishedSchedule />} />
+            <Route
+              exact
+              path="/dashboard"
+              element={
+                <ProtectedRoute
+                  Component={Dashboard}
+                  redirectPath="/"
+                  roles={[ADMIN_ROLE, USER_ROLE]}
+                />
+              }
+            />
+          </Routes>
+        </Router>
+      </CookiesProvider>
+    </ChakraProvider>
   );
 };
 
