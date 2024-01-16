@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerWithEmailAndPassword } from '../../utils/auth_utils';
 
-const Register = () => {
+const SignUp = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [checkPassword, setCheckPassword] = useState();
@@ -39,7 +39,7 @@ const Register = () => {
 
   return (
     <div>
-      <h2>Register</h2>
+      <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
         <input type="text" onChange={({ target }) => setEmail(target.value)} placeholder="Email" />
         <br />
@@ -57,7 +57,7 @@ const Register = () => {
           type="password"
         />
         <br />
-        <button type="submit">Register</button>
+        <button type="submit">Sign Up</button>
         {/* <div className="login-buttons">
           <button type="button" onClick={handleGoogleSignIn}>
             <span>Sign Up With Google</span>
@@ -69,4 +69,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default SignUp;
