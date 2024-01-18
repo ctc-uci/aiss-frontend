@@ -24,7 +24,16 @@ const App = () => {
         <CookiesProvider>
           <Router>
             <Routes>
-              <Route exact path="/" element={<PublishedSchedule />} />
+              <Route
+                exact path="/"
+                element={
+                  <ProtectedRoute
+                    Component={PublishedSchedule}
+                    redirectPath='/login'
+                    roles={[ADMIN_ROLE, USER_ROLE]}
+                  />
+                }
+              />
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/logout" element={<Logout />} />
               <Route exact path="/forgotpassword" element={<ForgotPassword />} />
