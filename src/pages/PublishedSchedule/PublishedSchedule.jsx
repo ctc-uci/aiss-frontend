@@ -43,7 +43,7 @@ const PublishedSchedule = () => {
             <Tr key={item.id}>
               <Td>{item.title}</Td>
               <Td>{item.host}</Td>
-              <Td>{item.cohort}</Td>
+              <Td>{item.cohort.join(', ')}</Td>
               <Td>{String(item.confirmed)}</Td>
               <Td>{String(item.startTime)}</Td>
               <Td>{String(item.endTime)}</Td>
