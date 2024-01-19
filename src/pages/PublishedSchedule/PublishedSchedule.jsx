@@ -32,7 +32,7 @@ const PublishedSchedule = () => {
           <Tr>
             <Th>Title</Th>
             <Th>Host</Th>
-            <Th isNumeric>Cohort Year</Th>
+            <Th>Cohort Year</Th>
             <Th>Confirmed?</Th>
             <Th>Start Time</Th>
             <Th>End Time</Th>
@@ -43,10 +43,10 @@ const PublishedSchedule = () => {
             <Tr key={item.id}>
               <Td>{item.title}</Td>
               <Td>{item.host}</Td>
-              <Td isNumeric>{item.cohort}</Td>
-              <Td>{item.confirmed}</Td>
-              <Td>{item.start_time}</Td>
-              <Td>{item.end_time}</Td>
+              <Td>{item.cohort}</Td>
+              <Td>{String(item.confirmed)}</Td>
+              <Td>{String(item.startTime)}</Td>
+              <Td>{String(item.endTime)}</Td>
             </Tr>
           ))}
         </Tbody>
