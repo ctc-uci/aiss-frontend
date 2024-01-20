@@ -16,45 +16,39 @@ export default function CatalogPage() {
     // Render table data
   return (
     <>
-        {tableData.map(({id, host, title}) => {
-            console.log(id, host, title)
-
-            return <li key={id}>{id} {host} {title}</li>
-        })}
       <TableContainer>
         <Table variant="simple">
-          <TableCaption>Imperial to metric conversion factors</TableCaption>
+          <TableCaption>Event Information</TableCaption>
           <Thead>
             <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
+              <Th>Title</Th>
+              <Th>Host</Th>
+              <Th>Cohort Type</Th>
+              <Th>Event Type</Th>
+              <Th>Subject</Th>
+              <Th>Description</Th>
             </Tr>
           </Thead>
           <Tbody>
-            <Tr>
-              <Td>inches</Td>
-              <Td>millimetres (mm)</Td>
-              <Td isNumeric>25.4</Td>
-            </Tr>
-            <Tr>
-              <Td>feet</Td>
-              <Td>centimetres (cm)</Td>
-              <Td isNumeric>30.48</Td>
-            </Tr>
-            <Tr>
-              <Td>yards</Td>
-              <Td>metres (m)</Td>
-              <Td isNumeric>0.91444</Td>
-            </Tr>
-          </Tbody>
-          <Tfoot>
-            <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
-            </Tr>
-          </Tfoot>
+            {tableData.map(({id, host, title, eventType, subject, description, year}) => (
+              <Tr key ={id}> 
+                <Td>{title}</Td>
+                <Td>{host}</Td>
+                <Td>{year}</Td>
+                <Td>{eventType}</Td>
+                <Td>{subject}</Td>
+                <Td>{description}</Td>
+              </Tr>
+            ))}
+            </Tbody>
+            <Tfoot>
+              <Th>Title</Th>
+              <Th>Host</Th>
+              <Th>Cohort Type</Th>
+              <Th>Event Type</Th>
+              <Th>Subject</Th>
+              <Th>Description</Th>
+            </Tfoot>
         </Table>
       </TableContainer>
     </>

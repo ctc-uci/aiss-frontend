@@ -1,13 +1,11 @@
 import './App.css';
 import CatalogPage from './pages/CatalogPage/CatalogPage';
-import { Button } from '@chakra-ui/react';
 
 const App = () => {
   return (
     <>
-      <p>Hello World</p>
+      <h3>Event Catalog</h3>
       <CatalogPage />
-      <Button colorScheme="blue">Button</Button>
     </>
   );
 };
