@@ -7,8 +7,6 @@ export default function Catalog() {
 
   useEffect(() => {
     const fetchCatalogData = async () => {
-      // const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/catalog`);
-      // const data = await response.json();
       const response = await NPOBackend.get('/catalog');
       setTableData(response.data);
     };
