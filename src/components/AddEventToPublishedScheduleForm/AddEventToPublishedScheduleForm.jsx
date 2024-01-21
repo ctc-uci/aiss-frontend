@@ -9,7 +9,7 @@ import {
     Textarea,
     Checkbox,
     Editable,
-    EditablePreview
+    EditablePreview,
   } from '@chakra-ui/react';
   import { yupResolver } from '@hookform/resolvers/yup';
   import { useForm } from 'react-hook-form';
@@ -28,21 +28,25 @@ import {
       const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
       } = useForm({
         resolver: yupResolver(schema),
-      });
-  
+      });  
 
-    //   const [confirmed, { setConfirmed }] = useBoolean();
 
+      const handleConfirmedChange = (e) => {
+        setValue('confirmed', e.target.checked);
+      };
+
+      
       return (
         <Box p="2vw">
           <form onSubmit={handleSubmit(data => console.log(data))}>
   
             <Box mb="4vh">
   
-              {/* TITLE - non-editable*/}
+              {/* TITLE - non-editable */}
               <Box mb="4vh">
                 <FormControl isInvalid={errors && errors.title} width="80%">
                     <FormLabel fontWeight="bold">Title</FormLabel>
@@ -68,12 +72,12 @@ import {
               <Box mb="4vh">
               <FormControl isInvalid={errors && errors.confirmed} width="47%">
                 <FormLabel fontWeight="bold">Confirmed</FormLabel>
-                <Checkbox defaultChecked onClick={register('confirmed').toggle}>Confirmed?</Checkbox>
+                <Checkbox defaultChecked onChange={handleConfirmedChange}>Confirmed?</Checkbox>
                 <FormErrorMessage>{errors.confirmed && errors.confirmed.message}</FormErrorMessage>
               </FormControl>
              </Box>
 
-              {/* START TIME?*/}
+              {/* START TIME? */}
               <Box mb="4vh">
                 <FormControl isInvalid={errors && errors.startTime} width="80%">
                     <FormLabel fontWeight="bold">Start time</FormLabel>
@@ -87,7 +91,7 @@ import {
                 </FormControl>
               </Box>
 
-              {/* END TIME?*/}
+              {/* END TIME? */}
               <Box mb="4vh">
                 <FormControl isInvalid={errors && errors.endTime} width="80%">
                     <FormLabel fontWeight="bold">End time</FormLabel>
@@ -101,7 +105,7 @@ import {
                 </FormControl>
               </Box>
 
-              {/* COHORT?*/}
+              {/* COHORT? */}
               <Box mb="4vh">
               <FormControl isInvalid={errors && errors.cohort} width="47%">
                 <FormLabel fontWeight="bold">Cohort</FormLabel>
@@ -110,7 +114,7 @@ import {
               </FormControl>
              </Box>
 
-              {/* NOTES?*/}
+              {/* NOTES? */}
               <Box mb="4vh">
               <FormControl isInvalid={errors && errors.notes} width="47%">
                 <FormLabel fontWeight="bold">Notes</FormLabel>
