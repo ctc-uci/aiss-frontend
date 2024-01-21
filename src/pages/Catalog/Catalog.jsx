@@ -1,14 +1,16 @@
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
+import { NPOBackend } from '../../utils/auth_utils';
 
 export default function Catalog() {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     const fetchCatalogData = async () => {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/catalog`);
-      const data = await response.json();
-      setTableData(data);
+      // const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/catalog`);
+      // const data = await response.json();
+      const response = await NPOBackend.get('/catalog');
+      setTableData(response.data);
     };
 
     fetchCatalogData().catch(console.error);
