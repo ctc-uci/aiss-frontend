@@ -12,6 +12,7 @@ import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
 import AUTH_ROLES from './utils/auth_config';
 import ProtectedRoute from './utils/ProtectedRoute';
+import Catalog from './pages/Catalog/Catalog';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
@@ -39,6 +40,7 @@ const App = () => {
                 />
               }
             />
+            <Route exact path="/catalog" element={<Catalog />} />
           </Routes>
         </Router>
       </CookiesProvider>
