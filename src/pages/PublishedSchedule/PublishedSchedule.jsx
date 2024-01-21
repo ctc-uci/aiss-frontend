@@ -4,7 +4,6 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
@@ -44,22 +43,12 @@ const PublishedSchedule = () => {
               <Td>{item.title}</Td>
               <Td>{item.host}</Td>
               <Td isNumeric>{item.cohort}</Td>
-              <Td>{item.confirmed}</Td>
-              <Td>{item.start_time}</Td>
-              <Td>{item.end_time}</Td>
+              <Td>{item.confirmed ? 'true' : 'false'}</Td>
+              <Td>{item.startTime}</Td>
+              <Td>{item.endTime}</Td>
             </Tr>
           ))}
         </Tbody>
-        <Tfoot>
-          <Tr>
-            <Th>Title</Th>
-            <Th>Host</Th>
-            <Th isNumeric>Cohort Year</Th>
-            <Th>Confirmed?</Th>
-            <Th>Start Time</Th>
-            <Th>End Time</Th>
-          </Tr>
-        </Tfoot>
       </Table>
     </TableContainer>
   );
