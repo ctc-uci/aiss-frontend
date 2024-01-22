@@ -39,7 +39,7 @@ const App = () => {
               <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
               <Route
                 exact
-                path="/notifictions"
+                path="/notifications"
                 element={
                   <ProtectedRoute
                     Component={Notifications}
