@@ -1,11 +1,57 @@
+import { NPOBackend } from '../../utils/auth_utils.js';
+import { useEffect, useState } from 'react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  // TableCaption,
+  TableContainer,
+} from '@chakra-ui/react';
 
 const PublishedSchedule = () => {
-  return (
-    <div>
-      <h1>Published Schedule</h1>
-    </div>
-  )
-}
+  // get data from database
+  const [items, setItems] = useState([]);
 
+  useEffect(() => {
+    const renderTable = async () => {
+      const { data } = await NPOBackend.get('/published-schedule');
+      setItems(data);
+    };
+    renderTable();
+  }, []);
+
+  //update chakra table container accordingly
+  return (
+    <TableContainer>
+      <Table variant="striped" colorScheme="blue">
+        <Thead>
+          <Tr>
+            <Th>Title</Th>
+            <Th>Host</Th>
+            <Th>Cohort Year</Th>
+            <Th>Confirmed?</Th>
+            <Th>Start Time</Th>
+            <Th>End Time</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {items.map(item => (
+            <Tr key={item.id}>
+              <Td>{item.title}</Td>
+              <Td>{item.host}</Td>
+              <Td>{item.cohort.join(', ')}</Td>
+              <Td>{String(item.confirmed)}</Td>
+              <Td>{String(item.startTime)}</Td>
+              <Td>{String(item.endTime)}</Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
+  );
+};
 
 export default PublishedSchedule;
