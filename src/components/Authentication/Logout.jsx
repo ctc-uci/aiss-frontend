@@ -9,7 +9,7 @@ const Logout = ({ cookies }) => {
 
   const handleLogout = async () => {
     try {
-      await logout('/', navigate, cookies);
+      await logout('/login', navigate, cookies);
     } catch (err) {
       setErrorMessage(err.message);
     }
