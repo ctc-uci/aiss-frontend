@@ -1,47 +1,48 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerWithEmailAndPassword } from '../../utils/auth_utils';
+import { sendEmail } from '../EmailTemplates/EmailSending';
+import emailtemplate from '../EmailTemplates/emailtemplate';
+// import { renderEmail } from 'react-html-email';
 
 const Register = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [checkPassword, setCheckPassword] = useState();
   const [errorMessage, setErrorMessage] = useState();
-  //   const [role, setRole] = useState();
+  //const [role, setRole] = useState();
   const navigate = useNavigate();
-
-  const handleSubmit = async e => {
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (password !== checkPassword) {
         throw new Error("Passwords don't match");
       }
+  
+      // register email and password
       await registerWithEmailAndPassword(email, password, 'admin', navigate, '/');
+
+      // send email to Debbie 
+      const subject = "placeholder";
+      const newEmail = "subinlk@uci.edu";
+      await sendEmail(subject, newEmail, emailtemplate);
+  
     } catch (error) {
       setErrorMessage(error.message);
     }
   };
-
-  //   /**
-  //    * This function handles signing up with Google
-  //    * If the user logs in and is new, they are directed to a new-user path
-  //    * If the user logs in and isn't new, they are directed to the dashboard.
-  //    * If the user fails to log in, they are directed back to the login screen
-  //    */
-  //   const handleGoogleSignIn = async e => {
-  //     try {
-  //       e.preventDefault();
-  //       await signInWithGoogle('/new-user', '/logout', navigate, cookies);
-  //     } catch (err) {
-  //       setErrorMessage(err.message);
-  //     }
-  //   };
+  
 
   return (
     <div>
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" onChange={({ target }) => setEmail(target.value)} placeholder="Email" />
+        <input 
+          type="text" 
+          onChange={({ target }) => setEmail(target.value)} 
+          placeholder="Email" 
+        />
         <br />
         {/* <input onChange={({ target }) => setRole(target.value)} placeholder="Role" />
         <br /> */}

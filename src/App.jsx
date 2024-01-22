@@ -1,6 +1,5 @@
 import './App.css';
-import EmailSending from './components/EmailTemplates/EmailSending';
-import { ChakraProvider, Text } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import Login from './components/Authentication/Login';
@@ -17,7 +16,6 @@ const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 const App = () => {
   return (
       <ChakraProvider>
-        <EmailSending />
         <CookiesProvider>
           <Router>
             <Routes>
