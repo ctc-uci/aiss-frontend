@@ -1,12 +1,11 @@
 import './App.css';
-import EmailSending from './components/EmailTemplates/EmailSending';
-import { ChakraProvider, Text } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import Login from './components/Authentication/Login';
 import Logout from './components/Authentication/Logout';
 import SignUp from './components/Authentication/SignUp';
-import Dashboard from './pages/Dashboard/Dashboard';
+import Notifications from './pages/Notifications/Notifications';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
 import AUTH_ROLES from './utils/auth_config';
@@ -20,7 +19,6 @@ const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 const App = () => {
   return (
       <ChakraProvider>
-        <EmailSending />
         <CookiesProvider>
           <Router>
             <Routes>
@@ -41,10 +39,10 @@ const App = () => {
               <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
               <Route
                 exact
-                path="/dashboard"
+                path="/notifictions"
                 element={
                   <ProtectedRoute
-                    Component={Dashboard}
+                    Component={Notifications}
                     redirectPath="/login"
                     roles={[ADMIN_ROLE, USER_ROLE]}
                   />
