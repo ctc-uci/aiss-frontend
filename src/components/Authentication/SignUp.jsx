@@ -5,7 +5,7 @@ import { sendEmail } from '../EmailTemplates/EmailSending';
 import emailtemplate from '../EmailTemplates/emailtemplate';
 // import { renderEmail } from 'react-html-email';
 
-const Register = () => {
+const SignUp = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [checkPassword, setCheckPassword] = useState();
@@ -25,7 +25,7 @@ const Register = () => {
 
       // send email to Debbie 
       const subject = "placeholder";
-      const newEmail = "subinlk@uci.edu";
+      const newEmail = email;
       await sendEmail(subject, newEmail, emailtemplate);
   
     } catch (error) {
@@ -36,7 +36,7 @@ const Register = () => {
 
   return (
     <div>
-      <h2>Register</h2>
+      <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
         <input 
           type="text" 
@@ -58,7 +58,7 @@ const Register = () => {
           type="password"
         />
         <br />
-        <button type="submit">Register</button>
+        <button type="submit">Sign Up</button>
         {/* <div className="login-buttons">
           <button type="button" onClick={handleGoogleSignIn}>
             <span>Sign Up With Google</span>
@@ -70,4 +70,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default SignUp;

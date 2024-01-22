@@ -13,7 +13,7 @@ const Login = ({ cookies }) => {
   const handleStdLogin = async e => {
     try {
       e.preventDefault();
-      await logInWithEmailAndPassword(email, password, '/dashboard', navigate, cookies);
+      await logInWithEmailAndPassword(email, password, '/publishedSchedule', navigate, cookies);
     } catch (err) {
       setErrorMessage(err.message);
     }

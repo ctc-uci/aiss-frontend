@@ -182,6 +182,7 @@ const finishGoogleLoginRegistration = async (redirectPath, navigate) => {
  * @returns A boolean indicating whether or not the log in was successful
  */
 const logInWithEmailAndPassword = async (email, password, redirectPath, navigate, cookies) => {
+  console.log(auth.currentUser);
   await signInWithEmailAndPassword(auth, email, password);
   // Check if the user has verified their email.
   if (!auth.currentUser.emailVerified) {
