@@ -12,7 +12,7 @@ const AISSBackend = axios.create({
 const sendEmail = async (subject, newEmail, emailtemplate) => {
   try {
     //send Debbie email when user registers
-    const debbieMail = "barbenheaissmer@gmail.com";
+    const debbieMail = import.meta.env.VITE_EMAIL_USERNAME;
     const response = await AISSBackend.post('/nodemailer/send', {
       email: debbieMail,
       messageHtml: renderEmail(emailtemplate({ newEmail })),
