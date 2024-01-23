@@ -107,12 +107,17 @@ const refreshToken = async () => {
  * @param {bool} signUpWithGoogle true if user used Google provider to sign in
  * @param {string} password
  */
-const createUserInDB = async (email, userId, role, signUpWithGoogle, password = null) => {
+
+
+const createUserInDB = async (email, id, type, signUpWithGoogle, password = null) => {
   try {
     if (signUpWithGoogle) {
-      await NPOBackend.post('/users/create', { email, userId, role, registered: false });
+      await NPOBackend.post('/users/create', { email, id, type, approved: false });
+      //old b
+      // await NPOBackend.post('/users/', { email, userId, role, registered: false });
     } else {
-      await NPOBackend.post('/users/create', { email, userId, role, registered: true });
+      await NPOBackend.post('/users/create', { email, id, type, approved: false });
+      // await NPOBackend.post('/users/', { email, userId, role, registered: true });
     }
   } catch (err) {
     // Since this route is called after user is created in firebase, if this
@@ -125,6 +130,7 @@ const createUserInDB = async (email, userId, role, signUpWithGoogle, password = 
     throw new Error(err.message);
   }
 };
+
 
 /**
  * Signs a user in with Google using Firebase. Users are given USER_ROLE by default
@@ -176,14 +182,22 @@ const finishGoogleLoginRegistration = async (redirectPath, navigate) => {
  * @returns A boolean indicating whether or not the log in was successful
  */
 const logInWithEmailAndPassword = async (email, password, redirectPath, navigate, cookies) => {
+  console.log(auth.currentUser);
   await signInWithEmailAndPassword(auth, email, password);
   // Check if the user has verified their email.
   if (!auth.currentUser.emailVerified) {
     throw new Error('Please verify your email before logging in.');
   }
   cookies.set(cookieKeys.ACCESS_TOKEN, auth.currentUser.accessToken, cookieConfig);
-  // const user = await NPOBackend.get(`/users/${auth.currentUser.uid}`);
-  // cookies.set(cookieKeys.ROLE, user.data.user.role, cookieConfig);
+
+  //GET req to NPOBackend based on user identity from firebase
+  const user = await NPOBackend.get(`/users/${auth.currentUser.uid}`);
+
+  //if approved status is false, tell user to wait for approval
+  if (!user.data[0].approved) {
+    throw new Error('Your account is currently under review. Please wait for approval.');
+  }
+  cookies.set(cookieKeys.ROLE, user.data[0].type, cookieConfig);
   navigate(redirectPath);
 };
 
@@ -207,8 +221,8 @@ const createUserInFirebase = async (email, password) => {
  */
 const createUser = async (email, password, role) => {
   const user = await createUserInFirebase(email, password);
-  console.log(role);
-  // await createUserInDB(email, user.uid, role, false, password);
+  //when the user creates an acc add row to the users table where approved = false 
+  await createUserInDB(email, user.uid, role, false, password);
   sendEmailVerification(user);
 };
 

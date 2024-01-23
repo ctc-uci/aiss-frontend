@@ -19,15 +19,6 @@ const Login = ({ cookies }) => {
     }
   };
 
-  // const handleGoogleLogin = async e => {
-  //   try {
-  //     e.preventDefault();
-  //     await signInWithGoogle('/new-user', '/dashboard', navigate, cookies);
-  //   } catch (err) {
-  //     setErrorMessage(err.message);
-  //   }
-  // };
-
   return (
     <div>
       <h2>Login</h2>
