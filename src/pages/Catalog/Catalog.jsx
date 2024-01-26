@@ -2,6 +2,7 @@ import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from '@chakra-ui/reac
 import { useState, useEffect } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 
+//need to add search and four drop downs
 export default function Catalog() {
   const [tableData, setTableData] = useState([]);
 
