@@ -6,7 +6,7 @@ const subjectsOptions = ['life skills', 'science', 'technology', 'engineering', 
 const eventOptions = ['guest speaker', 'study-trip', 'workshop', 'other'];
 const yearOptions = ['junior', 'senior', 'both'];
 const seasonOptions = ['fall', 'spring', 'summer', 'winter'];
-//need to add search and four drop downs
+
 export default function Catalog() {
   const [tableData, setTableData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -99,7 +99,7 @@ export default function Catalog() {
               </Flex>
             </Flex>
   
-            <TableContainer mt="8" borderRadius="md" overflowX="auto">
+            <TableContainer mt="8" mb = "8" borderRadius="md" overflowX="auto">
               <Table variant="simple" className="space-table" borderWidth="3px" width="100%">
                 <Thead>
                   <Tr>
