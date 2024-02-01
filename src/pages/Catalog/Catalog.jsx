@@ -1,18 +1,19 @@
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
-import { NPOBackend } from '../../utils/auth_utils';
+import { useState } from 'react';
+// import { NPOBackend } from '../../utils/auth_utils';
+import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
 
 export default function Catalog() {
   const [tableData, setTableData] = useState([]);
 
-  useEffect(() => {
-    const fetchCatalogData = async () => {
-      const response = await NPOBackend.get('/catalog');
-      setTableData(response.data);
-    };
+  // useEffect(() => {
+  //   const fetchCatalogData = async () => {
+  //     const response = await NPOBackend.get('/catalog');
+  //     setTableData(response.data.events);
+  //   };
 
-    fetchCatalogData().catch(console.error);
-  }, []);
+  //   fetchCatalogData().catch(console.error);
+  // }, []);
 
   return (
     <TableContainer>
@@ -40,6 +41,7 @@ export default function Catalog() {
           ))}
         </Tbody>
       </Table>
+      <PaginationFooter table="catalog" setData={setTableData} />
     </TableContainer>
   );
 }
