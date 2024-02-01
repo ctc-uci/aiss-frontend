@@ -22,15 +22,46 @@ const Notifications = () => {
     getPendingUsers().catch(console.error);
   }, []);
 
-  // const Approve = async (id) => {
-  //   const response = await NPOBackend.put(`/users/approve/${id}`);
-  // }
-  // Approve().catch(console.error);
+  const ApproveAll = async () => {
+    try {
+      for (let i = 0; i < listData.length; i++) {
+        await NPOBackend.put(`/users/approve/${listData[i].id}`);
+      }
+      location.reload();
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-  // const Decline = async (id) => {
-  //   const response = await NPOBackend.delete(`/users/${id}`);
-  // }
-  // Decline().catch(console.error);
+  const DeclineAll = async () => {
+    try {
+      for (let i = 0; i < listData.length; i++) {
+        await NPOBackend.delete(`/users/${listData[i].id}`);
+      }
+      location.reload();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const Approve = async (id) => {
+    try {
+      await NPOBackend.put(`/users/approve/${id}`); 
+      location.reload();
+    } catch (e) {
+      console.log(e);
+    }
+     
+  }
+
+  const Decline = async (id) => {
+    try {
+      await NPOBackend.delete(`/users/${id}`);
+      location.reload();
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
       <TableContainer>
@@ -39,19 +70,18 @@ const Notifications = () => {
             <Tr>
               <Th>ID</Th>
               <Th>Email</Th>
-              <Th>Accept</Th>
-              <Th>Decline</Th>
+              <Th><Link onClick={async () => { await ApproveAll() }}>Approve All</Link></Th>
+              <Th><Link onClick={async () => { await DeclineAll() }}>Decline All</Link></Th>
             </Tr>
           </Thead>
           <Tbody>
+
             {listData.map(({ id, email }) => (
               <Tr key={id}>
                 <Td>{id}</Td>
                 <Td>{email}</Td>
-                <Td><Link onClick={() => {console.log("accept")}}>Accept</Link></Td>
-                <Td><Link onClick={() => {console.log("decline")}}>Decline</Link></Td>
-                {/* <Td><Link onClick={ () => Approve(id) }>Accept</Link></Td> */}
-                {/* <Td><Link onClick={ () => Decline(id) }>Decline</Link></Td> */}
+                <Td><Link onClick={ async () => { await Approve(id)} }>Accept</Link></Td>
+                <Td><Link onClick={ async () => { await Decline(id)} }>Decline</Link></Td>
               </Tr>
             ))}
           </Tbody>
