@@ -81,10 +81,12 @@ const PlannerEvents = () => {
             <option>Senior</option>
           </Select>
           <Select color='#757575' backgroundColor='#CCCCCC' size='sm' width='100%' placeholder='Category'>
-            <option>TBA</option>
+            <option>Speaker</option>
+            <option>Study Trip</option>
           </Select>
           <Select color='#757575' backgroundColor='#CCCCCC' size='sm' placeholder='Type'>
-            <option>TBA</option>
+            <option>Technology</option>
+            <option>Other</option>
           </Select>
         </Stack>
       </Stack>
