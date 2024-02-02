@@ -64,32 +64,32 @@ const PlannerEvents = () => {
       <Text fontSize='30px' marginBottom='15px' marginTop='20px' marginLeft='20px'>Add Event to Day</Text>
       <AddEventModal/>
       <Text marginLeft='20px' marginBottom='15px' color='#9e9e9e'>______________</Text>
-      <Stack spacing={5} direction="row" width="92%" justifyContent="space-between">
-        <InputGroup marginLeft='20px'>
+      <Stack direction="row" width="92%" justifyContent="space-between">
+        <InputGroup marginLeft='20px' width='80%'>
           <InputLeftElement pointerEvents='none'>
             <Search2Icon marginRight='5px' marginBottom='7px' boxSize='.8em' color='#9e9e9e'/>
           </InputLeftElement>
-          <Input size='sm' width='100%' fontSize='14px' placeholder='Search for a catalog event' id="catalogsearch" />
+          <Input size='sm' width='80%' fontSize='14px' placeholder='Search for a catalog event' id="catalogsearch" />
         </InputGroup>
         <Stack direction="row" width='100%'>
-          <Select backgroundColor='#CCCCCC' size='sm' placeholder='Season'>
+          <Select color='#757575' backgroundColor='#CCCCCC' size='sm' placeholder='Season'>
             <option>Winter</option>
             <option>Fall</option>
           </Select>
-          <Select backgroundColor='#CCCCCC' size='sm' placeholder='Year'>
+          <Select color='#757575' backgroundColor='#CCCCCC' size='sm' placeholder='Year'>
             <option>Junior</option>
             <option>Senior</option>
           </Select>
-          <Select backgroundColor='#CCCCCC' size='sm' width='100%' placeholder='Category'>
+          <Select color='#757575' backgroundColor='#CCCCCC' size='sm' width='100%' placeholder='Category'>
             <option>TBA</option>
           </Select>
-          <Select backgroundColor='#CCCCCC' size='sm' placeholder='Type'>
+          <Select color='#757575' backgroundColor='#CCCCCC' size='sm' placeholder='Type'>
             <option>TBA</option>
           </Select>
         </Stack>
       </Stack>
-      <TableContainer marginLeft='20px' marginTop='15px'>
-        <Table vairant='simple'>
+      <TableContainer width='90%' backgroundColor='white' color='white' marginLeft='20px' marginTop='15px'>
+        <Table variant='simple'>
           <Thead>
           <Tr>
             <Th color='#4A5568'>EVENT</Th>
@@ -102,6 +102,17 @@ const PlannerEvents = () => {
           </Tbody>
         </Table>
       </TableContainer>
+      <Stack spacing={5} justifyContent='right' direction="row" >
+        <div style={{
+          position:'fixed',
+          bottom: '40px',
+          right: '80px',
+          zIndex: '999',
+          }}>
+          <Button width='80px' marginRight='10px' size='sm' borderRadius='100px' backgroundColor='#999999'>Cancel</Button>
+          <Button width='100px' size='sm' borderRadius='100px' backgroundColor='#CCCCCC'>Finish Event</Button>
+        </div>
+      </Stack>
     </div>
 
 
