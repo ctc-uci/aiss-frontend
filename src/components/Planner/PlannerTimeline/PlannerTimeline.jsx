@@ -29,7 +29,7 @@ const PlannerTimeline = () => {
 
   return (
     <div id={s['planner-timeline-container']}>
-      <div className={s['timeline-grid']}>
+      <div className={`${s['timeline-grid']} ${s['gray-scrollbar-vertical']}`}>
         {timelineBlocks}
         <div
           style={{ gridRowStart: 2, gridColumnStart: 2, backgroundColor: 'pink', borderRadius: 4 }}

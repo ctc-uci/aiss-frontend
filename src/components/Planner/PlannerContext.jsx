@@ -1,16 +1,22 @@
 import { createContext, useState } from 'react';
 
-const UserContext = createContext(undefined);
+const PlannerContext = createContext(undefined);
 
 // eslint-disable-next-line react/prop-types
-function UserProvider({ children }) {
+function PlannerContextProvider({ children }) {
   const [plannedEvents, setPlannedEvents] = useState([]);
+  const [overlayIsVisible, setOverlayIsVisible] = useState(false);
 
   return (
-    <UserContext.Provider value={{ plannedEvents: [plannedEvents, setPlannedEvents] }}>
+    <PlannerContext.Provider
+      value={{
+        plannedEventsContext: [plannedEvents, setPlannedEvents],
+        overlayIsVisibleContext: [overlayIsVisible, setOverlayIsVisible],
+      }}
+    >
       {children}
-    </UserContext.Provider>
+    </PlannerContext.Provider>
   );
 }
 
-export { UserProvider, UserContext };
+export { PlannerContextProvider, PlannerContext };
