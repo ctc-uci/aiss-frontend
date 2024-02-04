@@ -1,11 +1,13 @@
-export const generateTimestamps = () => {
-  // Range of timeline from 6AM - 10PM
-  const EARLIEST_HOUR = 6;
-  const LATEST_HOUR = 22;
+import PlannedEvent from './PlannedEvent';
 
+export function generateTimestamps() {
   const timeLabels = [];
 
-  for (let hourIndex = EARLIEST_HOUR; hourIndex <= LATEST_HOUR; hourIndex++) {
+  for (
+    let hourIndex = PlannedEvent.EARLIEST_HOUR;
+    hourIndex <= PlannedEvent.LATEST_HOUR;
+    hourIndex++
+  ) {
     const isPM = hourIndex >= 12;
     const hour12Format = hourIndex > 12 ? hourIndex - 12 : hourIndex;
 
@@ -14,4 +16,16 @@ export const generateTimestamps = () => {
   }
 
   return timeLabels;
-};
+}
+
+export function minutesInFormattedTime(minutes) {
+  const hourIndex = Math.floor(minutes / MINUTES_PER_HOUR);
+  const minuteAmount = minutes % MINUTES_PER_HOUR;
+
+  const isPM = hourIndex >= 12;
+  const hour12Format = hourIndex > 12 ? hourIndex - 12 : hourIndex;
+
+  return `${hour12Format}:${minuteAmount < 10 ? '0' : ''}${minuteAmount} ${isPM ? 'PM' : 'AM'}`;
+}
+
+export const MINUTES_PER_HOUR = 60;
