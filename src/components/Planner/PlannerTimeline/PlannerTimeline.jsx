@@ -18,7 +18,7 @@ const PlannerTimeline = () => {
               style={{ gridRowStart: rowIndex + 1, gridColumn: '1/-1' }}
             >
               <div className={s['grid-hour-badge']}>
-                <Badge>{timeStampLabel}</Badge>
+                <Badge backgroundColor="transparent">{timeStampLabel}</Badge>
               </div>
             </div>
           );

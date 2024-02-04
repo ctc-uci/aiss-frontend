@@ -1,40 +1,44 @@
+import { Stack, Text, Button } from '@chakra-ui/react';
 import s from '../PlannerLayout.module.css';
 
-// const AddEventModal = () => {
-//   const { isOpen, onOpen, onClose } = useDisclosure();
-//   return (
-//     <>
-//       <div>
-//         <Button onClick={onOpen} backgroundColor='#9E9E9E' height='50px' justifyContent='space-between' className= {s['create-event-button'] }>
-//         {/* className={s['create-event-button']} */}
-//           <Text fontSize='18px' color='white' >Create New Event</Text>
-//           {/* FIX: plus sign not vertically aligned with text */}
-//           <Text fontSize='25px'color='white' >+</Text>
-//         </Button>
-//       </div>
-
-//       <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInRight">
-//         <ModalOverlay />
-//         <ModalContent style={{ right: 0 }}>
-//           <ModalHeader>MM/DD/YYY | Location</ModalHeader>
-//           <ModalBody>
-//             {/* Your modal content goes here */}
-//             Cool form stuff will be here!
-//           </ModalBody>
-
-//           <ModalFooter>
-//             <Button borderRadius='100px' colorScheme="gray" mr={3} onClick={onClose}>
-//               Cancel
-//             </Button>
-//             <Button borderRadius='100px' colorScheme="gray">Add Event</Button>
-//           </ModalFooter>
-//         </ModalContent>
-//       </Modal>
-//     </>
-//   )};
-
-const AddEventOverlay = () => {
-  return <div id={s['add-event-overlay']}>AddEventOverlay</div>;
+// eslint-disable-next-line react/prop-types
+const AddEventOverlay = ({ setOverlayIsVisible }) => {
+  return (
+    <div id={s['add-event-overlay']}>
+      <Text fontSize="30px" marginBottom="1rem">
+        MM/DD/YYYY | Location
+      </Text>
+      <div className={s['add-event-container']}>
+        <div>
+          <Text fontSize="1.25rem">Event Information</Text>
+        </div>
+        <Stack spacing={2} justifyContent="right" direction="row">
+          <Button
+            paddingX="1.5rem"
+            size="sm"
+            borderRadius="full"
+            backgroundColor="blackAlpha.400"
+            _hover={{ backgroundColor: 'blackAlpha.300' }}
+            onClick={() => {
+              setOverlayIsVisible(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            paddingX="1.5rem"
+            size="sm"
+            borderRadius="full"
+            backgroundColor="blackAlpha.400"
+            _hover={{ backgroundColor: 'blackAlpha.300' }}
+            isDisabled
+          >
+            Add Event
+          </Button>
+        </Stack>
+      </div>
+    </div>
+  );
 };
 
 export default AddEventOverlay;

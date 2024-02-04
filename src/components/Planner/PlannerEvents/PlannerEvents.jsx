@@ -15,19 +15,17 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { Search2Icon, AddIcon } from '@chakra-ui/icons';
-import { useContext } from 'react';
-import { PlannerContext } from '../PlannerContext';
+import { useState } from 'react';
 import AddEventOverlay from './AddEventOverlay';
 
 const PlannerEvents = () => {
-  const { overlayIsVisibleContext } = useContext(PlannerContext);
-  const [overlayIsVisible, setOverlayIsVisible] = overlayIsVisibleContext;
+  const [overlayIsVisible, setOverlayIsVisible] = useState(false);
 
   return (
     <div id={s['planner-events-container']}>
-      {overlayIsVisible && <AddEventOverlay />}
+      {overlayIsVisible && <AddEventOverlay setOverlayIsVisible={setOverlayIsVisible} />}
       <div id={s['planner-browse']}>
-        <Text fontSize="30px" marginBottom="1rem">
+        <Text fontSize="1.875rem" marginBottom="1rem">
           Add Event to Day
         </Text>
         <Button
@@ -39,7 +37,7 @@ const PlannerEvents = () => {
           _hover={{
             backgroundColor: 'blackAlpha.400',
           }}
-          height="50px"
+          padding="1.5rem"
           justifyContent="space-between"
           alignItems="center"
           marginBottom="1rem"
@@ -69,8 +67,8 @@ const PlannerEvents = () => {
           </InputGroup>
           <Stack direction="row" width="100%">
             <Select
-              color="#757575"
-              backgroundColor="#CCCCCC"
+              color="blackAlpha.600"
+              backgroundColor="blackAlpha.400"
               size="sm"
               placeholder="Season"
               borderRadius="4px"
@@ -79,8 +77,8 @@ const PlannerEvents = () => {
               <option>Fall</option>
             </Select>
             <Select
-              color="#757575"
-              backgroundColor="#CCCCCC"
+              color="blackAlpha.600"
+              backgroundColor="blackAlpha.400"
               size="sm"
               placeholder="Year"
               borderRadius="4px"
@@ -89,8 +87,8 @@ const PlannerEvents = () => {
               <option>Senior</option>
             </Select>
             <Select
-              color="#757575"
-              backgroundColor="#CCCCCC"
+              color="blackAlpha.600"
+              backgroundColor="blackAlpha.400"
               size="sm"
               placeholder="Category"
               borderRadius="4px"
@@ -99,8 +97,8 @@ const PlannerEvents = () => {
               <option>Study Trip</option>
             </Select>
             <Select
-              color="#757575"
-              backgroundColor="#CCCCCC"
+              color="blackAlpha.600"
+              backgroundColor="blackAlpha.400"
               size="sm"
               placeholder="Type"
               borderRadius="4px"
@@ -111,18 +109,18 @@ const PlannerEvents = () => {
           </Stack>
         </Stack>
         <TableContainer
+          className={s['planner-table-container']}
           backgroundColor="white"
           color="white"
-          className={s['planner-table-container']}
           marginBottom="2rem"
           borderRadius="8px"
         >
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th color="#4A5568">EVENT</Th>
-                <Th color="#4A5568">HOST</Th>
-                <Th color="#4A5568">TAGS</Th>
+                <Th color="gray.600">EVENT</Th>
+                <Th color="gray.600">HOST</Th>
+                <Th color="gray.600">TAGS</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -130,27 +128,26 @@ const PlannerEvents = () => {
             </Tbody>
           </Table>
         </TableContainer>
-        <Stack spacing={5} justifyContent="right" direction="row">
-          <div>
-            <Button
-              width="80px"
-              marginRight="10px"
-              size="sm"
-              borderRadius="100px"
-              backgroundColor="#999999"
-            >
-              Cancel
-            </Button>
-            <Button
-              width="100px"
-              size="sm"
-              borderRadius="100px"
-              backgroundColor="#CCCCCC"
-              isDisabled
-            >
-              Finish Event
-            </Button>
-          </div>
+        <Stack spacing={2} justifyContent="right" direction="row">
+          <Button
+            paddingX="1.5rem"
+            size="sm"
+            borderRadius="full"
+            backgroundColor="blackAlpha.400"
+            _hover={{ backgroundColor: 'blackAlpha.300' }}
+          >
+            Cancel
+          </Button>
+          <Button
+            paddingX="1.5rem"
+            size="sm"
+            borderRadius="full"
+            backgroundColor="blackAlpha.400"
+            _hover={{ backgroundColor: 'blackAlpha.300' }}
+            isDisabled
+          >
+            Finish Event
+          </Button>
         </Stack>
       </div>
     </div>
