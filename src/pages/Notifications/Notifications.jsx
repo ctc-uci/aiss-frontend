@@ -24,9 +24,10 @@ const Notifications = () => {
 
   const ApproveAll = async () => {
     try {
-      for (let i = 0; i < listData.length; i++) {
-        await NPOBackend.put(`/users/approve/${listData[i].id}`);
-      }
+      listData.map(async user => {
+        await NPOBackend.put(`/users/approve/${user.id}`);
+      });
+
       location.reload();
     } catch (e) {
       console.log(e);
@@ -35,9 +36,10 @@ const Notifications = () => {
 
   const DeclineAll = async () => {
     try {
-      for (let i = 0; i < listData.length; i++) {
-        await NPOBackend.delete(`/users/${listData[i].id}`);
-      }
+      listData.map(async user => {
+        await NPOBackend.delete(`/users/${user.id}`);
+      });
+
       location.reload();
     } catch (e) {
       console.log(e);
@@ -46,12 +48,12 @@ const Notifications = () => {
 
   const Approve = async (id) => {
     try {
-      await NPOBackend.put(`/users/approve/${id}`); 
+      await NPOBackend.put(`/users/approve/${id}`);
       location.reload();
     } catch (e) {
       console.log(e);
     }
-     
+
   }
 
   const Decline = async (id) => {
