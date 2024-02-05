@@ -14,6 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import * as yup from 'yup';
+import React from 'react';
 
 const AISSBackend = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_HOST,
@@ -33,10 +34,11 @@ const schema = yup.object({
   year: yup.string().required('Year required'),
 });
 
-const CreateEventForm = () => {
+const CreateEventForm = event => {
   const toast = useToast();
   const {
     handleSubmit,
+    setValue,
     register,
     reset,
     formState: { errors },
@@ -44,20 +46,55 @@ const CreateEventForm = () => {
     resolver: yupResolver(schema),
   });
 
+  let [editId, editTitle, editHost, editYear, editEventType, editSubject, editDescription] = [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ];
+
+  if (event) {
+    [editId, editTitle, editHost, editYear, editEventType, editSubject, editDescription] = event;
+  }
+
+  React.useEffect(() => {
+    if (event) {
+      Object.entries(event).forEach(([key, value]) => {
+        setValue(key, value);
+      });
+    }
+  }, [event, setValue]);
+
   const submitData = async data => {
     const { host, title, eventType, subject, description, year } = data;
     toast.closeAll();
 
     // make post request to catalog backend route
     try {
-      const response = await AISSBackend.post('/catalog', {
-        host: host,
-        title: title,
-        eventType: eventType,
-        subject: subject,
-        description: description,
-        year: year,
-      });
+      let response;
+      if (event) {
+        response = await AISSBackend.put(`/catalog/${editId}`, {
+          host: host,
+          title: title,
+          eventType: eventType,
+          subject: subject,
+          description: description,
+          year: year,
+        });
+      } else {
+        response = await AISSBackend.post(`/catalog`, {
+          host: host,
+          title: title,
+          eventType: eventType,
+          subject: subject,
+          description: description,
+          year: year,
+        });
+      }
+      console.log(response);
       reset();
       toast({
         title: 'Event submitted!',
@@ -103,7 +140,7 @@ const CreateEventForm = () => {
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.host} width="80%">
               <FormLabel fontWeight="bold">Host</FormLabel>
-              <Textarea {...register('host')} border="1px solid" />
+              <Textarea {...register('host')} border="1px solid" defaultValue={editHost ?? ''} />
               <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
             </FormControl>
           </Box>
@@ -112,7 +149,7 @@ const CreateEventForm = () => {
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.title} width="80%">
               <FormLabel fontWeight="bold">Title</FormLabel>
-              <Textarea {...register('title')} border="1px solid" />
+              <Textarea {...register('title')} border="1px solid" defaultValue={editTitle ?? ''} />
               <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
             </FormControl>
           </Box>
@@ -121,7 +158,7 @@ const CreateEventForm = () => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Event Type</FormLabel>
-              <Select {...register('eventType')}>
+              <Select {...register('eventType')} defaultValue={editEventType ?? ''}>
                 <option value="guest speaker">Guest Speaker</option>
                 <option value="study-trip">Study Trip</option>
                 <option value="workshop">Workshop</option>
@@ -135,7 +172,7 @@ const CreateEventForm = () => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Subject</FormLabel>
-              <Select {...register('subject')}>
+              <Select {...register('subject')} defaultValue={editSubject ?? ''}>
                 <option value="life skills">Life Skills</option>
                 <option value="science">Science</option>
                 <option value="technology">Technology</option>
@@ -151,7 +188,11 @@ const CreateEventForm = () => {
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.description} width="47%">
               <FormLabel fontWeight="bold">Description</FormLabel>
-              <Input {...register('description')} border="1px solid" />
+              <Input
+                {...register('description')}
+                border="1px solid"
+                defaultValue={editDescription ?? ''}
+              />
               <FormErrorMessage>
                 {errors.description && errors.description.message}
               </FormErrorMessage>
@@ -162,7 +203,7 @@ const CreateEventForm = () => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Year</FormLabel>
-              <Select {...register('year')}>
+              <Select {...register('year')} defaultValue={editYear ?? ''}>
                 <option value="junior">Junior</option>
                 <option value="senior">Senior</option>
                 <option value="both">Both</option>

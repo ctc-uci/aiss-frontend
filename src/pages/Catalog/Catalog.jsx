@@ -54,7 +54,9 @@ export default function Catalog() {
   };
 
   const handleEditForm = data => {
+    console.log('Handling edit form');
     setEditData(data);
+    console.log(editData);
     setIsEditFormOpen(!isEditFormOpen);
     // populate form with data from setEditData (pass into CreateEventForm component as an event prop?)
   };
@@ -88,7 +90,7 @@ export default function Catalog() {
       <Modal id="editForm" isOpen={isEditFormOpen} onClose={handleCloseEditForm}>
         <ModalContent>
           <ModalBody>
-            <CreateEventForm />
+            <CreateEventForm event={editData} />
           </ModalBody>
         </ModalContent>
       </Modal>
