@@ -13,6 +13,7 @@ import ProtectedRoute from './utils/ProtectedRoute';
 import Catalog from './pages/Catalog/Catalog';
 import PublishedSchedule from './pages/PublishedSchedule/PublishedSchedule';
 import Playground from './pages/Playground/Playground';
+import Planner from './pages/Planner/Planner';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
@@ -68,6 +69,7 @@ const App = () => {
                 }
               />
               <Route exact path="/playground" element={<Playground />}/>
+              <Route exact path="/planner" element={<Planner />}/>
             </Routes>
           </Router>
         </CookiesProvider>

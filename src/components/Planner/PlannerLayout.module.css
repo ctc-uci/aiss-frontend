@@ -1,0 +1,139 @@
+/* CUSTOM SCROLLBAR */
+.gray-scrollbar-vertical {
+  scrollbar-width: thin;
+  scrollbar-color: var(--chakra-colors-blackAlpha-400) #f2f2f2;
+}
+
+.gray-scrollbar-vertical::-webkit-scrollbar {
+  width: 12px;
+}
+
+.gray-scrollbar-vertical::-webkit-scrollbar-track {
+  background: #f2f2f2;
+}
+
+.gray-scrollbar-vertical::-webkit-scrollbar-thumb {
+  background-color: var(--chakra-colors-blackAlpha-400);
+  border-radius: 10px;
+  border: 4px solid #f2f2f2;
+}
+
+/*
+ *            LAYOUT
+ *  +----------+------------------+
+ *  |          |                  |
+ *  |          |                  |
+ *  | TIMELINE |      EVENTS      |
+ *  |          |                  |
+ *  |          |                  |
+ *  +----------+------------------+
+ *
+ */
+
+/* PLANNER LAYOUT */
+#planner-page-layout {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* PLANNER TIMELINE */
+#planner-timeline-container {
+  background-color: var(--chakra-colors-blackAlpha-200);
+  width: clamp(250px, 30%, 600px);
+}
+
+.timeline-grid {
+  max-height: 100vh;
+  display: grid;
+  grid-template-columns: 64px repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  overflow-y: auto;
+}
+
+.grid-hour-container {
+  min-height: 64px;
+  position: relative;
+  border-top: 2px solid var(--chakra-colors-blackAlpha-400);
+}
+
+.timeline-event-wrapper {
+  position: relative;
+  z-index: 10;
+  padding: 0.125rem;
+}
+
+.timeline-event-container {
+  background-color: var(--chakra-colors-gray-300);
+  height: 100%;
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+}
+
+/* PLANNER EVENTS */
+#planner-events-container {
+  padding: 2rem;
+  padding-right: max(5%, 2rem);
+  flex-grow: 1;
+  background-color: #f2f2f2;
+  position: relative;
+}
+
+#planner-browse {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.create-event-button {
+  display: flex;
+  justify-content: space-between;
+  height: 2.5rem;
+  text-align: left;
+  width: 100%;
+}
+
+.header-divider {
+  width: 8rem;
+  margin-bottom: 1.5rem;
+  border: none;
+  height: 2px;
+  background-color: var(--chakra-colors-blackAlpha-400);
+}
+
+.planner-table-container {
+  flex-grow: 1;
+}
+
+/* not sure how to use with chakra Text */
+.event-header-text {
+  font-size: 30px;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+/* ADD NEW EVENT */
+#add-event-overlay {
+  background-color: #f2f2f2;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  padding: 2rem;
+  padding-right: max(5%, 2rem);
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-event-container {
+  background-color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 1rem;
+  flex-grow: 1;
+}

@@ -10,22 +10,28 @@ import { useState, useEffect } from 'react';
 import { PropTypes } from 'prop-types';
 import { NPOBackend } from '../../utils/auth_utils';
 
-const PaginationFooter = ({ setData, table }) => {
+const PaginationFooter = ({ setData, table, searchTerm, selectedFilters }) => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [rowRangeString, setRowRangeString] = useState('');
     const [dataCount, setDataCount] = useState(0);
-  
+
     const { currentPage, setCurrentPage, pagesCount } = usePagination({
       pagesCount: Math.ceil(dataCount / rowsPerPage),
       initialState: { currentPage: 1 },
     });
-  
+
     // when the number of rows or the next page is clicked, get the desired data from the backend
     useEffect(() => {
       const refreshData = async () => {
-        const { data } = await NPOBackend.get(
-          `/${table}?limit=${rowsPerPage}&page=${currentPage}`,
-        );
+        const params = {
+          title: searchTerm,
+          ...selectedFilters,
+          limit: rowsPerPage,
+          page: currentPage
+        };
+        const { data } = await NPOBackend.get('/catalog', {
+          params: params
+        });
         const { count, events: tableData } = data;
 
         setData(tableData); // data on the page
@@ -35,8 +41,8 @@ const PaginationFooter = ({ setData, table }) => {
         setRowRangeString(`${start} - ${start + tableData.length - 1}`); // range of data on the page
       };
       refreshData();
-    }, [currentPage, rowsPerPage, setData, table]);
-  
+    }, [currentPage, rowsPerPage, setData, table, searchTerm, selectedFilters]);
+
     useEffect(() => {
       setCurrentPage(1);
     }, [setCurrentPage, rowsPerPage, table]);
@@ -52,7 +58,7 @@ const PaginationFooter = ({ setData, table }) => {
       mx={5}
       p={3}
     >
-      <HStack width="17%" spacing={0}>
+      <HStack spacing={0}>
         <Box fontSize="14px" width="100%" whitespace="nowrap">
           Show rows per page&nbsp;
         </Box>
@@ -82,7 +88,7 @@ const PaginationFooter = ({ setData, table }) => {
         </Pagination>
       </Flex>
     </Flex>
-      
+
     );
   }
   PaginationFooter.propTypes = {
@@ -90,11 +96,18 @@ const PaginationFooter = ({ setData, table }) => {
     table: PropTypes.string.isRequired,
     data: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.string, 
+        id: PropTypes.string,
       }),
     ),
+    searchTerm: PropTypes.string.isRequired,
+    selectedFilters: PropTypes.shape({
+      subject: PropTypes.string,
+      eventType: PropTypes.string,
+      season: PropTypes.string,
+      year: PropTypes.string,
+    }),
   };
-  
+
   PaginationFooter.defaultProps = {
     data: [],
     table: '',
