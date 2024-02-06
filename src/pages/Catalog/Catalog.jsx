@@ -128,22 +128,11 @@ export default function Catalog() {
                   {hoveredRow === index && (
                     <>
                       <IconButton
-                        icon={
-                          <EditIcon
-                            onClick={() => {
-                              console.log('clicking on edit icon');
-                              handleEditForm([
-                                id,
-                                title,
-                                host,
-                                year,
-                                eventType,
-                                subject,
-                                description,
-                              ]);
-                            }}
-                          />
-                        }
+                        icon={<EditIcon />}
+                        onClick={() => {
+                          console.log('clicking on edit icon');
+                          handleEditForm([id, title, host, year, eventType, subject, description]);
+                        }}
                       />
                       <IconButton icon={<DeleteIcon />} onClick={() => handleDeleteClick(id)} />
                     </>
