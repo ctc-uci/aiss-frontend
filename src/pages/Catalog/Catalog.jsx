@@ -1,7 +1,7 @@
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Badge, Input, Select, Flex, Box, Center, Button } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
-import { NPOBackend } from '../../utils/auth_utils';
-import { Link } from 'react-router-dom';
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Badge, Input, Select, Flex, Box, Center } from '@chakra-ui/react';
+import { useState } from 'react';
+import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
+
 const subjectsOptions = ['life skills', 'science', 'technology', 'engineering', 'math', 'college readiness'];
 const eventOptions = ['guest speaker', 'study-trip', 'workshop', 'other'];
 const yearOptions = ['junior', 'senior', 'both'];
@@ -17,28 +17,6 @@ export default function Catalog() {
     year: '',
   });
 
-  useEffect(() => {
-    const fetchCatalogData = async () => {
-     const params = {
-        title: searchTerm,
-        ...selectedFilters,
-      };
-      console.log('fetching catalog data with params', params);
-      const response = await NPOBackend.get('/catalog', {
-        params: params
-      });
-      console.log('response', response);
-      setTableData(response.data);
-    };
-
-    const delay = setTimeout(() => {
-      fetchCatalogData().catch(console.error);
-    }, 750); // this is in miliseconds so 750 is .75 seconds, Vy design choice delay
-
-    return () => clearTimeout(delay);
-
-  }, [searchTerm, selectedFilters]);
-
   const handleSearch = (event) => {
     console.log('searching for', event.target.value);
     setSearchTerm(event.target.value);
@@ -53,15 +31,7 @@ export default function Catalog() {
 
     return (
       <div>
-        <Flex justify="space-between" align="center" mb="4" bgColor="gray.200" p="4">
-          <Link to="/publishedschedule">
-            <Button bgColor="gray.200">Schedule</Button>
-          </Link>
-          <Link to="/logout">
-            <Button bgColor="gray.200">Logout</Button>
-          </Link>
-        </Flex>
-  
+
         <Center>
           <Box minW="950px" mt="8">
             <h1 style={{ fontSize: 35}}>Event Catalog</h1>
@@ -98,7 +68,7 @@ export default function Catalog() {
                 </Select>
               </Flex>
             </Flex>
-  
+
             <TableContainer mt="8" mb = "8" borderRadius="md" overflowX="auto">
               <Table variant="simple" className="space-table" borderWidth="3px" width="100%">
                 <Thead>
@@ -131,10 +101,11 @@ export default function Catalog() {
                   ))}
                 </Tbody>
               </Table>
+              <PaginationFooter table="catalog" setData={setTableData} searchTerm={searchTerm} selectedFilters={selectedFilters} />
             </TableContainer>
           </Box>
         </Center>
       </div>
     );
   }
-  
+
