@@ -1,4 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/prop-types */
 import {
   Box,
   FormLabel,
@@ -34,7 +35,7 @@ const schema = yup.object({
   year: yup.string().required('Year required'),
 });
 
-const CreateEventForm = event => {
+const CreateEventForm = ({ event }) => {
   const toast = useToast();
   const {
     handleSubmit,

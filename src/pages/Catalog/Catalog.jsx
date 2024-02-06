@@ -58,11 +58,13 @@ export default function Catalog() {
     setEditData(data);
     console.log(editData);
     setIsEditFormOpen(!isEditFormOpen);
+    console.log(isEditFormOpen);
     // populate form with data from setEditData (pass into CreateEventForm component as an event prop?)
   };
 
   const handleCloseEditForm = () => {
     setIsEditFormOpen(!isEditFormOpen);
+    console.log(isEditFormOpen);
   };
 
   const handleDeleteClick = id => {
@@ -86,7 +88,14 @@ export default function Catalog() {
   return (
     <div>
       <Button onClick={openCreateForm}>Create</Button>
-      {isCreateFormOpen && <CreateEventForm />}
+      {/* {isCreateFormOpen && <CreateEventForm />} */}
+      <Modal id="createFrom" isOpen={isCreateFormOpen} onClose={openCreateForm}>
+        <ModalContent>
+          <ModalBody>
+            <CreateEventForm />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <Modal id="editForm" isOpen={isEditFormOpen} onClose={handleCloseEditForm}>
         <ModalContent>
           <ModalBody>
@@ -121,7 +130,8 @@ export default function Catalog() {
                       <IconButton
                         icon={
                           <EditIcon
-                            onClick={() =>
+                            onClick={() => {
+                              console.log('clicking on edit icon');
                               handleEditForm([
                                 id,
                                 title,
@@ -130,8 +140,8 @@ export default function Catalog() {
                                 eventType,
                                 subject,
                                 description,
-                              ])
-                            }
+                              ]);
+                            }}
                           />
                         }
                       />
