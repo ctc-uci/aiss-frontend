@@ -7,13 +7,25 @@ import {
   Tr,
   Th,
   Td,
+  // Modal,
+  // ModalOverlay,
+  // ModalContent,
+  // ModalHeader,
+  // ModalFooter,
+  // ModalBody,
+  // ModalCloseButton,
   // TableCaption,
   TableContainer,
 } from '@chakra-ui/react';
+import AddDayModal from './AddDayModal.jsx';
+// import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter.jsx';
+
+
 
 const PublishedSchedule = () => {
   // get data from database
   const [items, setItems] = useState([]);
+  // const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const renderTable = async () => {
@@ -25,6 +37,7 @@ const PublishedSchedule = () => {
 
   //update chakra table container accordingly
   return (
+    <div> 
     <TableContainer>
       <Table variant="striped" colorScheme="blue">
         <Thead>
@@ -51,6 +64,13 @@ const PublishedSchedule = () => {
         </Tbody>
       </Table>
     </TableContainer>
+    <AddDayModal/>
+    {/* <AddDayModal
+      onClose={onClose}
+      onOpen={onOpen}
+      isOpen={isOpen}
+    /> */}
+    </div>
   );
 };
 

@@ -1,11 +1,7 @@
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Badge, Input, Select, Flex, Box, Center } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Badge, Box, Center } from '@chakra-ui/react';
 import { useState } from 'react';
 import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
-
-const subjectsOptions = ['life skills', 'science', 'technology', 'engineering', 'math', 'college readiness'];
-const eventOptions = ['guest speaker', 'study-trip', 'workshop', 'other'];
-const yearOptions = ['junior', 'senior', 'both'];
-const seasonOptions = ['fall', 'spring', 'summer', 'winter'];
+import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter';
 
 export default function Catalog() {
   const [tableData, setTableData] = useState([]);
@@ -35,39 +31,7 @@ export default function Catalog() {
         <Center>
           <Box minW="950px" mt="8">
             <h1 style={{ fontSize: 35}}>Event Catalog</h1>
-            <Flex gap="4" mt="4">
-              <Input placeholder="Search..." size="md" w="35%" bgColor="gray.200" className="searchBar" onChange={handleSearch} />
-              <Flex gap="4" ml="auto">
-                <Select placeholder="Subject" className="dropDown" bgColor="gray.200" name="subject" onChange={handleFilterChange}>
-                  {subjectsOptions.map((subject, index) => (
-                    <option key={index} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </Select>
-                <Select placeholder="Event Type" className="dropDown" bgColor="gray.200" name="eventType" onChange={handleFilterChange}>
-                  {eventOptions.map((subject, index) => (
-                    <option key={index} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </Select>
-                <Select placeholder="Year" className="dropDown" bgColor="gray.200" name="year" onChange={handleFilterChange}>
-                  {yearOptions.map((subject, index) => (
-                    <option key={index} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </Select>
-                <Select placeholder="Season" className="dropDown" bgColor="gray.200" name="season" onChange={handleFilterChange}>
-                  {seasonOptions.map((subject, index) => (
-                    <option key={index} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </Select>
-              </Flex>
-            </Flex>
+            <SearchAndFilter onSearch={handleSearch} onChange={handleFilterChange} />
 
             <TableContainer mt="8" mb = "8" borderRadius="md" overflowX="auto">
               <Table variant="simple" className="space-table" borderWidth="3px" width="100%">
