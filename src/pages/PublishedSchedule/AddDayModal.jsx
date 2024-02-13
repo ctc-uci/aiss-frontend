@@ -10,6 +10,8 @@ import {
     useDisclosure,
     Text,
   } from '@chakra-ui/react'
+import Planner from '../../pages/Planner/Planner.jsx';
+import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
 
   const AddDayModal = () => {
     const { isOpen: isOpenDay, onOpen:onOpenDay, onClose:onCloseDay } = useDisclosure();
@@ -24,21 +26,16 @@ import {
         <>
           <Button onClick={onOpenDay}>Add Day</Button>
     
-          <Modal isOpen={isOpenDay} onClose={onCloseDay}>
+          <Modal isOpen={isOpenDay} size={'xl'} onClose={onCloseDay}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>Day Modal</ModalHeader>
+              <ModalHeader> Add New Day</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <Text>This is the add day modal</Text>
+                <AddDayForm
+                  onClose={onCloseDay}
+                  onOpen={handleOpenPlanner}/>
               </ModalBody>
-              
-              <ModalFooter>
-                <Button colorScheme='blue' mr={3} onClick={onCloseDay}>
-                  Close
-                </Button>
-                <Button variant='ghost' onClick={handleOpenPlanner}>Open Planner</Button>
-              </ModalFooter>
             </ModalContent>
           </Modal>
 
@@ -49,6 +46,7 @@ import {
             <ModalCloseButton />
             <ModalBody>
             <Text>This is the planner modal</Text>
+            <Planner/>
             </ModalBody>
 
             <ModalFooter>
@@ -61,32 +59,5 @@ import {
         </>
       );
   };
-  
-// export default function BasicUsage() {
-//     const { isOpen, onOpen, onClose } = useDisclosure()
-//     return (
-//       <>
-//         <Button onClick={onOpen}>Open Modal</Button>
-  
-//         <Modal isOpen={isOpen} onClose={onClose}>
-//           <ModalOverlay />
-//           <ModalContent>
-//             <ModalHeader>Modal Title</ModalHeader>
-//             <ModalCloseButton />
-//             <ModalBody>
-//               <Lorem count={2} />
-//             </ModalBody>
-  
-//             <ModalFooter>
-//               <Button colorScheme='blue' mr={3} onClick={onClose}>
-//                 Close
-//               </Button>
-//               <Button variant='ghost'>Secondary Action</Button>
-//             </ModalFooter>
-//           </ModalContent>
-//         </Modal>
-//       </>
-//     )
-//   }
 
 export default AddDayModal;
