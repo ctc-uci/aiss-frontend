@@ -1,6 +1,6 @@
 import './App.css';
 import { ChakraProvider } from '@chakra-ui/react';
-import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import { Route, Routes, Outlet, BrowserRouter as Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import Login from './components/Authentication/Login';
 import Logout from './components/Authentication/Logout';
@@ -14,21 +14,30 @@ import Catalog from './pages/Catalog/Catalog';
 import PublishedSchedule from './pages/PublishedSchedule/PublishedSchedule';
 import Playground from './pages/Playground/Playground';
 import Planner from './pages/Planner/Planner';
+import Navbar from './components/Navbar/Navbar';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 const App = () => {
+  const NavBarWrapper = () => (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
   return (
-      <ChakraProvider>
-        <CookiesProvider>
-          <Router>
-            <Routes>
+    <ChakraProvider>
+      <CookiesProvider>
+        <Router>
+          <Routes>
+            <Route element={<NavBarWrapper />}>
               <Route
-                exact path="/"
+                exact
+                path="/"
                 element={
                   <ProtectedRoute
                     Component={PublishedSchedule}
-                    redirectPath='/login'
+                    redirectPath="/login"
                     roles={[ADMIN_ROLE, USER_ROLE]}
                   />
                 }
@@ -50,7 +59,8 @@ const App = () => {
                 }
               />
               <Route
-                exact path="/catalog"
+                exact
+                path="/catalog"
                 element={
                   <ProtectedRoute
                     Component={Catalog}
@@ -59,7 +69,9 @@ const App = () => {
                   />
                 }
               />
-              <Route exact path="/publishedSchedule"
+              <Route
+                exact
+                path="/publishedSchedule"
                 element={
                   <ProtectedRoute
                     Component={PublishedSchedule}
@@ -68,12 +80,13 @@ const App = () => {
                   />
                 }
               />
-              <Route exact path="/playground" element={<Playground />}/>
-              <Route exact path="/planner" element={<Planner />}/>
-            </Routes>
-          </Router>
-        </CookiesProvider>
-      </ChakraProvider>
+              <Route exact path="/playground" element={<Playground />} />
+              <Route exact path="/planner" element={<Planner />} />
+            </Route>
+          </Routes>
+        </Router>
+      </CookiesProvider>
+    </ChakraProvider>
   );
 };
 

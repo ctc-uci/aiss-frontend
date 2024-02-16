@@ -12,6 +12,7 @@ const Login = ({ cookies }) => {
 
   const handleStdLogin = async e => {
     try {
+      console.log('logging in...');
       e.preventDefault();
       await logInWithEmailAndPassword(email, password, '/publishedSchedule', navigate, cookies);
     } catch (err) {
@@ -33,61 +34,64 @@ const Login = ({ cookies }) => {
       >
         <h2>Welcome. Please enter login information.</h2>
         {errorMessage && <p>{errorMessage}</p>}
-        <FormControl onSubmit={handleStdLogin}>
-          <div>
-            <Input
-              style={{ width: '350px', height: '81px', margin: '20px' }}
-              type="email"
-              onChange={({ target }) => setEmail(target.value)}
-              placeholder="Email"
-            />
-            <Input
-              style={{ width: '350px', height: '81px', margin: '20px' }}
-              type="password"
-              onChange={({ target }) => setPassword(target.value)}
-              placeholder="Password"
-            />
-          </div>
+        <form onSubmit={handleStdLogin}>
+          <FormControl>
+            <div>
+              <Input
+                style={{ width: '350px', height: '81px', margin: '20px' }}
+                type="email"
+                onChange={({ target }) => setEmail(target.value)}
+                placeholder="Email"
+              />
+              <Input
+                style={{ width: '350px', height: '81px', margin: '20px' }}
+                type="password"
+                onChange={({ target }) => setPassword(target.value)}
+                placeholder="Password"
+              />
+            </div>
 
-          <div
-            style={{
-              marginTop: '25px',
-              marginBottom: '25px',
-            }}
-          >
-            <Button
-              type="submit"
+            <div
               style={{
-                borderRadius: '30px',
-                marginRight: '24px',
-                width: '130px',
-                height: '38px',
+                marginTop: '25px',
+                marginBottom: '25px',
               }}
-              backgroundColor={'#3182CE'}
-              color={'white'}
             >
-              Login
-            </Button>
-            <Button
-              style={{
-                borderRadius: '30px',
-                marginLeft: '24px',
-                width: '130px',
-                height: '38px',
-              }}
-              backgroundColor={'#A0AEC0'}
-              color={'white'}
-            >
-              Create Account
-            </Button>
-          </div>
+              <Button
+                type="submit"
+                style={{
+                  borderRadius: '30px',
+                  marginRight: '24px',
+                  width: '130px',
+                  height: '38px',
+                }}
+                backgroundColor={'#3182CE'}
+                color={'white'}
+              >
+                Login
+              </Button>
+              <Button
+                style={{
+                  borderRadius: '30px',
+                  marginLeft: '24px',
+                  width: '130px',
+                  height: '38px',
+                }}
+                backgroundColor={'#A0AEC0'}
+                color={'white'}
+              >
+                Create Account
+              </Button>
+            </div>
 
-          <div>
-            <a href="/forgotpassword" style={{ fontWeight: 'bold' }}>
-              Forgot Password
-            </a>
-          </div>
-        </FormControl>
+            <div>
+              <a href="/forgotpassword" style={{ fontWeight: 'bold' }}>
+                Forgot Password
+              </a>
+            </div>
+          </FormControl>
+        </form>
+
         {/* <h2>Welcome. Please enter login information.</h2>
       {errorMessage && <p>{errorMessage}</p>} */}
         {/* <form onSubmit={handleStdLogin}>
