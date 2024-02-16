@@ -8,42 +8,34 @@ import {
   TableContainer,
   Button,
   IconButton,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  ModalHeader,
-  ModalCloseButton,
-  ModalFooter,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
-import CreateEventForm from '../../components/CreateEventForm/CreateEventForm';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import DeleteEventModal from '../../components/DeleteEventModal/DeleteEventModal';
+import CreateEventFormModal from '../../components/CreateEventForm/CreateEventFormModal';
 
 export default function Catalog() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const { isOpen: isEditFormOpen, onOpen: onEditFormOpen, onClose: onEditFormClose } = useDisclosure();
+  const { isOpen: isCreateFormOpen, onOpen: onCreateFormOpen, onClose: onCreateFormClose } = useDisclosure();
+
   const [tableData, setTableData] = useState([]);
-  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
   const [hoveredRow, setHoveredRow] = useState(null);
-  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-  const [deleteItemId, setDeleteItemId] = useState(null);
-  const [editData, setEditData] = useState([]);
+  const [deleteItemId, setDeleteItemId] = useState(-1);
+  const [editData, setEditData] = useState({});
+  const [isModified, setModified] = useState(false);
 
   useEffect(() => {
     const fetchCatalogData = async () => {
       const response = await NPOBackend.get('/catalog');
-      setTableData(response.data);
-      console.log(editData);
+      setTableData(response.data.events);
     };
 
     fetchCatalogData().catch(console.error);
-  }, []);
-
-  const openCreateForm = () => {
-    setIsCreateFormOpen(!isCreateFormOpen);
-  };
+    setModified(false);
+  }, [isModified]);
 
   const handleRowHover = index => {
     setHoveredRow(index);
@@ -54,55 +46,18 @@ export default function Catalog() {
   };
 
   const handleEditForm = data => {
-    console.log('Handling edit form');
     setEditData(data);
-    console.log(editData);
-    setIsEditFormOpen(!isEditFormOpen);
-    console.log(isEditFormOpen);
-    // populate form with data from setEditData (pass into CreateEventForm component as an event prop?)
-  };
-
-  const handleCloseEditForm = () => {
-    setIsEditFormOpen(!isEditFormOpen);
-    console.log(isEditFormOpen);
+    onEditFormOpen();
   };
 
   const handleDeleteClick = id => {
     setDeleteItemId(id);
-    onOpen();
-  };
-
-  const handleConfirmDelete = async idToDelete => {
-    try {
-      await NPOBackend.delete(`/catalog/${idToDelete}`);
-
-      const response = await NPOBackend.get('/catalog');
-      setTableData(response.data);
-
-      onClose();
-    } catch (error) {
-      console.error(error);
-    }
+    onDeleteOpen();
   };
 
   return (
     <div>
-      <Button onClick={openCreateForm}>Create</Button>
-      {/* {isCreateFormOpen && <CreateEventForm />} */}
-      <Modal id="createFrom" isOpen={isCreateFormOpen} onClose={openCreateForm}>
-        <ModalContent>
-          <ModalBody>
-            <CreateEventForm />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-      <Modal id="editForm" isOpen={isEditFormOpen} onClose={handleCloseEditForm}>
-        <ModalContent>
-          <ModalBody>
-            <CreateEventForm event={editData} />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <Button onClick={onCreateFormOpen}>Create</Button>
       <TableContainer>
         <Table variant="simple">
           <Thead>
@@ -129,10 +84,7 @@ export default function Catalog() {
                     <>
                       <IconButton
                         icon={<EditIcon />}
-                        onClick={() => {
-                          console.log('clicking on edit icon');
-                          handleEditForm([id, title, host, year, eventType, subject, description]);
-                        }}
+                        onClick={() => handleEditForm({id, title, host, year, eventType, subject, description})}
                       />
                       <IconButton icon={<DeleteIcon />} onClick={() => handleDeleteClick(id)} />
                     </>
@@ -143,21 +95,9 @@ export default function Catalog() {
           </Tbody>
         </Table>
       </TableContainer>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirm Delete</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>Are you sure you want to delete this row?</ModalBody>
-          <ModalFooter>
-            <ModalFooter>
-              <Button onClick={() => handleConfirmDelete(deleteItemId)}>Delete</Button>
-              <Button onClick={onClose}>Cancel</Button>
-            </ModalFooter>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <CreateEventFormModal isOpen={isCreateFormOpen} onClose={onCreateFormClose} setModified={setModified} />
+      <CreateEventFormModal isOpen={isEditFormOpen} onClose={onEditFormClose} eventData={editData} setModified={setModified} />
+      <DeleteEventModal isOpen={isDeleteOpen} onClose={onDeleteClose} deleteItemId={deleteItemId} setModified={setModified} />
     </div>
   );
 }

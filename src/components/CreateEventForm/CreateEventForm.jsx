@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import {
   Box,
   FormLabel,
@@ -13,14 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import * as yup from 'yup';
-import React from 'react';
-
-const AISSBackend = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_HOST,
-  withCredentials: true,
-});
+import { NPOBackend } from '../../utils/auth_utils';
 
 const schema = yup.object({
   // id: yup.string().required('ID required').max(10, 'ID exceeds 10 character limit'),
@@ -35,39 +28,17 @@ const schema = yup.object({
   year: yup.string().required('Year required'),
 });
 
-const CreateEventForm = ({ event }) => {
+const CreateEventForm = ({ eventData, setModified, closeModal }) => {
   const toast = useToast();
   const {
     handleSubmit,
-    setValue,
     register,
     reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: { ...eventData },
   });
-
-  let [editId, editTitle, editHost, editYear, editEventType, editSubject, editDescription] = [
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ];
-
-  if (event) {
-    [editId, editTitle, editHost, editYear, editEventType, editSubject, editDescription] = event;
-  }
-
-  React.useEffect(() => {
-    if (event) {
-      Object.entries(event).forEach(([key, value]) => {
-        setValue(key, value);
-      });
-    }
-  }, [event, setValue]);
 
   const submitData = async data => {
     const { host, title, eventType, subject, description, year } = data;
@@ -76,8 +47,9 @@ const CreateEventForm = ({ event }) => {
     // make post request to catalog backend route
     try {
       let response;
-      if (event) {
-        response = await AISSBackend.put(`/catalog/${editId}`, {
+      let id;
+      if (eventData) {
+        response = await NPOBackend.put(`/catalog/${eventData.id}`, {
           host: host,
           title: title,
           eventType: eventType,
@@ -85,8 +57,9 @@ const CreateEventForm = ({ event }) => {
           description: description,
           year: year,
         });
+        id = response.data[0].id
       } else {
-        response = await AISSBackend.post(`/catalog`, {
+        response = await NPOBackend.post(`/catalog`, {
           host: host,
           title: title,
           eventType: eventType,
@@ -94,12 +67,12 @@ const CreateEventForm = ({ event }) => {
           description: description,
           year: year,
         });
+        id = response.data.id
       }
-      console.log(response);
       reset();
       toast({
         title: 'Event submitted!',
-        description: `Event has been submitted. ID: ${response.data.id}`,
+        description: `Event has been submitted. ID: ${id}`,
         status: 'success',
         variant: 'subtle',
         position: 'bottom',
@@ -109,6 +82,11 @@ const CreateEventForm = ({ event }) => {
         duration: 3000,
         isClosable: true,
       });
+      if (setModified) {
+        setModified(true);
+      }
+      closeModal();
+
     } catch (error) {
       toast({
         title: `Error: ${error}`,
@@ -141,7 +119,7 @@ const CreateEventForm = ({ event }) => {
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.host} width="80%">
               <FormLabel fontWeight="bold">Host</FormLabel>
-              <Textarea {...register('host')} border="1px solid" defaultValue={editHost ?? ''} />
+              <Textarea {...register('host')} border="1px solid" />
               <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
             </FormControl>
           </Box>
@@ -150,7 +128,7 @@ const CreateEventForm = ({ event }) => {
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.title} width="80%">
               <FormLabel fontWeight="bold">Title</FormLabel>
-              <Textarea {...register('title')} border="1px solid" defaultValue={editTitle ?? ''} />
+              <Textarea {...register('title')} border="1px solid" />
               <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
             </FormControl>
           </Box>
@@ -159,7 +137,7 @@ const CreateEventForm = ({ event }) => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Event Type</FormLabel>
-              <Select {...register('eventType')} defaultValue={editEventType ?? ''}>
+              <Select {...register('eventType')}>
                 <option value="guest speaker">Guest Speaker</option>
                 <option value="study-trip">Study Trip</option>
                 <option value="workshop">Workshop</option>
@@ -173,7 +151,7 @@ const CreateEventForm = ({ event }) => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Subject</FormLabel>
-              <Select {...register('subject')} defaultValue={editSubject ?? ''}>
+              <Select {...register('subject')}>
                 <option value="life skills">Life Skills</option>
                 <option value="science">Science</option>
                 <option value="technology">Technology</option>
@@ -192,7 +170,6 @@ const CreateEventForm = ({ event }) => {
               <Input
                 {...register('description')}
                 border="1px solid"
-                defaultValue={editDescription ?? ''}
               />
               <FormErrorMessage>
                 {errors.description && errors.description.message}
@@ -204,7 +181,7 @@ const CreateEventForm = ({ event }) => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Year</FormLabel>
-              <Select {...register('year')} defaultValue={editYear ?? ''}>
+              <Select {...register('year')} >
                 <option value="junior">Junior</option>
                 <option value="senior">Senior</option>
                 <option value="both">Both</option>
@@ -219,4 +196,25 @@ const CreateEventForm = ({ event }) => {
     </Box>
   );
 };
+
+CreateEventForm.propTypes = {
+  eventData: PropTypes.shape({
+    id: PropTypes.number,
+    title: PropTypes.string,
+    host: PropTypes.string,
+    year: PropTypes.number,
+    eventType: PropTypes.string,
+    subject: PropTypes.string,
+    description: PropTypes.string
+  }),
+  setModified: PropTypes.func,
+  closeModal:PropTypes.func,
+}
+
+CreateEventForm.defaultProps = {
+  eventData: undefined,
+  setModified: undefined,
+  closeModal: () => {},
+};
+
 export default CreateEventForm;
