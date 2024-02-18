@@ -13,9 +13,11 @@ import {
   Grid,
   GridItem,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 
 const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
+  const toast = useToast()
   const [accounts, setAccounts] = useState(notificationBlock.getNotificationData().accounts);
   const [disableChildrenButtons, setDisableChildrenButtons] = useState(false);
 
@@ -30,6 +32,13 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
       }),
     );
 
+    toast({
+      title: `Approved ${accounts?.length} accounts.`,
+      status: 'success',
+      duration: 9000,
+      isClosable: true,
+    })
+
     removeEntry(notificationBlock.key);
   };
 
@@ -40,6 +49,12 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
       }),
     );
 
+    toast({
+      title: `Declined ${accounts?.length} accounts.`,
+      status: 'info',
+      duration: 9000,
+      isClosable: true,
+    })
     removeEntry(notificationBlock.key);
   };
 
@@ -120,12 +135,24 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
                             declineText="Decline"
                             acceptCallback={async () => {
                               await approveCallback();
+                              toast({
+                                title: `Approved ${email}.`,
+                                status: 'success',
+                                duration: 9000,
+                                isClosable: true,
+                              })
                               setAccounts(accounts =>
                                 accounts.filter(account => account.id !== id),
                               );
                             }}
                             declineCallback={async () => {
                               await declineCallback();
+                              toast({
+                                title: `Declined ${email}.`,
+                                status: 'info',
+                                duration: 9000,
+                                isClosable: true,
+                              })
                               setAccounts(accounts =>
                                 accounts.filter(account => account.id !== id),
                               );
