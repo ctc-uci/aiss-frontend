@@ -18,7 +18,35 @@ const getDateFromISOString = isoString => {
 
 const Notifications = () => {
   const [notificationList, setNotificationList] = useState([]);
-  const today = useMemo(() => new Date(), [])
+  const today = useMemo(() => new Date(), []);
+
+  const approveAccount = async id => {
+    try {
+      console.log('approving', id);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('okays', id);
+      // await NPOBackend.put(`/users/approve/${id}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const declineAccount = async id => {
+    try {
+      console.log('declining', id);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('okays', id);
+      // await NPOBackend.delete(`/users/${id}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const removeNotificationEntry = key => {
+    setNotificationList(notificationBlocks =>
+      notificationBlocks.filter(block => block.getKey() !== key),
+    );
+  };
 
   useEffect(() => {
     const fetchNotificationData = async () => {
@@ -31,20 +59,29 @@ const Notifications = () => {
       // Map MM-DD-YY string to AccountNotificationBlock
       const accountsMap = new Map();
 
-      pendingAccounts.forEach(({ approvedOn, email }) => {
+      pendingAccounts.forEach(({ approvedOn, email, id }) => {
         const { dateObject, formattedDateString } = getDateFromISOString(approvedOn);
         let notificationBlock;
 
         if (!accountsMap.has(formattedDateString)) {
           // Create notification date block if first found entry of that day
-          const key = `${formattedDateString}-accounts`;
+          const key = `accounts-${formattedDateString}`;
           notificationBlock = new AccountNotificationBlock(dateObject, 'account', key);
         } else {
           // Set notification block to be existing entry
           notificationBlock = accountsMap.get(formattedDateString);
         }
 
-        notificationBlock.addPendingAccount(email);
+        notificationBlock.addPendingAccount(
+          id,
+          email,
+          async () => {
+            await approveAccount(id);
+          },
+          async () => {
+            await declineAccount(id);
+          },
+        );
         accountsMap.set(formattedDateString, notificationBlock);
       });
 
@@ -75,51 +112,11 @@ const Notifications = () => {
       });
 
       setNotificationList(notificationBlocks);
+
+      console.log(notificationBlocks);
     };
     fetchNotificationData().catch(console.error);
   }, []);
-
-  // const ApproveAll = async () => {
-  //   try {
-  //     listData.map(async user => {
-  //       await NPOBackend.put(`/users/approve/${user.id}`);
-  //     });
-
-  //     location.reload();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
-  // const DeclineAll = async () => {
-  //   try {
-  //     listData.map(async user => {
-  //       await NPOBackend.delete(`/users/${user.id}`);
-  //     });
-
-  //     location.reload();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
-  // const Approve = async id => {
-  //   try {
-  //     await NPOBackend.put(`/users/approve/${id}`);
-  //     location.reload();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
-  // const Decline = async id => {
-  //   try {
-  //     await NPOBackend.delete(`/users/${id}`);
-  //     location.reload();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
 
   return (
     <TableContainer>
@@ -132,10 +129,14 @@ const Notifications = () => {
               <Tr key={notificationBlock.key}>
                 <Td borderColor="gray.300">
                   {notificationType === 'account' && (
-                    <AccountNotification notificationBlock={notificationBlock} today={today}/>
+                    <AccountNotification
+                      notificationBlock={notificationBlock}
+                      today={today}
+                      onDestroy={removeNotificationEntry}
+                    />
                   )}
                   {notificationType === 'event' && (
-                    <EventNotification notificationBlock={notificationBlock} today={today}/>
+                    <EventNotification notificationBlock={notificationBlock} today={today} />
                   )}
                 </Td>
               </Tr>

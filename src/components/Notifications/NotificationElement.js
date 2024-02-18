@@ -12,7 +12,7 @@ class NotificationBlock {
   getType() {
     return this.type;
   }
-   
+
   getKey() {
     return this.key;
   }
@@ -30,8 +30,13 @@ class AccountNotificationBlock extends NotificationBlock {
     this.pendingAccounts = [];
   }
 
-  addPendingAccount(pendingAccount) {
-    this.pendingAccounts.push(pendingAccount);
+  addPendingAccount(id, email, approveCallback, declineCallback) {
+    this.pendingAccounts.push({
+      id: id,
+      email: email,
+      approveCallback: approveCallback,
+      declineCallback: declineCallback,
+    });
   }
 
   getNotificationData() {

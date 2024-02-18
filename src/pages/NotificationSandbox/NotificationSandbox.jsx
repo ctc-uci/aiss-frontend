@@ -24,7 +24,7 @@ const NotificationSandbox = () => {
         <Button ref={buttonRef} colorScheme="teal" onClick={onOpen}>
           <BellIcon />
         </Button>
-        <Drawer size="md" isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={buttonRef}>
+        <Drawer size="lg" isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={buttonRef}>
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
