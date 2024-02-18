@@ -1,5 +1,5 @@
 import { Table, Tbody, Tr, Td, TableContainer } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 import { AccountNotificationBlock, EventNotificationBlock } from './NotificationElement';
 import AccountNotification from './AccountNotification';
@@ -18,6 +18,7 @@ const getDateFromISOString = isoString => {
 
 const Notifications = () => {
   const [notificationList, setNotificationList] = useState([]);
+  const today = useMemo(() => new Date(), [])
 
   useEffect(() => {
     const fetchNotificationData = async () => {
@@ -129,12 +130,12 @@ const Notifications = () => {
 
             return (
               <Tr key={notificationBlock.key}>
-                <Td>
+                <Td borderColor="gray.300">
                   {notificationType === 'account' && (
-                    <AccountNotification notificationBlock={notificationBlock} />
+                    <AccountNotification notificationBlock={notificationBlock} today={today}/>
                   )}
                   {notificationType === 'event' && (
-                    <EventNotification notificationBlock={notificationBlock} />
+                    <EventNotification notificationBlock={notificationBlock} today={today}/>
                   )}
                 </Td>
               </Tr>

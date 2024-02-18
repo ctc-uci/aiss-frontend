@@ -1,8 +1,14 @@
-// eslint-disable-next-line react/prop-types
-const EventNotificationComponent = ({ notificationBlock }) => {
+import PropTypes from 'prop-types';
+import { EventNotificationBlock } from './NotificationElement';
+
+const EventNotification = ({ notificationBlock }) => {
   console.log('event', notificationBlock);
 
   return <div>EventNotificationComponent</div>;
 };
 
-export default EventNotificationComponent;
+EventNotification.propTypes = {
+  notificationBlock: PropTypes.instanceOf(EventNotificationBlock)
+}
+
+export default EventNotification;
