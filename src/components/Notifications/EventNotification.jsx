@@ -21,7 +21,13 @@ const EventNotification = ({ notificationBlock, today }) => {
         </Text>
       </Text>
       <Text alignSelf="flex-end" fontSize="xs" title={blockDate.toLocaleString()}>
-        {diffDays} day{diffDays !== 1 && 's'} ago
+        {diffDays > 0 ? (
+          <>
+            {diffDays} day{diffDays !== 1 && 's'} ago
+          </>
+        ) : (
+          <>Today</>
+        )}
       </Text>
     </Container>
   );

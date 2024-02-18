@@ -22,10 +22,9 @@ const Notifications = () => {
 
   const approveAccount = async id => {
     try {
-      console.log('approving', id);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('okays', id);
-      // await NPOBackend.put(`/users/approve/${id}`);
+      console.log('Approving', id);
+      await NPOBackend.put(`/users/approve/${id}`);
+      console.log('Approved', id);
     } catch (e) {
       console.log(e);
     }
@@ -33,10 +32,9 @@ const Notifications = () => {
 
   const declineAccount = async id => {
     try {
-      console.log('declining', id);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('okays', id);
-      // await NPOBackend.delete(`/users/${id}`);
+      console.log('Declining', id);
+      await NPOBackend.delete(`/users/${id}`);
+      console.log('Declined', id);
     } catch (e) {
       console.log(e);
     }
@@ -112,8 +110,6 @@ const Notifications = () => {
       });
 
       setNotificationList(notificationBlocks);
-
-      console.log(notificationBlocks);
     };
     fetchNotificationData().catch(console.error);
   }, []);
@@ -132,7 +128,7 @@ const Notifications = () => {
                     <AccountNotification
                       notificationBlock={notificationBlock}
                       today={today}
-                      onDestroy={removeNotificationEntry}
+                      removeEntry={removeNotificationEntry}
                     />
                   )}
                   {notificationType === 'event' && (

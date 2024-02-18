@@ -15,7 +15,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-const AccountNotification = ({ notificationBlock, today, onDestroy }) => {
+const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
   const [accounts, setAccounts] = useState(notificationBlock.getNotificationData().accounts);
   const [disableChildrenButtons, setDisableChildrenButtons] = useState(false);
 
@@ -24,19 +24,23 @@ const AccountNotification = ({ notificationBlock, today, onDestroy }) => {
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   const acceptAll = async accounts => {
-    await Promise.all(accounts.map(async (account) => {
-      await account.approveCallback();
-    }))
+    await Promise.all(
+      accounts.map(async account => {
+        await account.approveCallback();
+      }),
+    );
 
-    onDestroy(notificationBlock.key);
+    removeEntry(notificationBlock.key);
   };
 
   const declineAll = async accounts => {
-    await Promise.all(accounts.map(async (account) => {
-      await account.declineCallback();
-    }))
+    await Promise.all(
+      accounts.map(async account => {
+        await account.declineCallback();
+      }),
+    );
 
-    onDestroy(notificationBlock.key);
+    removeEntry(notificationBlock.key);
   };
 
   return (
@@ -139,7 +143,13 @@ const AccountNotification = ({ notificationBlock, today, onDestroy }) => {
         )}
       </div>
       <Text alignSelf="flex-end" fontSize="xs" title={blockDate.toLocaleString()}>
-        {diffDays} day{diffDays !== 1 && 's'} ago
+        {diffDays > 0 ? (
+          <>
+            {diffDays} day{diffDays !== 1 && 's'} ago
+          </>
+        ) : (
+          <>Today</>
+        )}
       </Text>
     </Container>
   );
@@ -147,7 +157,7 @@ const AccountNotification = ({ notificationBlock, today, onDestroy }) => {
 AccountNotification.propTypes = {
   notificationBlock: PropTypes.instanceOf(AccountNotificationBlock),
   today: PropTypes.instanceOf(Date),
-  onDestroy: PropTypes.func,
+  removeEntry: PropTypes.func,
 };
 
 const AccountButtonGroup = ({
