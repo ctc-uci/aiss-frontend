@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 
 const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
-  const toast = useToast()
+  const toast = useToast();
   const [accounts, setAccounts] = useState(notificationBlock.getNotificationData().accounts);
   const [disableChildrenButtons, setDisableChildrenButtons] = useState(false);
 
@@ -37,7 +37,7 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
       status: 'success',
       duration: 9000,
       isClosable: true,
-    })
+    });
 
     removeEntry(notificationBlock.key);
   };
@@ -54,7 +54,7 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
       status: 'info',
       duration: 9000,
       isClosable: true,
-    })
+    });
     removeEntry(notificationBlock.key);
   };
 
@@ -140,7 +140,7 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
                                 status: 'success',
                                 duration: 9000,
                                 isClosable: true,
-                              })
+                              });
                               setAccounts(accounts =>
                                 accounts.filter(account => account.id !== id),
                               );
@@ -152,7 +152,7 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
                                 status: 'info',
                                 duration: 9000,
                                 isClosable: true,
-                              })
+                              });
                               setAccounts(accounts =>
                                 accounts.filter(account => account.id !== id),
                               );
