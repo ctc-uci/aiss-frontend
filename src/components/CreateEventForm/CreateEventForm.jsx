@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import PropTypes from 'prop-types';
 import {
   Box,
   FormLabel,
@@ -12,13 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import * as yup from 'yup';
-
-const AISSBackend = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_HOST,
-  withCredentials: true,
-});
+import { NPOBackend } from '../../utils/auth_utils';
 
 const schema = yup.object({
   // id: yup.string().required('ID required').max(10, 'ID exceeds 10 character limit'),
@@ -33,7 +28,7 @@ const schema = yup.object({
   year: yup.string().required('Year required'),
 });
 
-const CreateEventForm = () => {
+const CreateEventForm = ({ eventData, setModified, closeModal }) => {
   const toast = useToast();
   const {
     handleSubmit,
@@ -42,6 +37,7 @@ const CreateEventForm = () => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: { ...eventData },
   });
 
   const submitData = async data => {
@@ -50,18 +46,33 @@ const CreateEventForm = () => {
 
     // make post request to catalog backend route
     try {
-      const response = await AISSBackend.post('/catalog', {
-        host: host,
-        title: title,
-        eventType: eventType,
-        subject: subject,
-        description: description,
-        year: year,
-      });
+      let response;
+      let id;
+      if (eventData) {
+        response = await NPOBackend.put(`/catalog/${eventData.id}`, {
+          host: host,
+          title: title,
+          eventType: eventType,
+          subject: subject,
+          description: description,
+          year: year,
+        });
+        id = response.data[0].id
+      } else {
+        response = await NPOBackend.post(`/catalog`, {
+          host: host,
+          title: title,
+          eventType: eventType,
+          subject: subject,
+          description: description,
+          year: year,
+        });
+        id = response.data.id
+      }
       reset();
       toast({
         title: 'Event submitted!',
-        description: `Event has been submitted. ID: ${response.data.id}`,
+        description: `Event has been submitted. ID: ${id}`,
         status: 'success',
         variant: 'subtle',
         position: 'bottom',
@@ -71,6 +82,11 @@ const CreateEventForm = () => {
         duration: 3000,
         isClosable: true,
       });
+      if (setModified) {
+        setModified(true);
+      }
+      closeModal();
+
     } catch (error) {
       toast({
         title: `Error: ${error}`,
@@ -151,7 +167,10 @@ const CreateEventForm = () => {
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.description} width="47%">
               <FormLabel fontWeight="bold">Description</FormLabel>
-              <Input {...register('description')} border="1px solid" />
+              <Input
+                {...register('description')}
+                border="1px solid"
+              />
               <FormErrorMessage>
                 {errors.description && errors.description.message}
               </FormErrorMessage>
@@ -162,7 +181,7 @@ const CreateEventForm = () => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Year</FormLabel>
-              <Select {...register('year')}>
+              <Select {...register('year')} >
                 <option value="junior">Junior</option>
                 <option value="senior">Senior</option>
                 <option value="both">Both</option>
@@ -177,4 +196,25 @@ const CreateEventForm = () => {
     </Box>
   );
 };
+
+CreateEventForm.propTypes = {
+  eventData: PropTypes.shape({
+    id: PropTypes.number,
+    title: PropTypes.string,
+    host: PropTypes.string,
+    year: PropTypes.number,
+    eventType: PropTypes.string,
+    subject: PropTypes.string,
+    description: PropTypes.string
+  }),
+  setModified: PropTypes.func,
+  closeModal:PropTypes.func,
+}
+
+CreateEventForm.defaultProps = {
+  eventData: undefined,
+  setModified: undefined,
+  closeModal: () => {},
+};
+
 export default CreateEventForm;

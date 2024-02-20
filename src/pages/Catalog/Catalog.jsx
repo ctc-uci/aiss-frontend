@@ -1,6 +1,9 @@
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Badge, Input, Select, Flex, Box, Center } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Badge, Input, Select, Flex, Box, Center, IconButton, useDisclosure, Button } from '@chakra-ui/react';
 import { useState } from 'react';
 import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
+import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import DeleteEventModal from '../../components/DeleteEventModal/DeleteEventModal';
+import CreateEventFormModal from '../../components/CreateEventForm/CreateEventFormModal';
 
 const subjectsOptions = ['life skills', 'science', 'technology', 'engineering', 'math', 'college readiness'];
 const eventOptions = ['guest speaker', 'study-trip', 'workshop', 'other'];
@@ -8,7 +11,33 @@ const yearOptions = ['junior', 'senior', 'both'];
 const seasonOptions = ['fall', 'spring', 'summer', 'winter'];
 
 export default function Catalog() {
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const { isOpen: isEditFormOpen, onOpen: onEditFormOpen, onClose: onEditFormClose } = useDisclosure();
+  const { isOpen: isCreateFormOpen, onOpen: onCreateFormOpen, onClose: onCreateFormClose } = useDisclosure();
+
   const [tableData, setTableData] = useState([]);
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const [deleteItemId, setDeleteItemId] = useState(-1);
+  const [editData, setEditData] = useState({});
+  const [isModified, setModified] = useState(false);
+
+  const handleRowHover = index => {
+    setHoveredRow(index);
+  };
+
+  const handleRowLeave = () => {
+    setHoveredRow(null);
+  };
+
+  const handleEditForm = data => {
+    setEditData(data);
+    onEditFormOpen();
+  };
+
+  const handleDeleteClick = id => {
+    setDeleteItemId(id);
+    onDeleteOpen();
+  };
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilters, setSelectedFilters] = useState({
     subject: '',
@@ -16,6 +45,16 @@ export default function Catalog() {
     season: '',
     year: '',
   });
+
+  // useEffect(() => {
+  //   const fetchCatalogData = async () => {
+  //     const response = await NPOBackend.get('/catalog');
+  //     setTableData(response.data.events);
+  //   };
+
+  //   fetchCatalogData().catch(console.error);
+  //   setModified(false);
+  // }, [isModified]);
 
   const handleSearch = (event) => {
     console.log('searching for', event.target.value);
@@ -31,7 +70,7 @@ export default function Catalog() {
 
     return (
       <div>
-
+        <Button onClick={onCreateFormOpen}>Create</Button>
         <Center>
           <Box minW="950px" mt="8">
             <h1 style={{ fontSize: 35}}>Event Catalog</h1>
@@ -79,8 +118,8 @@ export default function Catalog() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {tableData.map(({ id, host, title, eventType, subject, year, season }) => (
-                    <Tr key={id}>
+                  {tableData.map(({ id, host, title, eventType, subject, year, season, description }, index) => (
+                    <Tr key={id} onMouseEnter={() => handleRowHover(index)} onMouseLeave={handleRowLeave}>
                       <Td textAlign="left">{title}</Td>
                       <Td textAlign="left">{host}</Td>
                       <Td textAlign="left">
@@ -97,12 +136,26 @@ export default function Catalog() {
                           {year}
                         </Badge>
                       </Td>
+                      <Td>
+                        {hoveredRow === index && (
+                          <>
+                            <IconButton
+                              icon={<EditIcon />}
+                              onClick={() => handleEditForm({id, title, host, year, eventType, subject, description})}
+                            />
+                            <IconButton icon={<DeleteIcon />} onClick={() => handleDeleteClick(id)} />
+                          </>
+                        )}
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>
               </Table>
-              <PaginationFooter table="catalog" setData={setTableData} searchTerm={searchTerm} selectedFilters={selectedFilters} />
+              <PaginationFooter table="catalog" setData={setTableData} searchTerm={searchTerm} selectedFilters={selectedFilters} isModified={isModified}/>
             </TableContainer>
+            <CreateEventFormModal isOpen={isCreateFormOpen} onClose={onCreateFormClose} setModified={setModified} />
+            <CreateEventFormModal isOpen={isEditFormOpen} onClose={onEditFormClose} eventData={editData} setModified={setModified} />
+            <DeleteEventModal isOpen={isDeleteOpen} onClose={onDeleteClose} deleteItemId={deleteItemId} setModified={setModified} />
           </Box>
         </Center>
       </div>

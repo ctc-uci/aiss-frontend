@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { PropTypes } from 'prop-types';
 import { NPOBackend } from '../../utils/auth_utils';
 
-const PaginationFooter = ({ setData, table, searchTerm, selectedFilters }) => {
+const PaginationFooter = ({ setData, table, searchTerm, selectedFilters, isModified }) => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [rowRangeString, setRowRangeString] = useState('');
     const [dataCount, setDataCount] = useState(0);
@@ -41,7 +41,7 @@ const PaginationFooter = ({ setData, table, searchTerm, selectedFilters }) => {
         setRowRangeString(`${start} - ${start + tableData.length - 1}`); // range of data on the page
       };
       refreshData();
-    }, [currentPage, rowsPerPage, setData, table, searchTerm, selectedFilters]);
+    }, [currentPage, rowsPerPage, setData, table, searchTerm, selectedFilters, isModified]);
 
     useEffect(() => {
       setCurrentPage(1);
@@ -106,6 +106,7 @@ const PaginationFooter = ({ setData, table, searchTerm, selectedFilters }) => {
       season: PropTypes.string,
       year: PropTypes.string,
     }),
+    isModified: PropTypes.bool.isRequired,
   };
 
   PaginationFooter.defaultProps = {
