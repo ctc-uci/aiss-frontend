@@ -1,56 +1,50 @@
 import { NPOBackend } from '../../utils/auth_utils.js';
+import PublishedScheduleTable from '../../components/Events/PublishedScheduleTable.jsx';
+
 import { useEffect, useState } from 'react';
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  // TableCaption,
-  TableContainer,
+  Box,
+  Select,
 } from '@chakra-ui/react';
+
 
 const PublishedSchedule = () => {
   // get data from database
-  const [items, setItems] = useState([]);
+  const [allSeasons, setAllSeasons] = useState([]);
+  const [selectedSeason, setSelectedSeason] = useState('');
 
   useEffect(() => {
     const renderTable = async () => {
-      const { data } = await NPOBackend.get('/published-schedule');
-      setItems(data);
+      const { data } = await NPOBackend.get('/published-schedule/all-seasons');
+      setAllSeasons(data);
     };
     renderTable();
+    
   }, []);
 
   //update chakra table container accordingly
   return (
-    <TableContainer>
-      <Table variant="striped" colorScheme="blue">
-        <Thead>
-          <Tr>
-            <Th>Title</Th>
-            <Th>Host</Th>
-            <Th>Cohort Year</Th>
-            <Th>Confirmed?</Th>
-            <Th>Start Time</Th>
-            <Th>End Time</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {items.map(item => (
-            <Tr key={item.id}>
-              <Td>{item.title}</Td>
-              <Td>{item.host}</Td>
-              <Td>{item.cohort.join(', ')}</Td>
-              <Td>{String(item.confirmed)}</Td>
-              <Td>{String(item.startTime)}</Td>
-              <Td>{String(item.endTime)}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
+    <Box pt={10} pb={10} pl={100} pr={100}>
+        {/* season dropdown menu */}
+        <Select variant='unstyled' placeholder='All Seasons' onChange={() => setSelectedSeason(event.target.value)} width="20%">
+            {allSeasons.map(item => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+        </Select> 
+
+        {/* tables for each season */}
+        {selectedSeason != '' ? 
+          (<PublishedScheduleTable
+            season={selectedSeason}
+          />) :  
+          (allSeasons.map(item => (
+            <PublishedScheduleTable
+              key={item}
+              season={item}
+            />
+          )))
+        }
+    </Box>
   );
 };
 

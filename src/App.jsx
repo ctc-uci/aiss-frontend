@@ -5,7 +5,6 @@ import { CookiesProvider } from 'react-cookie';
 import Login from './components/Authentication/Login';
 import Logout from './components/Authentication/Logout';
 import SignUp from './components/Authentication/SignUp';
-import Notifications from './pages/Notifications/Notifications';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
 import AUTH_ROLES from './utils/auth_config';
@@ -16,7 +15,7 @@ import Playground from './pages/Playground/Playground';
 import Planner from './pages/Planner/Planner';
 import Navbar from './components/Navbar/Navbar';
 import { auth, getCurrentUser } from './utils/auth_utils';
-// import getCurrentUser from './utils/auth_utils';
+import NotificationSandbox from './pages/NotificationSandbox/NotificationSandbox';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 const currentUser = await getCurrentUser(auth);
@@ -53,13 +52,9 @@ const App = () => {
               <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
               <Route
                 exact
-                path="/notifications"
+                path="/notification-sandbox"
                 element={
-                  <ProtectedRoute
-                    Component={Notifications}
-                    redirectPath="/login"
-                    roles={[ADMIN_ROLE, USER_ROLE]}
-                  />
+                  <NotificationSandbox />
                 }
               />
               <Route
