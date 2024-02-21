@@ -82,48 +82,47 @@ export default function Catalog() {
     });
   };
 
-    return (
-      <div>
-        <Button onClick={onCreateFormOpen}>Create</Button>
-        <Center>
-          <Box minW="950px" mt="8">
-            <h1 style={{ fontSize: 35}}>Event Catalog</h1>
-            <Flex gap="4" mt="4">
-              <Input placeholder="Search..." size="md" w="35%" bgColor="gray.200" className="searchBar" onChange={handleSearch} />
-              <Flex gap="4" ml="auto">
-                <Select placeholder="Subject" className="dropDown" bgColor="gray.200" name="subject" onChange={handleFilterChange}>
-                  {subjectsOptions.map((subject, index) => (
-                    <option key={index} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </Select>
-                <Select placeholder="Event Type" className="dropDown" bgColor="gray.200" name="eventType" onChange={handleFilterChange}>
-                  {eventOptions.map((subject, index) => (
-                    <option key={index} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </Select>
-                <Select placeholder="Year" className="dropDown" bgColor="gray.200" name="year" onChange={handleFilterChange}>
-                  {yearOptions.map((subject, index) => (
-                    <option key={index} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </Select>
-                <Select placeholder="Season" className="dropDown" bgColor="gray.200" name="season" onChange={handleFilterChange}>
-                  {seasonOptions.map((subject, index) => (
-                    <option key={index} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </Select>
-              </Flex>
+  return (
+    <div>
+      <Button onClick={onCreateFormOpen}>Create</Button>
+      <Center>
+        <Box minW="950px" mt="8">
+          <h1 style={{ fontSize: 35}}>Event Catalog</h1>
+          <Flex gap="4" mt="4">
+            <Input placeholder="Search..." size="md" w="35%" bgColor="gray.200" className="searchBar" onChange={handleSearch} />
+            <Flex gap="4" ml="auto">
+              <Select placeholder="Subject" className="dropDown" bgColor="gray.200" name="subject" onChange={handleFilterChange}>
+                {subjectsOptions.map((subject, index) => (
+                  <option key={index} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </Select>
+              <Select placeholder="Event Type" className="dropDown" bgColor="gray.200" name="eventType" onChange={handleFilterChange}>
+                {eventOptions.map((subject, index) => (
+                  <option key={index} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </Select>
+              <Select placeholder="Year" className="dropDown" bgColor="gray.200" name="year" onChange={handleFilterChange}>
+                {yearOptions.map((subject, index) => (
+                  <option key={index} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </Select>
+              <Select placeholder="Season" className="dropDown" bgColor="gray.200" name="season" onChange={handleFilterChange}>
+                {seasonOptions.map((subject, index) => (
+                  <option key={index} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </Select>
             </Flex>
           </Flex>
 
-          <TableContainer mt="8" mb="8" borderRadius="md" overflowX="auto">
+          <TableContainer mt="8" mb = "8" borderRadius="md" overflowX="auto">
             <Table variant="simple" className="space-table" borderWidth="3px" width="100%">
               <Thead>
                 <Tr>
@@ -133,8 +132,8 @@ export default function Catalog() {
                 </Tr>
               </Thead>
               <Tbody>
-                {tableData.map(({ id, host, title, eventType, subject, year, season }) => (
-                  <Tr key={id}>
+                {tableData.map(({ id, host, title, eventType, subject, year, season, description }, index) => (
+                  <Tr key={id} onMouseEnter={() => handleRowHover(index)} onMouseLeave={handleRowLeave}>
                     <Td textAlign="left">{title}</Td>
                     <Td textAlign="left">{host}</Td>
                     <Td textAlign="left">
@@ -151,50 +150,28 @@ export default function Catalog() {
                         {year}
                       </Badge>
                     </Td>
+                    <Td>
+                      {hoveredRow === index && (
+                        <>
+                          <IconButton
+                            icon={<EditIcon />}
+                            onClick={() => handleEditForm({id, title, host, year, eventType, subject, description})}
+                          />
+                          <IconButton icon={<DeleteIcon />} onClick={() => handleDeleteClick(id)} />
+                        </>
+                      )}
+                    </Td>
                   </Tr>
-                </Thead>
-                <Tbody>
-                  {tableData.map(({ id, host, title, eventType, subject, year, season, description }, index) => (
-                    <Tr key={id} onMouseEnter={() => handleRowHover(index)} onMouseLeave={handleRowLeave}>
-                      <Td textAlign="left">{title}</Td>
-                      <Td textAlign="left">{host}</Td>
-                      <Td textAlign="left">
-                        <Badge colorScheme="orange" mr={2}>
-                          {eventType}
-                        </Badge>
-                        <Badge colorScheme="cyan" mr={2}>
-                          {subject}
-                        </Badge>
-                        <Badge colorScheme="purple" mr={2}>
-                          {season}
-                        </Badge>
-                        <Badge colorScheme="red" mr={2}>
-                          {year}
-                        </Badge>
-                      </Td>
-                      <Td>
-                        {hoveredRow === index && (
-                          <>
-                            <IconButton
-                              icon={<EditIcon />}
-                              onClick={() => handleEditForm({id, title, host, year, eventType, subject, description})}
-                            />
-                            <IconButton icon={<DeleteIcon />} onClick={() => handleDeleteClick(id)} />
-                          </>
-                        )}
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-              <PaginationFooter table="catalog" setData={setTableData} searchTerm={searchTerm} selectedFilters={selectedFilters} isModified={isModified}/>
-            </TableContainer>
-            <CreateEventFormModal isOpen={isCreateFormOpen} onClose={onCreateFormClose} setModified={setModified} />
-            <CreateEventFormModal isOpen={isEditFormOpen} onClose={onEditFormClose} eventData={editData} setModified={setModified} />
-            <DeleteEventModal isOpen={isDeleteOpen} onClose={onDeleteClose} deleteItemId={deleteItemId} setModified={setModified} />
-          </Box>
-        </Center>
-      </div>
-    );
-  }
-
+                ))}
+              </Tbody>
+            </Table>
+            <PaginationFooter table="catalog" setData={setTableData} searchTerm={searchTerm} selectedFilters={selectedFilters} isModified={isModified}/>
+          </TableContainer>
+          <CreateEventFormModal isOpen={isCreateFormOpen} onClose={onCreateFormClose} setModified={setModified} />
+          <CreateEventFormModal isOpen={isEditFormOpen} onClose={onEditFormClose} eventData={editData} setModified={setModified} />
+          <DeleteEventModal isOpen={isDeleteOpen} onClose={onDeleteClose} deleteItemId={deleteItemId} setModified={setModified} />
+        </Box>
+      </Center>
+    </div>
+  );
+}
