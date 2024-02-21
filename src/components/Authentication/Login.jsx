@@ -15,6 +15,7 @@ const Login = ({ cookies }) => {
       console.log('logging in...');
       e.preventDefault();
       await logInWithEmailAndPassword(email, password, '/publishedSchedule', navigate, cookies);
+      window.location.reload(true);
     } catch (err) {
       setErrorMessage(err.message);
     }

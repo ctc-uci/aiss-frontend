@@ -15,8 +15,12 @@ import PublishedSchedule from './pages/PublishedSchedule/PublishedSchedule';
 import Playground from './pages/Playground/Playground';
 import Planner from './pages/Planner/Planner';
 import Navbar from './components/Navbar/Navbar';
+import { auth, getCurrentUser } from './utils/auth_utils';
+// import getCurrentUser from './utils/auth_utils';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
+const currentUser = await getCurrentUser(auth);
+console.log(currentUser);
 
 const App = () => {
   const NavBarWrapper = () => (
@@ -30,7 +34,7 @@ const App = () => {
       <CookiesProvider>
         <Router>
           <Routes>
-            <Route element={<NavBarWrapper />}>
+            <Route element={currentUser ? <NavBarWrapper /> : null}>
               <Route
                 exact
                 path="/"
