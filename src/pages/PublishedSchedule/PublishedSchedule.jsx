@@ -1,5 +1,6 @@
 import { NPOBackend } from '../../utils/auth_utils.js';
 import PublishedScheduleTable from '../../components/Events/PublishedScheduleTable.jsx';
+// import s from './PublishedSchedule.module.css';
 
 import { useEffect, useState } from 'react';
 import {
@@ -19,7 +20,7 @@ const PublishedSchedule = () => {
       setAllSeasons(data);
     };
     renderTable();
-    
+
   }, []);
 
   //update chakra table container accordingly
@@ -30,13 +31,13 @@ const PublishedSchedule = () => {
             {allSeasons.map(item => (
               <option key={item} value={item}>{item}</option>
             ))}
-        </Select> 
+        </Select>
 
         {/* tables for each season */}
-        {selectedSeason != '' ? 
+        {selectedSeason != '' ?
           (<PublishedScheduleTable
             season={selectedSeason}
-          />) :  
+          />) :
           (allSeasons.map(item => (
             <PublishedScheduleTable
               key={item}
