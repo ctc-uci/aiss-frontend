@@ -18,7 +18,7 @@ import { auth, getCurrentUser } from './utils/auth_utils';
 import NotificationSandbox from './pages/NotificationSandbox/NotificationSandbox';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
-const currentUser = await getCurrentUser(auth);
+const currentUser = getCurrentUser(auth);
 console.log(currentUser);
 
 const App = () => {
