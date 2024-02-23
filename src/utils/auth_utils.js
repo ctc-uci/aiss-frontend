@@ -92,10 +92,9 @@ const refreshToken = async () => {
     });
     // Sets the appropriate cookies after refreshing access token
     setCookie(cookieKeys.ACCESS_TOKEN, idToken, cookieConfig);
-    // const user = await NPOBackend.get(`/users/${auth.currentUser.uid}`);
-    // setCookie(cookieKeys.ROLE, user.data.user.role, cookieConfig);
-    setCookie(cookieKeys.ROLE, 'admin', cookieConfig);
-    return idToken;
+    const user = await NPOBackend.get(`/users/${auth.currentUser.uid}`);
+    setCookie(cookieKeys.ROLE, user.data[0].type, cookieConfig);
+    return {accessToken: idToken, currentUser: user.data[0]};
   }
   return null;
 };
