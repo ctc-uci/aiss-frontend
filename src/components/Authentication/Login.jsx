@@ -3,7 +3,7 @@ import { instanceOf } from 'prop-types';
 import { Cookies, withCookies } from '../../utils/cookie_utils';
 import { logInWithEmailAndPassword, useNavigate } from '../../utils/auth_utils';
 // import { logInWithEmailAndPassword , signInWithGoogle, useNavigate } from '../utils/auth_utils';
-import { FormControl, Input, Button, Center } from '@chakra-ui/react';
+import { FormControl, Input, Button, Center, Link } from '@chakra-ui/react';
 const Login = ({ cookies }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState();
@@ -22,7 +22,7 @@ const Login = ({ cookies }) => {
   };
 
   return (
-    <Center h="100vh">
+    <Center h="90vh">
       <div
         style={{
           margin: 'auto',
@@ -33,22 +33,27 @@ const Login = ({ cookies }) => {
           gap: '25px',
         }}
       >
-        <h2>Welcome. Please enter login information.</h2>
+        <h1 style={{ fontSize: '28px', fontWeight: '700'}}>Sign In</h1>
+        <h2>Please enter login information.</h2>
         {errorMessage && <p>{errorMessage}</p>}
         <form onSubmit={handleStdLogin}>
           <FormControl>
             <div>
               <Input
-                style={{ width: '350px', height: '81px', margin: '20px' }}
+                style={{ width: '360px', height: '48px', marginTop: '40px' }}
                 type="email"
                 onChange={({ target }) => setEmail(target.value)}
                 placeholder="Email"
+                borderColor={"#CBD5E0"}
+                borderRadius= '3px'
               />
               <Input
-                style={{ width: '350px', height: '81px', margin: '20px' }}
+                style={{ width: '360px', height: '48px', margin: '20px' }}
                 type="password"
                 onChange={({ target }) => setPassword(target.value)}
                 placeholder="Password"
+                borderColor={"#CBD5E0"}
+                borderRadius= '3px'
               />
             </div>
 
@@ -58,62 +63,61 @@ const Login = ({ cookies }) => {
                 marginBottom: '25px',
               }}
             >
+              <Link href='/signup'>
+                <Button
+                  style={{
+                    borderRadius: '30px',
+                    borderColor: '#155696',
+                    borderWidth: '1.5px',
+                    marginRight: '16px',
+                    paddingLeft: '80px',
+                    paddingRight: '80px',
+                    width: '140px',
+                    height: '38px',
+                  }}
+                  backgroundColor={'#FFFFFF'}
+                  color={'#155696'}
+                  variant='outline'
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = '#E0E0E0'; 
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                >
+                  Create Account
+                </Button>
+              </Link>
               <Button
                 type="submit"
                 style={{
                   borderRadius: '30px',
-                  marginRight: '24px',
-                  width: '130px',
+                  marginLeft: '16px',
+                  paddingLeft: '80px',
+                  paddingRight: '80px',
+                  width: '140px',
                   height: '38px',
                 }}
-                backgroundColor={'#3182CE'}
-                color={'white'}
+                backgroundColor={'#243268'}
+                color={'#ffffff'}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#1A2559'; 
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#243268';
+                }}
               >
                 Login
-              </Button>
-              <Button
-                style={{
-                  borderRadius: '30px',
-                  marginLeft: '24px',
-                  width: '130px',
-                  height: '38px',
-                }}
-                backgroundColor={'#A0AEC0'}
-                color={'white'}
-              >
-                Create Account
               </Button>
             </div>
 
             <div>
-              <a href="/forgotpassword" style={{ fontWeight: 'bold' }}>
+              <a href="/forgotpassword" style={{ textDecoration: "underline"}}>
                 Forgot Password
               </a>
             </div>
           </FormControl>
         </form>
-
-        {/* <h2>Welcome. Please enter login information.</h2>
-      {errorMessage && <p>{errorMessage}</p>} */}
-        {/* <form onSubmit={handleStdLogin}>
-        <input type="text" onChange={({ target }) => setEmail(target.value)} placeholder="Email" />
-        <br />
-        <input
-          type="password"
-          onChange={({ target }) => setPassword(target.value)}
-          placeholder="Password"
-        />
-        <br />
-        <a href="/forgotpassword">Forgot Password</a>
-        <br />
-        <button type="submit">Login</button>
-      </form> */}
-
-        {/* <br />
-      <form onSubmit={handleGoogleLogin}>
-        <button type="submit">Sign In with Google</button>
-      </form>
-      <br /> */}
       </div>
     </Center>
   );
