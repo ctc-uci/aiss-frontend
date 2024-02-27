@@ -27,7 +27,7 @@ const PublishedSchedule = () => {
   return (
     <Box pt={10} pb={10} pl={100} pr={100}>
         {/* season dropdown menu */}
-        <Select variant='unstyled' placeholder='All Seasons' onChange={() => setSelectedSeason(event.target.value)} width="20%">
+        <Select variant='unstyled' placeholder='All Seasons' size='lg' onChange={() => setSelectedSeason(event.target.value)} width="20%">
             {allSeasons.map(item => (
               <option key={item} value={item}>{item}</option>
             ))}

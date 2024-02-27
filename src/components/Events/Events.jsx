@@ -27,6 +27,7 @@ const Events = ( {eventData, location} ) => {
                     endTime={formatDate(item.endTime)}
                     eventTitle={item.title}
                     location={location}
+                    confirmed={item.confirmed}
                 />
             ))}
         </Grid>

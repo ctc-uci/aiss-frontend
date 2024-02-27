@@ -49,6 +49,7 @@ const PublishedScheduleTable = ({ season }) => {
               <Tr key={item.day.id} verticalAlign={'top'}>
                 <Td>
                   <EventInfo
+                    
                     eventDate={new Date(item.day.eventDate).toLocaleDateString('en-US')}
                     day={dayNames[new Date(item.day.eventDate).getDay()]}
                     startTime={formatDate(item.day.startTime)}
@@ -58,7 +59,7 @@ const PublishedScheduleTable = ({ season }) => {
                   />
                 </Td>
 
-                <Td style={{ textAlign: 'left' }}>
+                <Td style={{ textAlign: 'left' }} width="75%">
                   <Events eventData={item.data} location={item.day.location} />
                 </Td>
               </Tr>
