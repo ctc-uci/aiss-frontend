@@ -14,7 +14,8 @@ import {
   Center,
   IconButton,
   useDisclosure,
-  Button
+  Button,
+  Link
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
@@ -82,6 +83,15 @@ export default function Catalog() {
     });
   };
 
+  const handleClear = () => {
+    setSelectedFilters({
+      subject: '',
+      eventType: '',
+      season: '',
+      year: '',
+    })
+  }
+
   return (
     <div>
       <Button onClick={onCreateFormOpen}>Create</Button>
@@ -89,36 +99,39 @@ export default function Catalog() {
         <Box minW="950px" mt="8">
           <h1 style={{ fontSize: 35}}>Event Catalog</h1>
           <Flex gap="4" mt="4">
-            <Input placeholder="Search..." size="md" w="35%" bgColor="gray.200" className="searchBar" onChange={handleSearch} />
-            <Flex gap="4" ml="auto">
-              <Select placeholder="Subject" className="dropDown" bgColor="gray.200" name="subject" onChange={handleFilterChange}>
+            <Input placeholder="Search..." size="sm" w="35%" bgColor="gray.200" className="searchBar" onChange={handleSearch} />
+            <Flex gap="3" ml="auto" mr="0">
+              <Select size="sm" placeholder="Subject" className="dropDown" bgColor="gray.200" name="subject" onChange={handleFilterChange}>
                 {subjectsOptions.map((subject, index) => (
                   <option key={index} value={subject}>
                     {subject}
                   </option>
                 ))}
               </Select>
-              <Select placeholder="Event Type" className="dropDown" bgColor="gray.200" name="eventType" onChange={handleFilterChange}>
+              <Select size="sm" placeholder="Event Type" className="dropDown" bgColor="gray.200" name="eventType" onChange={handleFilterChange}>
                 {eventOptions.map((subject, index) => (
                   <option key={index} value={subject}>
                     {subject}
                   </option>
                 ))}
               </Select>
-              <Select placeholder="Year" className="dropDown" bgColor="gray.200" name="year" onChange={handleFilterChange}>
+              <Select size="sm" placeholder="Year" className="dropDown" bgColor="gray.200" name="year" onChange={handleFilterChange}>
                 {yearOptions.map((subject, index) => (
                   <option key={index} value={subject}>
                     {subject}
                   </option>
                 ))}
               </Select>
-              <Select placeholder="Season" className="dropDown" bgColor="gray.200" name="season" onChange={handleFilterChange}>
+              <Select size="sm" placeholder="Season" className="dropDown" bgColor="gray.200" name="season" onChange={handleFilterChange}>
                 {seasonOptions.map((subject, index) => (
                   <option key={index} value={subject}>
                     {subject}
                   </option>
                 ))}
               </Select>
+              <Link fontSize="15" mr="2" mt="1" textAlign="right" className="dropDown" textDecoration="underline" width="80%" color="#4299E1" onClick={handleClear}>
+                Clear Filters
+              </Link>
             </Flex>
           </Flex>
 
