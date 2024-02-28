@@ -18,6 +18,7 @@ import {
   Container,
   Link,
 } from '@chakra-ui/react';
+import s from './Catalog.module.css';
 import { useState } from 'react';
 import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -50,18 +51,9 @@ export default function Catalog() {
   } = useDisclosure();
 
   const [tableData, setTableData] = useState([]);
-  const [hoveredRow, setHoveredRow] = useState(null);
   const [deleteItemId, setDeleteItemId] = useState(-1);
   const [editData, setEditData] = useState({});
   const [isModified, setModified] = useState(false);
-
-  const handleRowHover = index => {
-    setHoveredRow(index);
-  };
-
-  const handleRowLeave = () => {
-    setHoveredRow(null);
-  };
 
   const handleEditForm = data => {
     setEditData(data);
@@ -105,7 +97,7 @@ export default function Catalog() {
     <div>
       <Button onClick={onCreateFormOpen}>Create</Button>
       <Center>
-        <Box minW="950px" mt="8">
+        <Box mt="8">
           <h1 style={{ fontSize: 35 }}>Event Catalog</h1>
           <Flex gap="4" mt="4">
             <Input
@@ -113,6 +105,7 @@ export default function Catalog() {
               size="sm"
               w="35%"
               bgColor="gray.200"
+              borderRadius="6px"
               className="searchBar"
               onChange={handleSearch}
             />
@@ -123,6 +116,7 @@ export default function Catalog() {
                 className="dropDown"
                 bgColor="gray.200"
                 name="subject"
+                borderRadius="6px"
                 onChange={handleFilterChange}
               >
                 {subjectsOptions.map((subject, index) => (
@@ -137,6 +131,7 @@ export default function Catalog() {
                 className="dropDown"
                 bgColor="gray.200"
                 name="eventType"
+                borderRadius="6px"
                 onChange={handleFilterChange}
               >
                 {eventOptions.map((subject, index) => (
@@ -151,6 +146,7 @@ export default function Catalog() {
                 className="dropDown"
                 bgColor="gray.200"
                 name="year"
+                borderRadius="6px"
                 onChange={handleFilterChange}
               >
                 {yearOptions.map((subject, index) => (
@@ -165,6 +161,7 @@ export default function Catalog() {
                 className="dropDown"
                 bgColor="gray.200"
                 name="season"
+                borderRadius="6px"
                 onChange={handleFilterChange}
               >
                 {seasonOptions.map((subject, index) => (
@@ -178,10 +175,9 @@ export default function Catalog() {
                 mr="2"
                 mt="1"
                 textAlign="right"
-                className="dropDown"
-                textDecoration="underline"
                 width="80%"
                 color="#4299E1"
+                whiteSpace="nowrap"
                 onClick={handleClear}
               >
                 Clear Filters
@@ -189,8 +185,15 @@ export default function Catalog() {
             </Flex>
           </Flex>
 
-          <TableContainer mt="8" mb="8" borderRadius="md" overflowX="auto">
-            <Table variant="simple" className="space-table" borderWidth="1px" width="100%">
+          <TableContainer mt="8" mb="8" overflow="hidden">
+            <Table
+              variant="simple"
+              className={s['catalog-table']}
+              borderWidth="1px"
+              width="100%"
+              borderRadius="8px"
+              px="1rem"
+            >
               <Thead>
                 <Tr>
                   <Th textAlign="left">Event</Th>
@@ -201,12 +204,8 @@ export default function Catalog() {
               </Thead>
               <Tbody>
                 {tableData.map(
-                  ({ id, host, title, eventType, subject, year, season, description }, index) => (
-                    <Tr
-                      key={id}
-                      onMouseEnter={() => handleRowHover(index)}
-                      onMouseLeave={handleRowLeave}
-                    >
+                  ({ id, host, title, eventType, subject, year, season, description }) => (
+                    <Tr key={id}>
                       <Td textAlign="left" py="1.5rem">
                         {title}
                       </Td>
@@ -214,7 +213,14 @@ export default function Catalog() {
                         {host}
                       </Td>
                       <Td textAlign="left" py="1.5rem">
-                        <Container>
+                        <Container
+                          p="0"
+                          m="0"
+                          maxW="16rem"
+                          display="flex"
+                          flexWrap="wrap"
+                          gap="0.375rem"
+                        >
                           {season && (
                             <Badge
                               backgroundColor="#CEECC3"
@@ -223,7 +229,7 @@ export default function Catalog() {
                               borderRadius="10rem"
                               fontWeight="normal"
                               px="0.5rem"
-                              mr="0.5rem"
+                              mr="0.125rem"
                             >
                               {season}
                             </Badge>
@@ -236,7 +242,7 @@ export default function Catalog() {
                               borderRadius="10rem"
                               fontWeight="normal"
                               px="0.5rem"
-                              mr="0.5rem"
+                              mr="0.125rem"
                             >
                               {year}
                             </Badge>
@@ -249,7 +255,7 @@ export default function Catalog() {
                               borderRadius="10rem"
                               fontWeight="normal"
                               px="0.5rem"
-                              mr="0.5rem"
+                              mr="0.125rem"
                             >
                               {subject}
                             </Badge>
@@ -262,7 +268,7 @@ export default function Catalog() {
                               borderRadius="10rem"
                               fontWeight="normal"
                               px="0.5rem"
-                              mr="0.5rem"
+                              mr="0.125rem"
                             >
                               {eventType}
                             </Badge>
@@ -270,38 +276,34 @@ export default function Catalog() {
                         </Container>
                       </Td>
                       <Td>
-                        {hoveredRow === index && (
-                          <>
-                            <IconButton
-                              color="gray.400"
-                              backgroundColor="transparent"
-                              p="0.5rem"
-                              h="fit-content"
-                              w="fit-content"
-                              icon={<EditIcon />}
-                              onClick={() =>
-                                handleEditForm({
-                                  id,
-                                  title,
-                                  host,
-                                  year,
-                                  eventType,
-                                  subject,
-                                  description,
-                                })
-                              }
-                            />
-                            <IconButton
-                              color="gray.400"
-                              backgroundColor="transparent"
-                              p="0.5rem"
-                              h="fit-content"
-                              w="fit-content"
-                              icon={<DeleteIcon />}
-                              onClick={() => handleDeleteClick(id)}
-                            />
-                          </>
-                        )}
+                        <IconButton
+                          color="gray.400"
+                          backgroundColor="transparent"
+                          p="0.5rem"
+                          h="fit-content"
+                          w="fit-content"
+                          icon={<EditIcon />}
+                          onClick={() =>
+                            handleEditForm({
+                              id,
+                              title,
+                              host,
+                              year,
+                              eventType,
+                              subject,
+                              description,
+                            })
+                          }
+                        />
+                        <IconButton
+                          color="gray.400"
+                          backgroundColor="transparent"
+                          p="0.5rem"
+                          h="fit-content"
+                          w="fit-content"
+                          icon={<DeleteIcon />}
+                          onClick={() => handleDeleteClick(id)}
+                        />
                       </Td>
                     </Tr>
                   ),
