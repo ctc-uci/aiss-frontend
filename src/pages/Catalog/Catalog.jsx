@@ -14,7 +14,8 @@ import {
   Center,
   IconButton,
   useDisclosure,
-  Button
+  Button,
+  Container
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
@@ -138,18 +139,28 @@ export default function Catalog() {
                     <Td textAlign="left"py="1.5rem">{title}</Td>
                     <Td textAlign="left" py="1.5rem">{host}</Td>
                     <Td textAlign="left" py="1.5rem">
-                      <Badge colorScheme="orange" mr={2}>
-                        {eventType}
-                      </Badge>
-                      <Badge colorScheme="cyan" mr={2}>
-                        {subject}
-                      </Badge>
-                      <Badge colorScheme="purple" mr={2}>
-                        {season}
-                      </Badge>
-                      <Badge colorScheme="red" mr={2}>
-                        {year}
-                      </Badge>
+                      <Container>
+                      {season &&
+                        <Badge backgroundColor="#CEECC3" color="gray.900" textTransform="capitalize" borderRadius="10rem" fontWeight="normal" px="0.5rem" mr="0.5rem">
+                          {season}
+                        </Badge>
+                      }
+                      {year &&   
+                        <Badge backgroundColor="#FFE1BE" color="gray.900" textTransform="capitalize" borderRadius="10rem" fontWeight="normal" px="0.5rem" mr="0.5rem">
+                          {year}
+                        </Badge>
+                      }
+                      {subject &&
+                        <Badge backgroundColor="#E8D7FF" color="gray.900" textTransform="capitalize" borderRadius="10rem" fontWeight="normal" px="0.5rem" mr="0.5rem">
+                          {subject}
+                        </Badge>
+                      }
+                      {eventType &&
+                        <Badge backgroundColor="#CFDCFF" color="gray.900" textTransform="capitalize" borderRadius="10rem" fontWeight="normal" px="0.5rem" mr="0.5rem">
+                          {eventType}
+                        </Badge>
+                      }
+                      </Container>
                     </Td>
                     <Td>
                       {hoveredRow === index && (
