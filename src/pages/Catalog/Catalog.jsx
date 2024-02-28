@@ -123,20 +123,21 @@ export default function Catalog() {
           </Flex>
 
           <TableContainer mt="8" mb = "8" borderRadius="md" overflowX="auto">
-            <Table variant="simple" className="space-table" borderWidth="3px" width="100%">
+            <Table variant="simple" className="space-table" borderWidth="1px" width="100%">
               <Thead>
                 <Tr>
                   <Th textAlign="left">Event</Th>
                   <Th textAlign="left">Host</Th>
                   <Th textAlign="left">Tags</Th>
+                  <Th width="8rem"></Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {tableData.map(({ id, host, title, eventType, subject, year, season, description }, index) => (
                   <Tr key={id} onMouseEnter={() => handleRowHover(index)} onMouseLeave={handleRowLeave}>
-                    <Td textAlign="left">{title}</Td>
-                    <Td textAlign="left">{host}</Td>
-                    <Td textAlign="left">
+                    <Td textAlign="left"py="1.5rem">{title}</Td>
+                    <Td textAlign="left" py="1.5rem">{host}</Td>
+                    <Td textAlign="left" py="1.5rem">
                       <Badge colorScheme="orange" mr={2}>
                         {eventType}
                       </Badge>
@@ -154,10 +155,22 @@ export default function Catalog() {
                       {hoveredRow === index && (
                         <>
                           <IconButton
+                            color="gray.400"
+                            backgroundColor="transparent"
+                            p="0.5rem"
+                            h="fit-content"
+                            w="fit-content"
                             icon={<EditIcon />}
                             onClick={() => handleEditForm({id, title, host, year, eventType, subject, description})}
                           />
-                          <IconButton icon={<DeleteIcon />} onClick={() => handleDeleteClick(id)} />
+                          <IconButton 
+                            color="gray.400"
+                            backgroundColor="transparent" 
+                            p="0.5rem"
+                            h="fit-content"
+                            w="fit-content"
+                            icon={<DeleteIcon />} 
+                            onClick={() => handleDeleteClick(id)} />
                         </>
                       )}
                     </Td>
