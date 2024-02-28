@@ -14,10 +14,10 @@ import {
   Center,
   IconButton,
   useDisclosure,
-  Button,
   Container,
   Link,
 } from '@chakra-ui/react';
+import { AddIcon, SearchIcon } from '@chakra-ui/icons';
 import s from './Catalog.module.css';
 import { useState } from 'react';
 import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
@@ -95,20 +95,45 @@ export default function Catalog() {
 
   return (
     <div>
-      <Button onClick={onCreateFormOpen}>Create</Button>
+      <IconButton
+        bgColor="blue.700"
+        color="gray.50"
+        borderRadius="10rem"
+        position="fixed"
+        bottom="2rem"
+        right="3rem"
+        fontSize="0.75rem"
+        w="3rem"
+        h="3rem"
+        _hover={{ bgColor: 'blue.500' }}
+        onClick={onCreateFormOpen}
+        icon={<AddIcon />}
+      >
+        Create
+      </IconButton>
       <Center>
         <Box mt="8">
           <h1 style={{ fontSize: 35 }}>Event Catalog</h1>
           <Flex gap="4" mt="4">
-            <Input
-              placeholder="Search..."
-              size="sm"
-              w="35%"
-              bgColor="gray.200"
-              borderRadius="6px"
-              className="searchBar"
-              onChange={handleSearch}
-            />
+            <Container m="0" p="0" w="35%" position="relative">
+              <Input
+                placeholder="Search..."
+                size="sm"
+                bgColor="blackAlpha.200"
+                borderRadius="6px"
+                pl="2.5rem"
+                className="searchBar"
+                onChange={handleSearch}
+              />
+              <SearchIcon
+                position="absolute"
+                left="1rem"
+                top="50%"
+                transform="translateY(-50%)"
+                color="gray.600"
+                zIndex="10"
+              />
+            </Container>
             <Flex gap="3" ml="auto" mr="0">
               <Select
                 size="sm"
@@ -185,13 +210,19 @@ export default function Catalog() {
             </Flex>
           </Flex>
 
-          <TableContainer mt="8" mb="8" overflow="hidden">
+          <TableContainer
+            mt="8"
+            mb="8"
+            px="1rem"
+            overflow="hidden"
+            borderWidth="1px"
+            borderRadius="12px"
+          >
             <Table
               variant="simple"
               className={s['catalog-table']}
-              borderWidth="1px"
+              borderWidth="0"
               width="100%"
-              borderRadius="8px"
               px="1rem"
             >
               <Thead>
