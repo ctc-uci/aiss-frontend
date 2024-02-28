@@ -16,7 +16,7 @@ import {
   useDisclosure,
   Button,
   Container,
-  Link
+  Link,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
@@ -38,8 +38,16 @@ const seasonOptions = ['fall', 'spring', 'summer', 'winter'];
 
 export default function Catalog() {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const { isOpen: isEditFormOpen, onOpen: onEditFormOpen, onClose: onEditFormClose } = useDisclosure();
-  const { isOpen: isCreateFormOpen, onOpen: onCreateFormOpen, onClose: onCreateFormClose } = useDisclosure();
+  const {
+    isOpen: isEditFormOpen,
+    onOpen: onEditFormOpen,
+    onClose: onEditFormClose,
+  } = useDisclosure();
+  const {
+    isOpen: isCreateFormOpen,
+    onOpen: onCreateFormOpen,
+    onClose: onCreateFormClose,
+  } = useDisclosure();
 
   const [tableData, setTableData] = useState([]);
   const [hoveredRow, setHoveredRow] = useState(null);
@@ -90,53 +98,98 @@ export default function Catalog() {
       eventType: '',
       season: '',
       year: '',
-    })
-  }
+    });
+  };
 
   return (
     <div>
       <Button onClick={onCreateFormOpen}>Create</Button>
       <Center>
         <Box minW="950px" mt="8">
-          <h1 style={{ fontSize: 35}}>Event Catalog</h1>
+          <h1 style={{ fontSize: 35 }}>Event Catalog</h1>
           <Flex gap="4" mt="4">
-            <Input placeholder="Search..." size="sm" w="35%" bgColor="gray.200" className="searchBar" onChange={handleSearch} />
+            <Input
+              placeholder="Search..."
+              size="sm"
+              w="35%"
+              bgColor="gray.200"
+              className="searchBar"
+              onChange={handleSearch}
+            />
             <Flex gap="3" ml="auto" mr="0">
-              <Select size="sm" placeholder="Subject" className="dropDown" bgColor="gray.200" name="subject" onChange={handleFilterChange}>
+              <Select
+                size="sm"
+                placeholder="Subject"
+                className="dropDown"
+                bgColor="gray.200"
+                name="subject"
+                onChange={handleFilterChange}
+              >
                 {subjectsOptions.map((subject, index) => (
                   <option key={index} value={subject}>
                     {subject}
                   </option>
                 ))}
               </Select>
-              <Select size="sm" placeholder="Event Type" className="dropDown" bgColor="gray.200" name="eventType" onChange={handleFilterChange}>
+              <Select
+                size="sm"
+                placeholder="Event Type"
+                className="dropDown"
+                bgColor="gray.200"
+                name="eventType"
+                onChange={handleFilterChange}
+              >
                 {eventOptions.map((subject, index) => (
                   <option key={index} value={subject}>
                     {subject}
                   </option>
                 ))}
               </Select>
-              <Select size="sm" placeholder="Year" className="dropDown" bgColor="gray.200" name="year" onChange={handleFilterChange}>
+              <Select
+                size="sm"
+                placeholder="Year"
+                className="dropDown"
+                bgColor="gray.200"
+                name="year"
+                onChange={handleFilterChange}
+              >
                 {yearOptions.map((subject, index) => (
                   <option key={index} value={subject}>
                     {subject}
                   </option>
                 ))}
               </Select>
-              <Select size="sm" placeholder="Season" className="dropDown" bgColor="gray.200" name="season" onChange={handleFilterChange}>
+              <Select
+                size="sm"
+                placeholder="Season"
+                className="dropDown"
+                bgColor="gray.200"
+                name="season"
+                onChange={handleFilterChange}
+              >
                 {seasonOptions.map((subject, index) => (
                   <option key={index} value={subject}>
                     {subject}
                   </option>
                 ))}
               </Select>
-              <Link fontSize="15" mr="2" mt="1" textAlign="right" className="dropDown" textDecoration="underline" width="80%" color="#4299E1" onClick={handleClear}>
+              <Link
+                fontSize="15"
+                mr="2"
+                mt="1"
+                textAlign="right"
+                className="dropDown"
+                textDecoration="underline"
+                width="80%"
+                color="#4299E1"
+                onClick={handleClear}
+              >
                 Clear Filters
               </Link>
             </Flex>
           </Flex>
 
-          <TableContainer mt="8" mb = "8" borderRadius="md" overflowX="auto">
+          <TableContainer mt="8" mb="8" borderRadius="md" overflowX="auto">
             <Table variant="simple" className="space-table" borderWidth="1px" width="100%">
               <Thead>
                 <Tr>
@@ -147,66 +200,139 @@ export default function Catalog() {
                 </Tr>
               </Thead>
               <Tbody>
-                {tableData.map(({ id, host, title, eventType, subject, year, season, description }, index) => (
-                  <Tr key={id} onMouseEnter={() => handleRowHover(index)} onMouseLeave={handleRowLeave}>
-                    <Td textAlign="left"py="1.5rem">{title}</Td>
-                    <Td textAlign="left" py="1.5rem">{host}</Td>
-                    <Td textAlign="left" py="1.5rem">
-                      <Container>
-                      {season &&
-                        <Badge backgroundColor="#CEECC3" color="gray.900" textTransform="capitalize" borderRadius="10rem" fontWeight="normal" px="0.5rem" mr="0.5rem">
-                          {season}
-                        </Badge>
-                      }
-                      {year &&   
-                        <Badge backgroundColor="#FFE1BE" color="gray.900" textTransform="capitalize" borderRadius="10rem" fontWeight="normal" px="0.5rem" mr="0.5rem">
-                          {year}
-                        </Badge>
-                      }
-                      {subject &&
-                        <Badge backgroundColor="#E8D7FF" color="gray.900" textTransform="capitalize" borderRadius="10rem" fontWeight="normal" px="0.5rem" mr="0.5rem">
-                          {subject}
-                        </Badge>
-                      }
-                      {eventType &&
-                        <Badge backgroundColor="#CFDCFF" color="gray.900" textTransform="capitalize" borderRadius="10rem" fontWeight="normal" px="0.5rem" mr="0.5rem">
-                          {eventType}
-                        </Badge>
-                      }
-                      </Container>
-                    </Td>
-                    <Td>
-                      {hoveredRow === index && (
-                        <>
-                          <IconButton
-                            color="gray.400"
-                            backgroundColor="transparent"
-                            p="0.5rem"
-                            h="fit-content"
-                            w="fit-content"
-                            icon={<EditIcon />}
-                            onClick={() => handleEditForm({id, title, host, year, eventType, subject, description})}
-                          />
-                          <IconButton 
-                            color="gray.400"
-                            backgroundColor="transparent" 
-                            p="0.5rem"
-                            h="fit-content"
-                            w="fit-content"
-                            icon={<DeleteIcon />} 
-                            onClick={() => handleDeleteClick(id)} />
-                        </>
-                      )}
-                    </Td>
-                  </Tr>
-                ))}
+                {tableData.map(
+                  ({ id, host, title, eventType, subject, year, season, description }, index) => (
+                    <Tr
+                      key={id}
+                      onMouseEnter={() => handleRowHover(index)}
+                      onMouseLeave={handleRowLeave}
+                    >
+                      <Td textAlign="left" py="1.5rem">
+                        {title}
+                      </Td>
+                      <Td textAlign="left" py="1.5rem">
+                        {host}
+                      </Td>
+                      <Td textAlign="left" py="1.5rem">
+                        <Container>
+                          {season && (
+                            <Badge
+                              backgroundColor="#CEECC3"
+                              color="gray.900"
+                              textTransform="capitalize"
+                              borderRadius="10rem"
+                              fontWeight="normal"
+                              px="0.5rem"
+                              mr="0.5rem"
+                            >
+                              {season}
+                            </Badge>
+                          )}
+                          {year && (
+                            <Badge
+                              backgroundColor="#FFE1BE"
+                              color="gray.900"
+                              textTransform="capitalize"
+                              borderRadius="10rem"
+                              fontWeight="normal"
+                              px="0.5rem"
+                              mr="0.5rem"
+                            >
+                              {year}
+                            </Badge>
+                          )}
+                          {subject && (
+                            <Badge
+                              backgroundColor="#E8D7FF"
+                              color="gray.900"
+                              textTransform="capitalize"
+                              borderRadius="10rem"
+                              fontWeight="normal"
+                              px="0.5rem"
+                              mr="0.5rem"
+                            >
+                              {subject}
+                            </Badge>
+                          )}
+                          {eventType && (
+                            <Badge
+                              backgroundColor="#CFDCFF"
+                              color="gray.900"
+                              textTransform="capitalize"
+                              borderRadius="10rem"
+                              fontWeight="normal"
+                              px="0.5rem"
+                              mr="0.5rem"
+                            >
+                              {eventType}
+                            </Badge>
+                          )}
+                        </Container>
+                      </Td>
+                      <Td>
+                        {hoveredRow === index && (
+                          <>
+                            <IconButton
+                              color="gray.400"
+                              backgroundColor="transparent"
+                              p="0.5rem"
+                              h="fit-content"
+                              w="fit-content"
+                              icon={<EditIcon />}
+                              onClick={() =>
+                                handleEditForm({
+                                  id,
+                                  title,
+                                  host,
+                                  year,
+                                  eventType,
+                                  subject,
+                                  description,
+                                })
+                              }
+                            />
+                            <IconButton
+                              color="gray.400"
+                              backgroundColor="transparent"
+                              p="0.5rem"
+                              h="fit-content"
+                              w="fit-content"
+                              icon={<DeleteIcon />}
+                              onClick={() => handleDeleteClick(id)}
+                            />
+                          </>
+                        )}
+                      </Td>
+                    </Tr>
+                  ),
+                )}
               </Tbody>
             </Table>
-            <PaginationFooter table="catalog" setData={setTableData} searchTerm={searchTerm} selectedFilters={selectedFilters} isModified={isModified}/>
+            <PaginationFooter
+              table="catalog"
+              setData={setTableData}
+              searchTerm={searchTerm}
+              selectedFilters={selectedFilters}
+              isModified={isModified}
+            />
           </TableContainer>
-          <CreateEventFormModal isOpen={isCreateFormOpen} onClose={onCreateFormClose} setModified={setModified} />
-          <CreateEventFormModal isOpen={isEditFormOpen} onClose={onEditFormClose} eventData={editData} setModified={setModified} />
-          <DeleteEventModal isOpen={isDeleteOpen} onClose={onDeleteClose} deleteItemId={deleteItemId} setModified={setModified} />
+          <CreateEventFormModal
+            isOpen={isCreateFormOpen}
+            onClose={onCreateFormClose}
+            setModified={setModified}
+          />
+          <CreateEventFormModal
+            isOpen={isEditFormOpen}
+            onClose={onEditFormClose}
+            eventData={editData}
+            setModified={setModified}
+          />
+          <DeleteEventModal
+            isOpen={isDeleteOpen}
+            onClose={onDeleteClose}
+            deleteItemId={deleteItemId}
+            setModified={setModified}
+          />
         </Box>
       </Center>
     </div>
