@@ -21,13 +21,13 @@ const DailyEvent = ({ startTime, endTime, eventTitle, location, confirmed }) => 
     >
       <Flex minWidth="max-content" alignItems="flex-start" gap="50">
         {/* <Text>{confirmed}</Text> */}
-        <Box w="20%">
+        <Box w="35vh">
           <Text>
             {startTime} - {endTime}
           </Text>
         </Box>
 
-        <Box w="80%">
+        <Box w="90%">
           <Grid gap={2}>
             <Text fontWeight="bold">{eventTitle}</Text>
             <Text>{location}</Text>
@@ -35,7 +35,7 @@ const DailyEvent = ({ startTime, endTime, eventTitle, location, confirmed }) => 
         </Box>
 
         {!confirmed ? (
-          <Box w="10%" alignItems="top">
+          <Box w="15vh" alignItems="top">
             <Grid gap={2}>
               <div></div>
               <div></div>
