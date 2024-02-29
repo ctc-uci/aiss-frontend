@@ -3,7 +3,7 @@ import { instanceOf } from 'prop-types';
 import { Cookies, withCookies } from '../../utils/cookie_utils';
 import { logInWithEmailAndPassword, useNavigate } from '../../utils/auth_utils';
 // import { logInWithEmailAndPassword , signInWithGoogle, useNavigate } from '../utils/auth_utils';
-import { FormControl, Input, Button, Center } from '@chakra-ui/react';
+import { FormControl, Input, Button, Center, Link } from '@chakra-ui/react';
 const Login = ({ cookies }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState();
@@ -71,18 +71,20 @@ const Login = ({ cookies }) => {
               >
                 Login
               </Button>
-              <Button
-                style={{
-                  borderRadius: '30px',
-                  marginLeft: '24px',
-                  width: '130px',
-                  height: '38px',
-                }}
-                backgroundColor={'#A0AEC0'}
-                color={'white'}
-              >
-                Create Account
-              </Button>
+              <Link href="/signup">
+                <Button
+                  style={{
+                    borderRadius: '30px',
+                    marginLeft: '24px',
+                    width: '130px',
+                    height: '38px',
+                  }}
+                  backgroundColor={'#A0AEC0'}
+                  color={'white'}
+                >
+                  Create Account
+                </Button>
+              </Link>
             </div>
 
             <div>
