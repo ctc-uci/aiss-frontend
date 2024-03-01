@@ -34,10 +34,10 @@ const PublishedSchedule = () => {
       data.sort((a, b) => {
         // Compare years first
         if (a.split(' ')[1] !== b.split(' ')[1]) {
-          return a.split(' ')[1] - b.split(' ')[1];
+          return b.split(' ')[1] - a.split(' ')[1];
         } else {
           // If years are equal, compare alphabetically
-          return a.localeCompare(b);
+          return -1*a.localeCompare(b);
         }
       });
       setAllSeasons(data);
@@ -59,7 +59,7 @@ const PublishedSchedule = () => {
         fontWeight="bold"
         size="lg"
         onChange={() => setSelectedSeason(event.target.value)}
-        width="23%"
+        width="25%"
       >
         {allSeasons.map(item => (
           <option key={item} value={item}>
