@@ -8,6 +8,8 @@ import {
   Container,
   Link,
   TableContainer,
+  InputGroup,
+  InputLeftElement,
 } from '@chakra-ui/react';
 import { AddIcon, SearchIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useCallback } from 'react';
@@ -52,7 +54,7 @@ export default function Catalog() {
   const [editData, setEditData] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { filters, clearFilters } = useSearchFilters();
+  const { filters, clearFilters, values } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
   const { currentPage, setCurrentPage, pagesCount, offset, pageSize, setPageSize } = usePagination({
@@ -77,11 +79,19 @@ export default function Catalog() {
 
   const fetchTableData = useCallback(async () => {
     console.log('Fetching Catalog');
+
     const params = {
       title: searchTerm,
       limit: pageSize,
       page: currentPage,
+      ...Object.assign(
+        {},
+        ...Object.entries(values).map(([k, v]) => {
+          return { [k]: v.join(',') };
+        }),
+      ),
     };
+
     const { data } = await NPOBackend.get('/catalog', {
       params: params,
     });
@@ -89,7 +99,7 @@ export default function Catalog() {
 
     setTableData(tableData);
     setTotalRowCount(Number(count[0].count));
-  }, [currentPage, pageSize, searchTerm]);
+  }, [currentPage, pageSize, searchTerm, values]);
 
   // Fetch data on component mount and pagination update
   useEffect(() => {
@@ -128,32 +138,33 @@ export default function Catalog() {
           Event Catalog
         </Text>
         <Flex gap="4" mt="4">
-          <Container m="0" p="0" w="35%" position="relative">
+          <InputGroup size="sm" maxW="sm">
+            <InputLeftElement>
+              <SearchIcon
+                position="absolute"
+                left="1rem"
+                top="50%"
+                transform="translateY(-50%)"
+                color="gray.600"
+                zIndex="10"
+              />
+            </InputLeftElement>
             <Input
               placeholder="Search..."
-              size="sm"
               bgColor="blackAlpha.200"
               borderRadius="6px"
               pl="2.5rem"
               className="searchBar"
               onChange={handleSearch}
             />
-            <SearchIcon
-              position="absolute"
-              left="1rem"
-              top="50%"
-              transform="translateY(-50%)"
-              color="gray.600"
-              zIndex="10"
-            />
-          </Container>
-          <Flex gap="3" ml="auto" mr="0" w="65%">
+          </InputGroup>
+          <Flex gap="3" justifyContent="flex-end" w="100%">
             <SearchFilter name="Season" options={seasonOptions} filter={seasonFilter} />
             <SearchFilter name="Cohort" options={yearOptions} filter={yearFilter} />
             <SearchFilter name="Topic" options={subjectOptions} filter={subjectFilter} />
             <SearchFilter name="Type" options={eventOptions} filter={eventFilter} />
             <Link
-              fontSize="15"
+              fontSize="1rem"
               mr="2"
               mt="1"
               textAlign="right"

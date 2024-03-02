@@ -10,6 +10,7 @@ import {
   useCheckbox,
   chakra,
 } from '@chakra-ui/react';
+import { CheckIcon } from '@chakra-ui/icons';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
 const SearchFilter = ({ name, options, filter }) => {
@@ -17,7 +18,15 @@ const SearchFilter = ({ name, options, filter }) => {
 
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+      <MenuButton
+        as={Button}
+        rightIcon={<ChevronDownIcon />}
+        size="sm"
+        bgColor="blackAlpha.200"
+        _hover={{ bgColor: 'blackAlpha.100' }}
+        _active={{ bgColor: 'blackAlpha.100' }}
+        fontWeight="normal"
+      >
         <Text overflowX="hidden" textOverflow="ellipsis">
           {name}
         </Text>
@@ -48,10 +57,6 @@ const FilterCheckbox = props => {
       flexDirection="row"
       alignItems="center"
       gridColumnGap={2}
-      maxW="40"
-      bg="green.50"
-      border="1px solid"
-      borderColor="green.500"
       rounded="lg"
       px={3}
       py={1}
@@ -62,13 +67,26 @@ const FilterCheckbox = props => {
       <Flex
         alignItems="center"
         justifyContent="center"
-        border="2px solid"
-        borderColor="green.500"
+        borderWidth={state.isChecked ? '0' : '2px'}
+        borderColor="blackAlpha.600"
+        borderRadius="4"
         w={4}
         h={4}
         {...getCheckboxProps()}
       >
-        {state.isChecked && <Box w={2} h={2} bg="green.500" />}
+        {state.isChecked && (
+          <Box
+            w={4}
+            h={4}
+            bg="blue.400"
+            borderRadius="4"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <CheckIcon color="white" fontSize="x-small" />
+          </Box>
+        )}
       </Flex>
       <Text color="gray.700" {...getLabelProps()}>
         {props.value}
