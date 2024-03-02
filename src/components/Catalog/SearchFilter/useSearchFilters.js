@@ -11,7 +11,7 @@ const useSearchFilters = () => {
     return [seasonFilter, yearFilter, subjectFilter, eventFilter];
   }, [eventFilter, seasonFilter, subjectFilter, yearFilter]);
 
-  const values = useMemo(() => {
+  const filterValues = useMemo(() => {
     return {
       season: seasonFilter.value,
       year: yearFilter.value,
@@ -28,7 +28,7 @@ const useSearchFilters = () => {
 
   return {
     filters,
-    values,
+    filterValues,
     clearFilters,
   };
 };

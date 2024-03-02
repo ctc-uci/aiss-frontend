@@ -54,7 +54,7 @@ export default function Catalog() {
   const [editData, setEditData] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { filters, clearFilters, values } = useSearchFilters();
+  const { filters, clearFilters, filterValues } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
   const { currentPage, setCurrentPage, pagesCount, offset, pageSize, setPageSize } = usePagination({
@@ -86,8 +86,8 @@ export default function Catalog() {
       page: currentPage,
       ...Object.assign(
         {},
-        ...Object.entries(values).map(([k, v]) => {
-          return { [k]: v.join(',') };
+        ...Object.entries(filterValues).map(([name, selected]) => {
+          return { [name]: selected.join(',') };
         }),
       ),
     };
@@ -99,7 +99,7 @@ export default function Catalog() {
 
     setTableData(tableData);
     setTotalRowCount(Number(count[0].count));
-  }, [currentPage, pageSize, searchTerm, values]);
+  }, [currentPage, pageSize, searchTerm, filterValues]);
 
   // Fetch data on component mount and pagination update
   useEffect(() => {
