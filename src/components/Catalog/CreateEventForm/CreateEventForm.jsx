@@ -28,7 +28,7 @@ const schema = yup.object({
   year: yup.string().required('Year required'),
 });
 
-const CreateEventForm = ({ eventData, setModified, closeModal }) => {
+const CreateEventForm = ({ eventData, setDataIsStale, closeModal }) => {
   const toast = useToast();
   const {
     handleSubmit,
@@ -82,9 +82,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
         duration: 3000,
         isClosable: true,
       });
-      if (setModified) {
-        setModified(true);
-      }
+      setDataIsStale(true);
       closeModal();
     } catch (error) {
       toast({
@@ -203,7 +201,7 @@ CreateEventForm.propTypes = {
     subject: PropTypes.string,
     description: PropTypes.string,
   }),
-  setModified: PropTypes.func,
+  setDataIsStale: PropTypes.func,
   closeModal: PropTypes.func,
 };
 

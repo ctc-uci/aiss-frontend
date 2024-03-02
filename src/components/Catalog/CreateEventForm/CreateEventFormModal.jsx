@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Modal, ModalBody, ModalContent, ModalOverlay, ModalCloseButton } from '@chakra-ui/react';
 import CreateEventForm from './CreateEventForm';
 
-const CreateEventFormModal = ({ isOpen, onClose, eventData, setModified }) => {
+const CreateEventFormModal = ({ isOpen, onClose, eventData, setDataIsStale }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="full">
       <ModalOverlay />
@@ -10,9 +10,13 @@ const CreateEventFormModal = ({ isOpen, onClose, eventData, setModified }) => {
         <ModalCloseButton />
         <ModalBody>
           {eventData ? (
-            <CreateEventForm eventData={eventData} setModified={setModified} closeModal={onClose} />
+            <CreateEventForm
+              eventData={eventData}
+              setDataIsStale={setDataIsStale}
+              closeModal={onClose}
+            />
           ) : (
-            <CreateEventForm setModified={setModified} closeModal={onClose} />
+            <CreateEventForm setDataIsStale={setDataIsStale} closeModal={onClose} />
           )}
         </ModalBody>
       </ModalContent>
@@ -32,7 +36,7 @@ CreateEventFormModal.propTypes = {
   }),
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  setModified: PropTypes.func.isRequired,
+  setDataIsStale: PropTypes.func.isRequired,
 };
 
 CreateEventForm.defaultProps = {

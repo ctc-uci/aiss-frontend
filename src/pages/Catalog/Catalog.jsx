@@ -10,7 +10,7 @@ import {
   TableContainer,
 } from '@chakra-ui/react';
 import { AddIcon, SearchIcon } from '@chakra-ui/icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 import DeleteEventModal from '../../components/Catalog/DeleteEventModal/DeleteEventModal';
 import CreateEventFormModal from '../../components/Catalog/CreateEventForm/CreateEventFormModal';
@@ -46,7 +46,7 @@ export default function Catalog() {
   } = useDisclosure();
 
   const [tableData, setTableData] = useState([]);
-  const [isModified, setIsModified] = useState(false);
+  const [dataIsStale, setDataIsStale] = useState(false);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [deleteItemId, setDeleteItemId] = useState(-1);
   const [editData, setEditData] = useState({});
@@ -75,26 +75,34 @@ export default function Catalog() {
     setSearchTerm(event.target.value);
   };
 
-  // when the number of rows or the next page is clicked, get the desired data from the backend
-  useEffect(() => {
-    const fetchTableData = async () => {
-      console.log('Fetching Catalog');
-      const params = {
-        title: searchTerm,
-        limit: pageSize,
-        page: currentPage,
-      };
-      const { data } = await NPOBackend.get('/catalog', {
-        params: params,
-      });
-      const { count, events: tableData } = data;
-
-      setTableData(tableData);
-      setTotalRowCount(Number(count[0].count));
+  const fetchTableData = useCallback(async () => {
+    console.log('Fetching Catalog');
+    const params = {
+      title: searchTerm,
+      limit: pageSize,
+      page: currentPage,
     };
+    const { data } = await NPOBackend.get('/catalog', {
+      params: params,
+    });
+    const { count, events: tableData } = data;
 
+    setTableData(tableData);
+    setTotalRowCount(Number(count[0].count));
+  }, [currentPage, pageSize, searchTerm]);
+
+  // Fetch data on component mount and pagination update
+  useEffect(() => {
     fetchTableData();
-  }, [currentPage, pageSize, searchTerm, isModified]);
+  }, [fetchTableData]);
+
+  // Fetch data when marked stale (e.g. creating or editing an event)
+  useEffect(() => {
+    if (dataIsStale) {
+      fetchTableData();
+      setDataIsStale(false);
+    }
+  }, [dataIsStale, fetchTableData]);
 
   return (
     <Container maxW="none" m="0" p="0">
@@ -184,19 +192,19 @@ export default function Catalog() {
         <CreateEventFormModal
           isOpen={isCreateFormOpen}
           onClose={onCreateFormClose}
-          setModified={setIsModified}
+          setDataIsStale={setDataIsStale}
         />
         <CreateEventFormModal
           isOpen={isEditFormOpen}
           onClose={onEditFormClose}
           eventData={editData}
-          setModified={setIsModified}
+          setDataIsStale={setDataIsStale}
         />
         <DeleteEventModal
           isOpen={isDeleteOpen}
           onClose={onDeleteClose}
           deleteItemId={deleteItemId}
-          setModified={setIsModified}
+          setDataIsStale={setDataIsStale}
         />
       </Box>
     </Container>

@@ -11,11 +11,11 @@ import {
 } from '@chakra-ui/react';
 import { NPOBackend } from '../../../utils/auth_utils';
 
-const DeleteEventModal = ({ isOpen, onClose, deleteItemId, setModified }) => {
+const DeleteEventModal = ({ isOpen, onClose, deleteItemId, setDataIsStale }) => {
   const handleConfirmDelete = async idToDelete => {
     try {
       await NPOBackend.delete(`/catalog/${idToDelete}`);
-      setModified(true);
+      setDataIsStale(true);
       onClose();
     } catch (error) {
       console.error(error);
@@ -42,7 +42,7 @@ DeleteEventModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   deleteItemId: PropTypes.number.isRequired,
-  setModified: PropTypes.func.isRequired,
+  setDataIsStale: PropTypes.func.isRequired,
 };
 
 export default DeleteEventModal;
