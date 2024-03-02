@@ -6,7 +6,7 @@ import {
   Box,
   Select,
 } from '@chakra-ui/react';
-
+import AddDayModal from './AddDayModal.jsx';
 
 const PublishedSchedule = () => {
   // get data from database
@@ -44,6 +44,9 @@ const PublishedSchedule = () => {
             />
           )))
         }
+        <AddDayModal>
+          
+        </AddDayModal>
     </Box>
   );
 };
