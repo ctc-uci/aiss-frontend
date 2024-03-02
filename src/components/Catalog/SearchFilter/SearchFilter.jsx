@@ -19,15 +19,25 @@ const SearchFilter = ({ name, options, filter }) => {
   return (
     <Menu>
       <MenuButton
+        className="my-box"
         as={Button}
-        rightIcon={<ChevronDownIcon />}
+        rightIcon={
+          <ChevronDownIcon
+            fontSize="large"
+            sx={{
+              '.my-box[data-active] &': {
+                transform: 'rotate(180deg)',
+              },
+            }}
+          />
+        }
         size="sm"
         bgColor="blackAlpha.200"
         _hover={{ bgColor: 'blackAlpha.100' }}
         _active={{ bgColor: 'blackAlpha.100' }}
         fontWeight="normal"
       >
-        <Text overflowX="hidden" textOverflow="ellipsis">
+        <Text overflowX="hidden" textOverflow="ellipsis" pr="4">
           {name}
         </Text>
       </MenuButton>
