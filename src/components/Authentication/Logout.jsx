@@ -17,10 +17,10 @@ const Logout = ({ cookies }) => {
 
   return (
     <div>
-      <h2>Logout</h2>
+      {/* <h2 style={{ color: 'white' }}>Logout</h2> */}
       {errorMessage && <p>{errorMessage}</p>}
-      <button type="submit" onClick={handleLogout}>
-        Logout
+      <button type="submit" style={{ color: 'white' }} onClick={handleLogout}>
+        Log out
       </button>
     </div>
   );

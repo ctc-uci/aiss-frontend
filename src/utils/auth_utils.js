@@ -32,10 +32,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+console.log({auth});
 
 // TEMP: Make sure to remove
 const NPOBackend = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: import.meta.env.VITE_BACKEND_HOST,
   withCredentials: true,
 });
 
@@ -108,7 +109,6 @@ const refreshToken = async () => {
  * @param {string} password
  */
 
-
 const createUserInDB = async (email, id, type, signUpWithGoogle, password = null) => {
   try {
     if (signUpWithGoogle) {
@@ -130,7 +130,6 @@ const createUserInDB = async (email, id, type, signUpWithGoogle, password = null
     throw new Error(err.message);
   }
 };
-
 
 /**
  * Signs a user in with Google using Firebase. Users are given USER_ROLE by default
@@ -220,7 +219,7 @@ const createUserInFirebase = async (email, password) => {
  */
 const createUser = async (email, password, role) => {
   const user = await createUserInFirebase(email, password);
-  //when the user creates an acc add row to the users table where approved = false 
+  //when the user creates an acc add row to the users table where approved = false
   await createUserInDB(email, user.uid, role, false, password);
   sendEmailVerification(user);
 };
@@ -284,6 +283,7 @@ const logout = async (redirectPath, navigate, cookies) => {
   await signOut(auth);
   clearCookies(cookies);
   navigate(redirectPath);
+  window.location.reload(true);
 };
 
 /**

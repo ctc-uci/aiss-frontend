@@ -1,11 +1,10 @@
 import './App.css';
 import { ChakraProvider } from '@chakra-ui/react';
-import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import { Route, Routes, Outlet, BrowserRouter as Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import Login from './components/Authentication/Login';
 import Logout from './components/Authentication/Logout';
 import SignUp from './components/Authentication/SignUp';
-import Notifications from './pages/Notifications/Notifications';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
 import AUTH_ROLES from './utils/auth_config';
@@ -14,21 +13,34 @@ import Catalog from './pages/Catalog/Catalog';
 import PublishedSchedule from './pages/PublishedSchedule/PublishedSchedule';
 import Playground from './pages/Playground/Playground';
 import Planner from './pages/Planner/Planner';
+import Navbar from './components/Navbar/Navbar';
+import { auth, getCurrentUser } from './utils/auth_utils';
+import NotificationSandbox from './pages/NotificationSandbox/NotificationSandbox';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
+const currentUser = getCurrentUser(auth);
+console.log(currentUser);
 
 const App = () => {
+  const NavBarWrapper = () => (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
   return (
-      <ChakraProvider>
-        <CookiesProvider>
-          <Router>
-            <Routes>
+    <ChakraProvider>
+      <CookiesProvider>
+        <Router>
+          <Routes>
+            <Route element={currentUser ? <NavBarWrapper /> : null}>
               <Route
-                exact path="/"
+                exact
+                path="/"
                 element={
                   <ProtectedRoute
                     Component={PublishedSchedule}
-                    redirectPath='/login'
+                    redirectPath="/login"
                     roles={[ADMIN_ROLE, USER_ROLE]}
                   />
                 }
@@ -40,17 +52,14 @@ const App = () => {
               <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
               <Route
                 exact
-                path="/notifications"
+                path="/notification-sandbox"
                 element={
-                  <ProtectedRoute
-                    Component={Notifications}
-                    redirectPath="/login"
-                    roles={[ADMIN_ROLE, USER_ROLE]}
-                  />
+                  <NotificationSandbox />
                 }
               />
               <Route
-                exact path="/catalog"
+                exact
+                path="/catalog"
                 element={
                   <ProtectedRoute
                     Component={Catalog}
@@ -59,7 +68,9 @@ const App = () => {
                   />
                 }
               />
-              <Route exact path="/publishedSchedule"
+              <Route
+                exact
+                path="/publishedSchedule"
                 element={
                   <ProtectedRoute
                     Component={PublishedSchedule}
@@ -68,12 +79,13 @@ const App = () => {
                   />
                 }
               />
-              <Route exact path="/playground" element={<Playground />}/>
-              <Route exact path="/planner" element={<Planner />}/>
-            </Routes>
-          </Router>
-        </CookiesProvider>
-      </ChakraProvider>
+              <Route exact path="/playground" element={<Playground />} />
+              <Route exact path="/planner" element={<Planner />} />
+            </Route>
+          </Routes>
+        </Router>
+      </CookiesProvider>
+    </ChakraProvider>
   );
 };
 
