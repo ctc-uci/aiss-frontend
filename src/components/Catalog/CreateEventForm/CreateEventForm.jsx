@@ -13,7 +13,7 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { NPOBackend } from '../../utils/auth_utils';
+import { NPOBackend } from '../../../utils/auth_utils';
 
 const schema = yup.object({
   // id: yup.string().required('ID required').max(10, 'ID exceeds 10 character limit'),
@@ -57,7 +57,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           description: description,
           year: year,
         });
-        id = response.data[0].id
+        id = response.data[0].id;
       } else {
         response = await NPOBackend.post(`/catalog`, {
           host: host,
@@ -67,7 +67,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           description: description,
           year: year,
         });
-        id = response.data.id
+        id = response.data.id;
       }
       reset();
       toast({
@@ -86,7 +86,6 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
         setModified(true);
       }
       closeModal();
-
     } catch (error) {
       toast({
         title: `Error: ${error}`,
@@ -167,10 +166,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.description} width="47%">
               <FormLabel fontWeight="bold">Description</FormLabel>
-              <Input
-                {...register('description')}
-                border="1px solid"
-              />
+              <Input {...register('description')} border="1px solid" />
               <FormErrorMessage>
                 {errors.description && errors.description.message}
               </FormErrorMessage>
@@ -181,7 +177,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Year</FormLabel>
-              <Select {...register('year')} >
+              <Select {...register('year')}>
                 <option value="junior">Junior</option>
                 <option value="senior">Senior</option>
                 <option value="both">Both</option>
@@ -205,11 +201,11 @@ CreateEventForm.propTypes = {
     year: PropTypes.number,
     eventType: PropTypes.string,
     subject: PropTypes.string,
-    description: PropTypes.string
+    description: PropTypes.string,
   }),
   setModified: PropTypes.func,
-  closeModal:PropTypes.func,
-}
+  closeModal: PropTypes.func,
+};
 
 CreateEventForm.defaultProps = {
   eventData: undefined,

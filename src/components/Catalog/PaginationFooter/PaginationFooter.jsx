@@ -8,7 +8,7 @@ import {
 } from '@ajna/pagination';
 import { useState, useEffect } from 'react';
 import { PropTypes } from 'prop-types';
-import { NPOBackend } from '../../utils/auth_utils';
+import { NPOBackend } from '../../../utils/auth_utils';
 
 const PaginationFooter = ({ setData, table, searchTerm, selectedFilters, isModified }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
