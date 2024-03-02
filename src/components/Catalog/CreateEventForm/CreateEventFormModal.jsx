@@ -25,7 +25,7 @@ CreateEventFormModal.propTypes = {
     id: PropTypes.number,
     title: PropTypes.string,
     host: PropTypes.string,
-    year: PropTypes.number,
+    year: PropTypes.string,
     eventType: PropTypes.string,
     subject: PropTypes.string,
     description: PropTypes.string,
