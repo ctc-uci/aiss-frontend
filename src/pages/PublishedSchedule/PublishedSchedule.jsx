@@ -1,9 +1,8 @@
 import { NPOBackend } from '../../utils/auth_utils.js';
 import PublishedScheduleTable from '../../components/Events/PublishedScheduleTable.jsx';
-// import s from './PublishedSchedule.module.css';
 
 import { useEffect, useState } from 'react';
-import { Box, Select } from '@chakra-ui/react';
+import { Box, Select, Text } from '@chakra-ui/react';
 
 const PublishedSchedule = () => {
   // get data from database
@@ -12,7 +11,7 @@ const PublishedSchedule = () => {
 
   const getTodaySeason = () => {
     let today = new Date();
-    let month = today.getMonth() + 1; //January is 0!
+    let month = today.getMonth() + 1;
     let year = today.getFullYear();
     let season;
 
@@ -31,13 +30,18 @@ const PublishedSchedule = () => {
   useEffect(() => {
     const renderTable = async () => {
       const { data } = await NPOBackend.get('/published-schedule/all-seasons');
+      const index = data.indexOf(curSeason);
+      if (index !== -1) {
+        data.splice(index, 1);
+      }
+
+      const seasonOrder = ['Summer', 'Fall', 'Winter', 'Spring'];
       data.sort((a, b) => {
         // Compare years first
         if (a.split(' ')[1] !== b.split(' ')[1]) {
           return b.split(' ')[1] - a.split(' ')[1];
         } else {
-          // If years are equal, compare alphabetically
-          return -1*a.localeCompare(b);
+          return seasonOrder.indexOf(a.split(' ')[0]) - seasonOrder.indexOf(b.split(' ')[0]);
         }
       });
       setAllSeasons(data);
@@ -50,16 +54,22 @@ const PublishedSchedule = () => {
   //update chakra table container accordingly
   return (
     <Box pt={10} pb={10} pl={100} pr={100}>
-      {/* season dropdown menu */}
+      {selectedSeason != '' ? (
+        <Text fontSize="2.5vw" mb="-5vh" fontWeight="bold">
+          {selectedSeason}
+        </Text>
+      ) : (
+        <Text fontSize="2.5vw" mb="-5vh" fontWeight="bold">
+          {curSeason}
+        </Text>
+      )}
       <Select
         mb="3vh"
         variant="unstyled"
-        placeholder="Current Season"
-        fontSize="2.5vw"
-        fontWeight="bold"
-        size="lg"
+        placeholder={curSeason}
+        textColor="transparent"
         onChange={() => setSelectedSeason(event.target.value)}
-        width="25%"
+        width="23%"
       >
         {allSeasons.map(item => (
           <option key={item} value={item}>
