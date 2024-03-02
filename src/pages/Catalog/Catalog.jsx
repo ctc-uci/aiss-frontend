@@ -48,7 +48,7 @@ export default function Catalog() {
   } = useDisclosure();
 
   const [tableData, setTableData] = useState([]);
-  const [dataIsStale, setDataIsStale] = useState(false);
+  const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [deleteItemId, setDeleteItemId] = useState(-1);
   const [editData, setEditData] = useState({});
@@ -106,13 +106,13 @@ export default function Catalog() {
     fetchTableData();
   }, [fetchTableData]);
 
-  // Fetch data when marked stale (e.g. creating or editing an event)
+  // Fetch data when should revalidate (e.g. creating or editing an event)
   useEffect(() => {
-    if (dataIsStale) {
+    if (dataShouldRevalidate) {
       fetchTableData();
-      setDataIsStale(false);
+      setDataShouldRevalidate(false);
     }
-  }, [dataIsStale, fetchTableData]);
+  }, [dataShouldRevalidate, fetchTableData]);
 
   return (
     <Container maxW="none" m="0" p="0">
@@ -203,19 +203,19 @@ export default function Catalog() {
         <CreateEventFormModal
           isOpen={isCreateFormOpen}
           onClose={onCreateFormClose}
-          setDataIsStale={setDataIsStale}
+          setDataShouldRevalidate={setDataShouldRevalidate}
         />
         <CreateEventFormModal
           isOpen={isEditFormOpen}
           onClose={onEditFormClose}
           eventData={editData}
-          setDataIsStale={setDataIsStale}
+          setDataShouldRevalidate={setDataShouldRevalidate}
         />
         <DeleteEventModal
           isOpen={isDeleteOpen}
           onClose={onDeleteClose}
           deleteItemId={deleteItemId}
-          setDataIsStale={setDataIsStale}
+          setDataShouldRevalidate={setDataShouldRevalidate}
         />
       </Box>
     </Container>
