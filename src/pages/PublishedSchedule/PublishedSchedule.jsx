@@ -44,9 +44,7 @@ const PublishedSchedule = () => {
             />
           )))
         }
-        <AddDayModal>
-          
-        </AddDayModal>
+        <AddDayModal />
     </Box>
   );
 };

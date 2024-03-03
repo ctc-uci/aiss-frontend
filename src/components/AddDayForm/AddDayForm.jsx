@@ -15,6 +15,7 @@ import {
   import { useForm } from 'react-hook-form';
   // import axios from 'axios';
   import * as yup from 'yup';
+import { NPOBackend } from '../../utils/auth_utils';
     
   const schema = yup.object({
     // month: yup.number("Must be type number").required('Month required').min(2, "Must be 2 numbers.").max(2, "Must be 2 numbers."),
@@ -40,19 +41,57 @@ import {
     const submitData = async data => {
       const { date, details, location } = data;
       toast.closeAll();
-      toast({
-        title: 'add day!',
-        description: `date: ${date}, description: ${details}, location: ${location}`,
-        status: 'success',
-        variant: 'subtle',
-        position: 'bottom',
-        containerStyle: {
-        mt: '6rem',
-        },
-        duration: 3000,
-        isClosable: true,
-      });
-      onOpen();
+      try {
+        const payload = {
+          eventDate: date,
+          location: location,
+          notes: details,
+        };
+
+        const response = await NPOBackend.post('/day/', payload);
+        if (response.status === 201) {
+          toast({
+            title: 'add day!',
+            description: `date: ${date}, description: ${details}, location: ${location}`,
+            status: 'success',
+            variant: 'subtle',
+            position: 'bottom',
+            containerStyle: {
+            mt: '6rem',
+            },
+            duration: 3000,
+            isClosable: true,
+          });
+          onOpen();
+        } else {
+          toast({
+            title: 'Error Adding Day',
+            description: `date: ${date}, description: ${details}, location: ${location}`,
+            status: 'error',
+            variant: 'subtle',
+            position: 'bottom',
+            containerStyle: {
+            mt: '6rem',
+            },
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+        
+      } catch (error) {
+        toast({
+          title: 'Error Adding Day',
+          description: error.response ? error.response.data.message : 'An error occurred',
+          status: 'error',
+          variant: 'subtle',
+          position: 'bottom',
+          containerStyle: {
+          mt: '6rem',
+          },
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   
     return (
