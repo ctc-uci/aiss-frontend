@@ -9,7 +9,8 @@ import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box } from '@chakra-ui
 
 const PublishedScheduleTable = ({ season }) => {
   const [eventsInDay, setEventsInDay] = useState([]);
-  const [prevEvent, setPrevEvent] = useState(null);
+  // const [prevEvent, setPrevEvent] = useState(null);
+  const [breaks, setBreaks] = useState([]);
   const seasonType = season.split(' ')[0];
   const seasonYear = season.split(' ')[1];
 
@@ -19,25 +20,55 @@ const PublishedScheduleTable = ({ season }) => {
         `/published-schedule/season?season=${seasonType}&year=${seasonYear}`,
       );
       setEventsInDay(data);
+      // setPrevEvent(data.length > 0 ? data[0].day : null);
     };
     renderTable();
   }, [seasonType, seasonYear]);
 
+  useEffect(() => {
+    const calculateBreaks = () => {
+      const allEvents = eventsInDay.flatMap(item => [
+        ...item.data,
+        { startTime: item.day.startTime, endTime: item.day.endTime },
+      ]);
+      const calculatedBreaks = [];
+      for (let i = 0; i < allEvents.length - 1; i++) {
+        const currentEvent = allEvents[i];
+        const nextEvent = allEvents[i + 1];
+
+        if (currentEvent.endTime < nextEvent.startTime) {
+          calculatedBreaks.push({
+            startTime: currentEvent.endTime,
+            endTime: nextEvent.startTime,
+            eventTitle: 'Break / Team Time',
+          });
+        }
+      }
+      return calculatedBreaks;
+    };
+
+    setBreaks(calculateBreaks());
+  }, [eventsInDay]);
+
+
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const checkBreak = day => {
-    if (prevEvent !== null && Date(day.startTime) > Date(prevEvent.endTime)) {
-      // const eventData = [0, prevEvent.endTime, day.startTime, 'Break / Team Time'];
-      setPrevEvent(day);
-      console.log('there should be a break here');
-      return true;
-    } else {
-      console.log("there isn't a break");
-      setPrevEvent(day);
-      console.log(day);
-      console.log(prevEvent);
-      return false;
-    }
-  };
+  // const checkBreak = day => {
+  //   if (
+  //     prevEvent !== null &&
+  //     new Date(day.startTime).getTime() > new Date(prevEvent.endTime).getTime()
+  //   ) {
+  //     // const eventData = [0, prevEvent.endTime, day.startTime, 'Break / Team Time'];
+  //     setPrevEvent(day);
+  //     console.log('there should be a break here');
+  //     return true;
+  //   } else {
+  //     console.log("there isn't a break");
+  //     setPrevEvent(day);
+  //     console.log(day);
+  //     console.log(prevEvent);
+  //     return false;
+  //   }
+  // };
 
   // const calculateBreaks = events => {
   //   const breaks = [];
@@ -76,8 +107,6 @@ const PublishedScheduleTable = ({ season }) => {
           <Tbody>
             {eventsInDay.map(item => (
               <Tr key={item.day.id} verticalAlign={'top'}>
-                {/* <Td><Events/></Td> ?? there is a break */}
-
                 <Td>
                   <EventInfo
                     eventDate={item.day.eventDate}
@@ -90,8 +119,18 @@ const PublishedScheduleTable = ({ season }) => {
                 </Td>
                 <Td>
                   <Events eventData={item.data} location={item.day.location} />
+                  {breaks.map((breakItem, index) => (
+                    <Tr key={`break-${index}`} verticalAlign={['top']}>
+                      <Td>
+                        <Events
+                          eventData={item.data.concat(breaks)}
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
                 </Td>
-                {checkBreak(item.day) ? (
+
+                {/* {checkBreak(item.day) ? (
                   <Td>
                     <Events
                       eventData={{
@@ -102,7 +141,7 @@ const PublishedScheduleTable = ({ season }) => {
                       }}
                     />
                   </Td>
-                ) : null}
+                ) : null} */}
               </Tr>
             ))}
           </Tbody>
