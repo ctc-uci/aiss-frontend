@@ -11,7 +11,8 @@ const userIsAuthenticated = async (roles, cookies) => {
       return false;
     }
     const loggedIn = await NPOBackend.get(`/auth/verifyToken/${accessToken}`);
-    return roles.includes(cookies.get(cookieKeys.ROLE)) && loggedIn.status === 200;
+
+    return roles.includes(cookies.get(cookieKeys.ROLE)) && loggedIn.status === 200 && cookies.get(cookieKeys.APPROVED);
     // return roles.includes(cookies.get(cookieKeys.ROLE));
   } catch (err) {
     console.log(err);

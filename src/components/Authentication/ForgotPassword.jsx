@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { sendPasswordReset } from '../../utils/auth_utils';
-import { FormControl, Input, Button, Center, Link } from '@chakra-ui/react';
+import { FormControl, Input, Button, Center, Link, Box, Heading, Text} from '@chakra-ui/react';
 
 
 const ForgotPassword = () => {
@@ -24,22 +24,20 @@ const ForgotPassword = () => {
 
   return (
     <Center h="90vh">
-    <div
+    <Box
       style={{
         margin: 'auto',
         textAlign: 'center',
         width: '598px',
         minWidth: '300px',
-        padding: '50px, 40px, 40px, 37px',
-        gap: '25px',
       }}
     >
-      <h1 style={{ fontSize: '28px', fontWeight: '700'}}>Reset Password</h1>
-      <h2>Enter email address associated with account</h2>
+      <Heading as='h1' size='lg'>Reset Password</Heading>
+      <Text as='h2' size='md' mt={2}>Enter email address associated with account</Text>
       {errorMessage && <p>{errorMessage}</p>}
       <form onSubmit={handleForgotPassword}>
         <FormControl>
-          <div>
+          <Box>
             <Input
               style={{ width: '360px', height: '48px', marginTop: '40px' }}
               type="email"
@@ -48,10 +46,10 @@ const ForgotPassword = () => {
               borderColor={"#CBD5E0"}
               borderRadius= '3px'
             />
-          </div>
+          </Box>
 
 
-          <div
+          <Box
             style={{
               marginTop: '25px',
               marginBottom: '25px',
@@ -72,12 +70,7 @@ const ForgotPassword = () => {
                 backgroundColor={'#FFFFFF'}
                 color={'#155696'}
                 variant='outline'
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#E0E0E0'; 
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#FFFFFF';
-                }}
+                _hover={{backgroundColor: '#E0E0E0'}}
               >
                 Cancel
               </Button>
@@ -96,20 +89,15 @@ const ForgotPassword = () => {
               }}
               backgroundColor={'#243268'}
               color={'#ffffff'}
-              onMouseOver={(e) => {
-                e.target.style.backgroundColor = '#1A2559'; 
-              }}
-              onMouseOut={(e) => {
-                e.target.style.backgroundColor = '#243268';
-              }}
+              _hover={{backgroundColor: '#1A2559'}}
             >
               Send Instructions
             </Button>
-          </div>
+          </Box>
         </FormControl>
       </form>
       {confirmationMessage && <p>{confirmationMessage}</p>}
-    </div>
+    </Box>
     </Center>
   );
 };
