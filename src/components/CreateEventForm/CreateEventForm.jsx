@@ -71,27 +71,29 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           description: description,
           year: year,
         });
-        //const catalogEventId = response.data.id
-        //console.log(catalogEventId)
+        const catalogEventId = response.data.id
+        const catalogYear = response.data.year
+        console.log(response)
+        console.log(catalogEventId, catalogYear)
         console.log(dayId)
         // Extract the ID of the newly created event from the response
         //publishedScheduleResponse = await NPOBackend.get(`/published-schedule`);
         const dayInfo = await NPOBackend.get(`/day/${dayId}`);
-        console.log("day id:", dayInfo)
+        console.log("day id:", dayInfo['data'][0])
+        console.log("day id:", dayInfo['data'][0].id, dayInfo['data'][0].startTime, dayInfo['data'][0].endTime, dayInfo['data'][0].notes)
 
-
-        // // Now, add the event to the published_schedule
-        // publishedScheduleResponse = await NPOBackend.post(`/published-schedule`, {
-        //   eventId: catalogEventId, // Use the ID of the newly created event
-        //   dayId: 45, // Assuming you have `dayId` available
-        //   confirmed: true, // Example values, adjust as needed
-        //   confirmedOn: "2017-06-15T07:00:00.000Z", // Example values, adjust as needed
-        //   startTime: "01:06:27.010498", // Example values, adjust as needed
-        //   endTime: "02:06:27.010498", // Example values, adjust as needed
-        //   cohort: ["2024", "2025"], // Example values, adjust as needed
-        //   notes: "generic", // Example values, adjust as needed
-        // });
-        // console.log(publishedScheduleResponse)
+        // Now, add the event to the published_schedule
+        const publishedScheduleResponse = await NPOBackend.post(`/published-schedule`, {
+          eventId: catalogEventId,
+          dayId: dayInfo['data'][0].id, 
+          confirmed: true, 
+          confirmedOn: "2017-06-15T07:00:00.000Z", 
+          startTime: dayInfo['data'][0].startTime, 
+          endTime: dayInfo['data'][0].endTime, 
+          cohort: response.data.year, 
+          notes: dayInfo['data'][0].notes,
+        });
+        console.log(publishedScheduleResponse)
       }
       reset();
       toast({
