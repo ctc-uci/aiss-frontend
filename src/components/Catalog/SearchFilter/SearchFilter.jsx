@@ -42,8 +42,8 @@ const SearchFilter = ({ name, options, filter }) => {
         </Text>
       </MenuButton>
       <MenuList>
-        {options.map(option => (
-          <FilterCheckbox key={option} {...getCheckboxProps({ value: option })} />
+        {options.map(({ value, name }) => (
+          <FilterCheckbox key={value} {...getCheckboxProps({ value: value })} name={name} />
         ))}
       </MenuList>
     </Menu>
@@ -52,7 +52,12 @@ const SearchFilter = ({ name, options, filter }) => {
 
 SearchFilter.propTypes = {
   name: PropTypes.string,
-  options: PropTypes.arrayOf(PropTypes.string),
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string,
+      name: PropTypes.string,
+    }),
+  ),
   filter: PropTypes.shape({
     getCheckboxProps: PropTypes.func,
   }),
@@ -99,7 +104,7 @@ const FilterCheckbox = props => {
         )}
       </Flex>
       <Text color="gray.700" {...getLabelProps()}>
-        {props.value}
+        {props.name}
       </Text>
     </chakra.label>
   );
@@ -107,6 +112,7 @@ const FilterCheckbox = props => {
 
 FilterCheckbox.propTypes = {
   value: PropTypes.string,
+  name: PropTypes.string,
 };
 
 export default SearchFilter;

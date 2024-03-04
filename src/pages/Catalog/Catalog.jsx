@@ -21,18 +21,12 @@ import CatalogTable from '../../components/Catalog/CatalogTable';
 import SearchFilter from '../../components/Catalog/SearchFilter/SearchFilter';
 import useSearchFilters from '../../components/Catalog/SearchFilter/useSearchFilters';
 import { usePagination } from '@ajna/pagination';
-
-const seasonOptions = ['fall', 'spring', 'summer', 'winter'];
-const yearOptions = ['junior', 'senior', 'both'];
-const subjectOptions = [
-  'life skills',
-  'science',
-  'technology',
-  'engineering',
-  'math',
-  'college readiness',
-];
-const eventOptions = ['guest speaker', 'study-trip', 'workshop', 'other'];
+import {
+  seasonOptions,
+  yearOptions,
+  subjectOptions,
+  eventOptions,
+} from '../../components/Catalog/SearchFilter/filterOptions';
 
 export default function Catalog() {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
