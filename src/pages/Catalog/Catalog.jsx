@@ -93,7 +93,7 @@ export default function Catalog() {
 
     setTableData(tableData);
     setTotalRowCount(Number(count[0].count));
-  }, [currentPage, pageSize, searchTerm, filterValues]);
+  }, [searchTerm, pageSize, currentPage, filterValues]);
 
   // Fetch data on component mount and pagination update
   useEffect(() => {
@@ -107,6 +107,11 @@ export default function Catalog() {
       setDataShouldRevalidate(false);
     }
   }, [dataShouldRevalidate, fetchTableData]);
+
+  // Reset pagination on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterValues, setCurrentPage]);
 
   return (
     <Container maxW="none" m="0" p="0">
