@@ -34,6 +34,11 @@ const PublishedScheduleTable = ({ season }) => {
     return `${hours}:${mins} ${ampm}`;
   };
 
+  const getUTCDate = (eventDate) => {
+    const utcDate = new Date(eventDate);
+    return new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+  }
+
   return (
     <Box>
       <TableContainer>
@@ -49,9 +54,9 @@ const PublishedScheduleTable = ({ season }) => {
               <Tr key={item.day.id} verticalAlign={'top'}>
                 <Td>
                   <EventInfo
-                    
-                    eventDate={new Date(item.day.eventDate).toLocaleDateString('en-US')}
-                    day={dayNames[new Date(item.day.eventDate).getDay()]}
+
+                    eventDate={getUTCDate(item.day.eventDate).toLocaleDateString('en-US')}
+                    day={dayNames[getUTCDate(item.day.eventDate).getDay()]}
                     startTime={formatDate(item.day.startTime)}
                     endTime={formatDate(item.day.endTime)}
                     location={item.day.location}
