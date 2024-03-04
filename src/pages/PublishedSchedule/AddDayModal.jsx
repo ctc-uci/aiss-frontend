@@ -10,8 +10,10 @@ import {
     useDisclosure,
     Text,
   } from '@chakra-ui/react'
+  import { DayIdProvider } from './AddDayContext.jsx';
 import Planner from '../../pages/Planner/Planner.jsx';
 import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
+
 
   const AddDayModal = () => {
     const { isOpen: isOpenDay, onOpen:onOpenDay, onClose:onCloseDay } = useDisclosure();
@@ -23,6 +25,7 @@ import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
       };
 
     return (
+      <DayIdProvider>
         <>
           <Button onClick={onOpenDay}>Add Day</Button>
     
@@ -34,7 +37,8 @@ import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
               <ModalBody>
                 <AddDayForm
                   onClose={onCloseDay}
-                  onOpen={handleOpenPlanner}/>
+                  onOpen={handleOpenPlanner}
+                  />
               </ModalBody>
             </ModalContent>
           </Modal>
@@ -57,6 +61,7 @@ import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
             </ModalContent>
           </Modal>
         </>
+      </DayIdProvider>
       );
   };
 

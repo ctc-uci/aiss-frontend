@@ -11,9 +11,11 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { NPOBackend } from '../../utils/auth_utils';
+import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
 
 const schema = yup.object({
   // id: yup.string().required('ID required').max(10, 'ID exceeds 10 character limit'),
@@ -40,6 +42,8 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
     defaultValues: { ...eventData },
   });
 
+  const { dayId } = useContext(DayIdContext);
+
   const submitData = async data => {
     const { host, title, eventType, subject, description, year } = data;
     toast.closeAll();
@@ -54,7 +58,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           title: title,
           eventType: eventType,
           subject: subject,
-          description: description,
+          description: description, 
           year: year,
         });
         id = response.data[0].id
@@ -67,7 +71,27 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           description: description,
           year: year,
         });
-        id = response.data.id
+        //const catalogEventId = response.data.id
+        //console.log(catalogEventId)
+        console.log(dayId)
+        // Extract the ID of the newly created event from the response
+        //publishedScheduleResponse = await NPOBackend.get(`/published-schedule`);
+        const dayInfo = await NPOBackend.get(`/day/${dayId}`);
+        console.log("day id:", dayInfo)
+
+
+        // // Now, add the event to the published_schedule
+        // publishedScheduleResponse = await NPOBackend.post(`/published-schedule`, {
+        //   eventId: catalogEventId, // Use the ID of the newly created event
+        //   dayId: 45, // Assuming you have `dayId` available
+        //   confirmed: true, // Example values, adjust as needed
+        //   confirmedOn: "2017-06-15T07:00:00.000Z", // Example values, adjust as needed
+        //   startTime: "01:06:27.010498", // Example values, adjust as needed
+        //   endTime: "02:06:27.010498", // Example values, adjust as needed
+        //   cohort: ["2024", "2025"], // Example values, adjust as needed
+        //   notes: "generic", // Example values, adjust as needed
+        // });
+        // console.log(publishedScheduleResponse)
       }
       reset();
       toast({
@@ -209,6 +233,7 @@ CreateEventForm.propTypes = {
   }),
   setModified: PropTypes.func,
   closeModal:PropTypes.func,
+  dayId: PropTypes.number,
 }
 
 CreateEventForm.defaultProps = {

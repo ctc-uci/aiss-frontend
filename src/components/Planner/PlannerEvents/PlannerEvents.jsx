@@ -16,7 +16,7 @@ const PlannerEvents = () => {
 
   return (
     <div id={s['planner-events-container']}>
-      {overlayIsVisible && <AddEventOverlay setOverlayIsVisible={handleCreateEventClick} />}
+      {overlayIsVisible && <AddEventOverlay setOverlayIsVisible={handleCreateEventClick}/>}
       <div id={s['planner-browse']}>
         {isVisible && ( 
           <>

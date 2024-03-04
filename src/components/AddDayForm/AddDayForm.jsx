@@ -16,6 +16,8 @@ import {
   // import axios from 'axios';
   import * as yup from 'yup';
 import { NPOBackend } from '../../utils/auth_utils';
+import { useContext } from 'react';
+import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
     
   const schema = yup.object({
     // month: yup.number("Must be type number").required('Month required').min(2, "Must be 2 numbers.").max(2, "Must be 2 numbers."),
@@ -29,6 +31,8 @@ import { NPOBackend } from '../../utils/auth_utils';
   });
   
   const AddDayForm = ({ onClose, onOpen }) => {
+    const { setDayId } = useContext(DayIdContext);
+
     const toast = useToast();
     const {
       handleSubmit,
@@ -62,7 +66,10 @@ import { NPOBackend } from '../../utils/auth_utils';
             duration: 3000,
             isClosable: true,
           });
-          onOpen();
+          const id = response.data['id']
+          setDayId(id);
+          console.log(id);
+          onOpen(id);
         } else {
           toast({
             title: 'Error Adding Day',
@@ -79,6 +86,7 @@ import { NPOBackend } from '../../utils/auth_utils';
         }
         
       } catch (error) {
+        console.log(error);
         toast({
           title: 'Error Adding Day',
           description: error.response ? error.response.data.message : 'An error occurred',
@@ -113,27 +121,6 @@ import { NPOBackend } from '../../utils/auth_utils';
               </FormControl>
             </Box>
 
-            {/* <HStack spacing='1vh'>
-              <Box mb="4vh">
-                <FormControl isInvalid={errors && errors.month}>
-                  <Input placeholder='MM' htmlSize={6} width='auto' {...register('month')}/>
-                  <FormErrorMessage>{errors.month && errors.month.message}</FormErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb="4vh">
-                <FormControl isInvalid={errors && errors.day}>
-                  <Input placeholder='DD' htmlSize={6} width='auto' {...register('day')}/>
-                  <FormErrorMessage>{errors.day && errors.day.message}</FormErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb="4vh">
-                <FormControl isInvalid={errors && errors.year}>
-                  <Input placeholder='YYYY' htmlSize={6} width='auto' {...register('year')}/>
-                  <FormErrorMessage>{errors.year && errors.year.message}</FormErrorMessage>
-                </FormControl>
-              </Box> 
-            </HStack> */}
-  
             {/* LOCATION */}
             <Box mb="4vh">
               <FormControl isInvalid={errors && errors.location} >

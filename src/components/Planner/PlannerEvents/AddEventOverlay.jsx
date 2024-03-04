@@ -3,7 +3,7 @@ import { Stack, Text, Button } from '@chakra-ui/react';
 import CreateEventForm from '../../CreateEventForm/CreateEventForm';
 
 // eslint-disable-next-line react/prop-types
-const AddEventOverlay = ({ setOverlayIsVisible }) => {
+const AddEventOverlay = ({ setOverlayIsVisible, dayId }) => {
   return (
     // <div id={s['add-event-overlay']}>
     <div>
@@ -13,7 +13,7 @@ const AddEventOverlay = ({ setOverlayIsVisible }) => {
       {/* <div className={s['add-event-container']}> */}
       <div>
         <div>
-          <CreateEventForm/>
+          <CreateEventForm dayId={dayId}/>
           {/* <Text fontSize="1.25rem">Event Information</Text> */}
         </div>  
         <Stack spacing={2} justifyContent="right" direction="row">
