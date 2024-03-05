@@ -1,6 +1,6 @@
 import { Stack, Text, Button } from '@chakra-ui/react';
 // import s from '../PlannerLayout.module.css';
-import CreateEventForm from '../../CreateEventForm/CreateEventForm';
+import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
 
 // eslint-disable-next-line react/prop-types
 const AddEventOverlay = ({ setOverlayIsVisible, dayId }) => {
@@ -13,7 +13,7 @@ const AddEventOverlay = ({ setOverlayIsVisible, dayId }) => {
       {/* <div className={s['add-event-container']}> */}
       <div>
         <div>
-          <CreateEventForm dayId={dayId}/>
+          <AddEventToPublishedScheduleForm dayId={dayId}/>
           {/* <Text fontSize="1.25rem">Event Information</Text> */}
         </div>  
         <Stack spacing={2} justifyContent="right" direction="row">

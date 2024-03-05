@@ -11,11 +11,9 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { NPOBackend } from '../../utils/auth_utils';
-import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
 
 const schema = yup.object({
   // id: yup.string().required('ID required').max(10, 'ID exceeds 10 character limit'),
@@ -41,8 +39,6 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
     resolver: yupResolver(schema),
     defaultValues: { ...eventData },
   });
-
-  const { dayId } = useContext(DayIdContext);
 
   const submitData = async data => {
     const { host, title, eventType, subject, description, year } = data;
@@ -71,29 +67,6 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           description: description,
           year: year,
         });
-        const catalogEventId = response.data.id
-        const catalogYear = response.data.year
-        console.log(response)
-        console.log(catalogEventId, catalogYear)
-        console.log(dayId)
-        // Extract the ID of the newly created event from the response
-        //publishedScheduleResponse = await NPOBackend.get(`/published-schedule`);
-        const dayInfo = await NPOBackend.get(`/day/${dayId}`);
-        console.log("day id:", dayInfo['data'][0])
-        console.log("day id:", dayInfo['data'][0].id, dayInfo['data'][0].startTime, dayInfo['data'][0].endTime, dayInfo['data'][0].notes)
-
-        // Now, add the event to the published_schedule
-        const publishedScheduleResponse = await NPOBackend.post(`/published-schedule`, {
-          eventId: catalogEventId,
-          dayId: dayInfo['data'][0].id, 
-          confirmed: true, 
-          confirmedOn: "2017-06-15T07:00:00.000Z", 
-          startTime: dayInfo['data'][0].startTime, 
-          endTime: dayInfo['data'][0].endTime, 
-          cohort: response.data.year, 
-          notes: dayInfo['data'][0].notes,
-        });
-        console.log(publishedScheduleResponse)
       }
       reset();
       toast({

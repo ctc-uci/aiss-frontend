@@ -25,6 +25,9 @@ const PublishedScheduleTable = ({season}) => {
   useEffect(() => {
     const renderTable = async () => {
       const { data } = await NPOBackend.get(`/published-schedule/season?season=${seasonType}&year=${seasonYear}`);
+      const data1 = await NPOBackend.get(`/published-schedule`)
+      console.log(data1)
+      //console.log(data)
       setEventsInDay(data);
     };
     renderTable();

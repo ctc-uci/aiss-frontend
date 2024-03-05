@@ -16,6 +16,7 @@ const PublishedSchedule = () => {
   useEffect(() => {
     const renderTable = async () => {
       const { data } = await NPOBackend.get('/published-schedule/all-seasons');
+      console.log(data)
       setAllSeasons(data);
     };
     renderTable();
