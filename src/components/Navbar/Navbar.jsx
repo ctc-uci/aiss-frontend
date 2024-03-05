@@ -65,20 +65,59 @@ const Navbar = ({ hasLoaded, isAdmin }) => {
             {makeNavTabs('Catalog', '/catalog')}
           </Flex>
         </HStack>
-        <Flex alignSelf={'right'} marginLeft={'auto'}>
-          <BellIcon
-            color="white"
-            alignSelf={'right'}
-            width={'24px'}
-            height={'24px'}
-            marginRight={'48px'}
-          />
-          <Logout alignSelf={'right'} />
+        <Flex alignSelf={'right'} align={'center'} marginLeft={'auto'}>
+          <IconButton onClick={onOpen} bgColor={'transparent'} marginRight={'48px'} icon={
+            <BellIcon
+              color="white"
+              alignSelf={'right'}
+              width={'24px'}
+              height={'24px'}
+            />
+          }>
+          </IconButton>
+          <Logout />
         </Flex>
+        <Drawer
+          size="lg"
+          isOpen={isOpen}
+          placement="right"
+          onClose={onClose}
+          finalFocusRef={buttonRef}
+        >
+          <DrawerOverlay />
+          <DrawerContent borderLeftRadius="2rem">
+            <Container
+              m="0"
+              maxW="none"
+              display="flex"
+              alignItems="center"
+              borderBottomColor="gray.300"
+              borderBottomWidth="1px"
+              pl="6"
+            >
+              <DrawerCloseButton
+                fontSize="0.5rem"
+                p="0"
+                w="6"
+                h="6"
+                borderRadius="100rem"
+                borderColor="black"
+                borderWidth="1px"
+                position="relative"
+                top="0"
+                left="0"
+              />
+              <DrawerHeader fontSize="2xl">Notifications</DrawerHeader>
+            </Container>
+            <DrawerBody padding="0">
+              <Notifications />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
       </Flex>
     )
   }
-  return (      
+  return ( // might be able to remove this
     <Flex
       style={{ backgroundColor: '#243268', padding: '0 100px 0 100px' }}
       justify={'space-between'}
