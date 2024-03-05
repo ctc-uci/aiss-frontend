@@ -7,6 +7,7 @@ import Logout from './components/Authentication/Logout';
 import SignUp from './components/Authentication/SignUp';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
+import AwaitConfirmation from './components/Authentication/AwaitConfirmation';
 import AUTH_ROLES from './utils/auth_config';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Catalog from './pages/Catalog/Catalog';
@@ -14,26 +15,29 @@ import PublishedSchedule from './pages/PublishedSchedule/PublishedSchedule';
 import Playground from './pages/Playground/Playground';
 import Planner from './pages/Planner/Planner';
 import Navbar from './components/Navbar/Navbar';
-import { auth, getCurrentUser } from './utils/auth_utils';
 import NotificationSandbox from './pages/NotificationSandbox/NotificationSandbox';
+import { AuthContextProvider, useAuthContext } from './common/AuthContext';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
-const currentUser = getCurrentUser(auth);
-console.log(currentUser);
 
 const App = () => {
-  const NavBarWrapper = () => (
-    <>
-      <Navbar />
-      <Outlet />
-    </>
-  );
+  const NavBarWrapper = () => {
+    const { currentUser } = useAuthContext();
+    return (
+      <>
+        <Navbar hasLoaded={currentUser != null} isAdmin={currentUser?.type === ADMIN_ROLE}/>
+        <Outlet />
+      </>
+    );
+  };
+
   return (
     <ChakraProvider>
       <CookiesProvider>
+      <AuthContextProvider>
         <Router>
           <Routes>
-            <Route element={currentUser ? <NavBarWrapper /> : null}>
+            <Route element={<NavBarWrapper />}>
               <Route
                 exact
                 path="/"
@@ -50,6 +54,7 @@ const App = () => {
               <Route exact path="/forgotpassword" element={<ForgotPassword />} />
               <Route exact path="/signUp" element={<SignUp />} />
               <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
+              <Route exact path="/awaitConfirmation" element={<AwaitConfirmation redirectPath="/" />} />
               <Route
                 exact
                 path="/notification-sandbox"
@@ -64,7 +69,7 @@ const App = () => {
                   <ProtectedRoute
                     Component={Catalog}
                     redirectPath="/login"
-                    roles={[ADMIN_ROLE, USER_ROLE]}
+                    roles={[ADMIN_ROLE]}
                   />
                 }
               />
@@ -80,10 +85,17 @@ const App = () => {
                 }
               />
               <Route exact path="/playground" element={<Playground />} />
-              <Route exact path="/planner" element={<Planner />} />
+              <Route exact path="/planner" element={
+                  <ProtectedRoute
+                    Component={Planner}
+                    redirectPath="/login"
+                    roles={[ADMIN_ROLE]}
+                  />
+                } />
             </Route>
           </Routes>
         </Router>
+        </AuthContextProvider>
       </CookiesProvider>
     </ChakraProvider>
   );
