@@ -6,7 +6,7 @@ import { Grid } from '@chakra-ui/react';
 const Events = ({ eventData, location }) => {
   const eventDataWithBreaks = [];
   if (eventData.length == 1) {
-    eventData.push(eventData);
+    eventDataWithBreaks.push(eventData[0]);
   }
   for (let i = 0; i < eventData.length - 1; i++) {
     const currentEvent = eventData[i];
@@ -19,9 +19,10 @@ const Events = ({ eventData, location }) => {
         title: 'Break / Team Time',
         location: 'N/A',
       });
-      eventDataWithBreaks.push(nextEvent);
     }
+    eventDataWithBreaks.push(nextEvent);
   }
+  // eventDataWithBreaks.push(eventData[eventData.length - 1]);
   return (
     <Grid gap={3}>
       {eventDataWithBreaks.map(item => (
