@@ -5,6 +5,9 @@ import { Grid } from '@chakra-ui/react';
 
 const Events = ({ eventData, location }) => {
   const eventDataWithBreaks = [];
+  if (eventData.length == 1) {
+    eventData.push(eventData);
+  }
   for (let i = 0; i < eventData.length - 1; i++) {
     const currentEvent = eventData[i];
     const nextEvent = eventData[i + 1];
