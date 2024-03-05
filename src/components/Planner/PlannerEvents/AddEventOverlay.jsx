@@ -1,19 +1,41 @@
 import { Stack, Text, Button } from '@chakra-ui/react';
 // import s from '../PlannerLayout.module.css';
 import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
+import { NPOBackend } from '../../../utils/auth_utils';
+import { useEffect, useState, useContext } from 'react';
+import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
 
 // eslint-disable-next-line react/prop-types
-const AddEventOverlay = ({ setOverlayIsVisible, dayId }) => {
+const AddEventOverlay = ({ setOverlayIsVisible }) => {
+  const { dayId } = useContext(DayIdContext);
+  const [datePart, setDatePart] = useState('');
+  const [locationPart, setLocationPart] = useState('');
+
+
+  useEffect(() => {
+    const getDayData = async () => {
+      try {
+        const response = await NPOBackend.get(`/day/${dayId}`);
+        const [locationPart] = response.data[0].location.split('T');
+        setLocationPart(locationPart);
+        const [datePart] = response.data[0].eventDate.split('T');
+        setDatePart(datePart);
+        //console.log(response.data)
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getDayData();
+  }, [dayId]);
   return (
-    // <div id={s['add-event-overlay']}>
     <div>
       <Text fontSize="30px" marginBottom="1rem">
-        MM/DD/YYYY | Location
+        {datePart} | {locationPart}
       </Text>
       {/* <div className={s['add-event-container']}> */}
       <div>
         <div>
-          <AddEventToPublishedScheduleForm dayId={dayId}/>
+          <AddEventToPublishedScheduleForm/>
           {/* <Text fontSize="1.25rem">Event Information</Text> */}
         </div>  
         <Stack spacing={2} justifyContent="right" direction="row">

@@ -49,16 +49,17 @@ import {
           let response;
 
           response = await NPOBackend.post(`/catalog`, {
-            host: host,
-            title: title,
+            host,
+            title,
             eventType,
             subject,
-            description: description,
-            year: year,
+            description,
+            year,
           });
           const catalogEventId = response.data.id
+          console.log(catalogEventId);
 
-          const dayInfo = await NPOBackend.get(`/day/${dayId}`);
+          //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
 
               // Format the start time and end time to remove the date component
           const formattedStartTime = new Date(startTime).toISOString().split('T')[1].slice(0, -1);
@@ -67,7 +68,7 @@ import {
           // Send a POST request to the appropriate backend route
           const response2 = await NPOBackend.post('/published-schedule', {
             eventId: catalogEventId,
-            dayId: dayInfo['data'][0].id,
+            dayId: dayId,
             confirmed,
             startTime: formattedStartTime,
             endTime: formattedEndTime,
@@ -82,6 +83,7 @@ import {
 
       
       return (
+        console.log(),
         <Box p="2vw">
           <form onSubmit={handleSubmit(data => submitData(data))}>
   
