@@ -15,7 +15,7 @@ const userIsAuthenticated = async (roles, cookies) => {
     const loggedIn = await NPOBackend.get(`/auth/verifyToken/${accessToken}`);
 
     return {
-      authenticated: roles.includes(cookies.get(cookieKeys.ROLE)) && loggedIn.status === 200,
+      authenticated: roles.includes(cookies.get(cookieKeys.ROLE)) && loggedIn.status === 200 && cookies.get(cookieKeys.APPROVED),
       currentUser,
     };
   } catch (err) {

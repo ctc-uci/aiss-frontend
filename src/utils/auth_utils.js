@@ -108,14 +108,14 @@ const refreshToken = async () => {
  * @param {string} password
  */
 
-const createUserInDB = async (email, id, type, signUpWithGoogle, password = null) => {
+const createUserInDB = async (email, id, type, signUpWithGoogle, password = null, firstName, lastName) => {
   try {
     if (signUpWithGoogle) {
-      await NPOBackend.post('/users/create', { email, id, type, approved: false });
+      await NPOBackend.post('/users/create', { email, id, type, approved: false, approvedOn: (new Date()).getDate(), firstName, lastName });
       //old b
       // await NPOBackend.post('/users/', { email, userId, role, registered: false });
     } else {
-      await NPOBackend.post('/users/create', { email, id, type, approved: false });
+      await NPOBackend.post('/users/create', { email, id, type, approved: false, approvedOn: new Date(), firstName, lastName });
       // await NPOBackend.post('/users/', { email, userId, role, registered: true });
     }
   } catch (err) {
@@ -150,6 +150,8 @@ const signInWithGoogle = async (newUserRedirectPath, defaultRedirectPath, naviga
   } else {
     const user = await NPOBackend.get(`/users/${auth.currentUser.uid}`);
     cookies.set(cookieKeys.ROLE, user.data.user.role, cookieConfig);
+    cookies.set(cookieKeys.APPROVED, user.data.user.approved, cookieConfig);
+
     if (!user.data.user.registered) {
       navigate(newUserRedirectPath);
     } else {
@@ -189,12 +191,14 @@ const logInWithEmailAndPassword = async (email, password, redirectPath, navigate
 
   //GET req to NPOBackend based on user identity from firebase
   const user = await NPOBackend.get(`/users/${auth.currentUser.uid}`);
-
   //if approved status is false, tell user to wait for approval
   if (!user.data[0].approved) {
     throw new Error('Your account is currently under review. Please wait for approval.');
-  }
+  } 
+
   cookies.set(cookieKeys.ROLE, user.data[0].type, cookieConfig);
+  cookies.set(cookieKeys.APPROVED, user.data[0].approved, cookieConfig);
+
   navigate(redirectPath);
 };
 
@@ -216,10 +220,10 @@ const createUserInFirebase = async (email, password) => {
  * @param {string} role
  * @returns A UserCredential object from firebase
  */
-const createUser = async (email, password, role) => {
+const createUser = async (email, password, role, firstName, lastName) => {
   const user = await createUserInFirebase(email, password);
   //when the user creates an acc add row to the users table where approved = false
-  await createUserInDB(email, user.uid, role, false, password);
+  await createUserInDB(email, user.uid, role, false, password, firstName, lastName);
   sendEmailVerification(user);
 };
 
@@ -231,9 +235,13 @@ const createUser = async (email, password, role) => {
  * @param {hook} navigate An instance of the useNavigate hook from react-router-dom
  * @param {string} redirectPath path to redirect users once logged in
  */
-const registerWithEmailAndPassword = async (email, password, role, navigate, redirectPath) => {
-  await createUser(email, password, role);
+const registerWithEmailAndPassword = async (email, password, role, navigate, redirectPath, firstName, lastName) => {
+  await createUser(email, password, role, firstName, lastName);
+  // try logging out here
+  // await signOut(auth);
+  // clearCookies(document.cookie);
   navigate(redirectPath);
+  // window.location.reload(true);
 };
 
 /**
@@ -248,11 +256,11 @@ const sendPasswordReset = async email => {
  * Sends password reset to new account created with stated email
  * @param {string} email The email to create an account with
  */
-const sendInviteLink = async (email, role) => {
+const sendInviteLink = async (email, role, firstName, lastName) => {
   // generate a random password (not going to be used as new account will reset password)
   const randomPassword = Math.random().toString(36).slice(-8);
   const user = await createUserInFirebase(email, randomPassword);
-  createUserInDB(email, user.uid, role, false, randomPassword);
+  createUserInDB(email, user.uid, role, false, randomPassword, firstName, lastName);
   sendPasswordReset(email);
 };
 
