@@ -32,10 +32,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+console.log({auth});
 
 // TEMP: Make sure to remove
 const NPOBackend = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: import.meta.env.VITE_BACKEND_HOST,
   withCredentials: true,
 });
 
