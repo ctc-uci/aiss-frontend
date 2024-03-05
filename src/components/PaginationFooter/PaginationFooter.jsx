@@ -33,12 +33,13 @@ const PaginationFooter = ({ setData, table, searchTerm, selectedFilters, isModif
           params: params
         });
         const { count, events: tableData } = data;
+        console.log(count, tableData)
 
-        setData(tableData); // data on the page
-        setDataCount(count[0].count); // total number of data across all pages
+        setData(data); // data on the page
+        setDataCount(data.length); // total number of data across all pages
 
         const start = (currentPage - 1) * rowsPerPage + 1;
-        setRowRangeString(`${start} - ${start + tableData.length - 1}`); // range of data on the page
+        setRowRangeString(`${start} - ${start + data.length - 1}`); // range of data on the page
       };
       refreshData();
     }, [currentPage, rowsPerPage, setData, table, searchTerm, selectedFilters, isModified]);
