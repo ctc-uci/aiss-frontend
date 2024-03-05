@@ -15,26 +15,29 @@ import PublishedSchedule from './pages/PublishedSchedule/PublishedSchedule';
 import Playground from './pages/Playground/Playground';
 import Planner from './pages/Planner/Planner';
 import Navbar from './components/Navbar/Navbar';
-import { auth, getCurrentUser } from './utils/auth_utils';
 import NotificationSandbox from './pages/NotificationSandbox/NotificationSandbox';
+import { AuthContextProvider, useAuthContext } from './common/AuthContext';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
-const currentUser = getCurrentUser(auth);
-console.log(currentUser);
 
 const App = () => {
-  const NavBarWrapper = () => (
-    <>
-      <Navbar />
-      <Outlet />
-    </>
-  );
+  const NavBarWrapper = () => {
+    const { currentUser } = useAuthContext();
+    return (
+      <>
+        <Navbar hasLoaded={currentUser != null} isAdmin={currentUser?.type === ADMIN_ROLE}/>
+        <Outlet />
+      </>
+    );
+  };
+
   return (
     <ChakraProvider>
       <CookiesProvider>
+      <AuthContextProvider>
         <Router>
           <Routes>
-            <Route element={currentUser ? <NavBarWrapper /> : null}>
+            <Route element={<NavBarWrapper />}>
               <Route
                 exact
                 path="/"
@@ -66,7 +69,7 @@ const App = () => {
                   <ProtectedRoute
                     Component={Catalog}
                     redirectPath="/login"
-                    roles={[ADMIN_ROLE, USER_ROLE]}
+                    roles={[ADMIN_ROLE]}
                   />
                 }
               />
@@ -82,10 +85,17 @@ const App = () => {
                 }
               />
               <Route exact path="/playground" element={<Playground />} />
-              <Route exact path="/planner" element={<Planner />} />
+              <Route exact path="/planner" element={
+                  <ProtectedRoute
+                    Component={Planner}
+                    redirectPath="/login"
+                    roles={[ADMIN_ROLE]}
+                  />
+                } />
             </Route>
           </Routes>
         </Router>
+        </AuthContextProvider>
       </CookiesProvider>
     </ChakraProvider>
   );

@@ -1,11 +1,15 @@
 import { NPOBackend } from '../../utils/auth_utils.js';
 import PublishedScheduleTable from '../../components/Events/PublishedScheduleTable.jsx';
+import AUTH_ROLES from '../../utils/auth_config.js';
+import { useAuthContext } from '../../common/AuthContext.jsx';
 
 import { useEffect, useState } from 'react';
+const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 import { Box, Select, Text } from '@chakra-ui/react';
 
 const PublishedSchedule = () => {
   // get data from database
+  const {currentUser} = useAuthContext();
   const [allSeasons, setAllSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState('');
 
@@ -30,6 +34,9 @@ const PublishedSchedule = () => {
   useEffect(() => {
     const renderTable = async () => {
       const { data } = await NPOBackend.get('/published-schedule/all-seasons');
+    
+      setSelectedSeason(currentUser.type === USER_ROLE ? data[0] : ''); // We assume the current season is the first one in the list
+
       const index = data.indexOf(curSeason);
       if (index !== -1) {
         data.splice(index, 1);
@@ -44,10 +51,12 @@ const PublishedSchedule = () => {
           return seasonOrder.indexOf(a.split(' ')[0]) - seasonOrder.indexOf(b.split(' ')[0]);
         }
       });
+
       setAllSeasons(data);
+
     };
-    renderTable();
-  }, []);
+    renderTable();    
+  }, [currentUser]);
 
   const curSeason = getTodaySeason();
 
@@ -71,11 +80,10 @@ const PublishedSchedule = () => {
         onChange={() => setSelectedSeason(event.target.value)}
         width="23%"
       >
-        {allSeasons.map(item => (
-          <option key={item} value={item}>
-            {item}
-          </option>
-        ))}
+        { currentUser.type === ADMIN_ROLE ?
+          allSeasons.map(item => (
+            <option key={item} value={item}>{item}</option>
+          )) : null }
       </Select>
 
       {/* tables for each season */}
