@@ -1,5 +1,5 @@
-import PendingAccounts from "./PendingAccounts";
-import ApprovedAccounts from "./ApprovedAccounts";
+import PendingAccounts from "../../components/Accounts/PendingAccounts";
+import ApprovedAccounts from "../../components/Accounts/ApprovedAccounts";
 import { Box, Heading, Tabs, TabList, TabPanels, Tab, TabPanel} from '@chakra-ui/react'
 
 const Accounts = () => {
