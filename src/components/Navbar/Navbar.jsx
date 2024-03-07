@@ -51,6 +51,7 @@ const Navbar = ({ hasLoaded, isAdmin }) => {
             <Image src="../../../aiss-logo.png" marginRight={'48px'}></Image>
             {makeNavTabs('Schedule', '/publishedSchedule')}
             {makeNavTabs('Catalog', '/catalog')}
+            {makeNavTabs('Accounts', '/accounts')}
           </Flex>
         </HStack>
         <Flex alignSelf={'right'} marginLeft={'auto'}>
