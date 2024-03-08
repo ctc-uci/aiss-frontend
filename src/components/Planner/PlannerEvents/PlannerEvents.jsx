@@ -1,8 +1,11 @@
 import s from '../PlannerLayout.module.css';
 import {
+  Flex,
+  IconButton,
   TableContainer,
   Table,
   Thead,
+  Heading,
   Tr,
   Th,
   Tbody,
@@ -13,21 +16,77 @@ import {
   InputLeftElement,
   Stack,
   Select,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormLabel,
+  Textarea,
+  FormControl,
 } from '@chakra-ui/react';
-import { Search2Icon, AddIcon } from '@chakra-ui/icons';
+import { Search2Icon, AddIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import AddEventOverlay from './AddEventOverlay';
 
 const PlannerEvents = () => {
   const [overlayIsVisible, setOverlayIsVisible] = useState(false);
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onOpenEditModal,
+    onClose: onCloseEditModal,
+  } = useDisclosure();
 
   return (
     <div id={s['planner-events-container']}>
+      <Modal isOpen={isEditModalOpen} onClose={onCloseEditModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Day Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Date:</FormLabel>
+              <Input type="date" />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Location:</FormLabel>
+              <Input />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Details:</FormLabel>
+              <Textarea />
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            {/* <Button colorScheme='blue' mr={3} onClick={onClose}>
+              Close
+            </Button> */}
+            <Button variant="ghost">Secondary Action</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       {overlayIsVisible && <AddEventOverlay setOverlayIsVisible={setOverlayIsVisible} />}
       <div id={s['planner-browse']}>
-        <Text fontSize="1.875rem" marginBottom="1rem">
-          Add Event to Day
-        </Text>
+        <Flex p="0" m="0" alignItems="center" mb="1rem">
+          <Heading as="h2" size="lg">
+            hello!
+          </Heading>
+          <IconButton
+            icon={<InfoOutlineIcon />}
+            onClick={onOpenEditModal}
+            background="transparent"
+            _hover={{
+              background: 'transparent',
+            }}
+          />
+        </Flex>
         <Button
           onClick={() => {
             setOverlayIsVisible(true);
