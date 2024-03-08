@@ -1,35 +1,35 @@
-import s from '../PlannerLayout.module.css';
+import { AddIcon, InfoOutlineIcon, Search2Icon } from '@chakra-ui/icons';
 import {
-  Flex,
-  IconButton,
-  TableContainer,
-  Table,
-  Thead,
-  Heading,
-  Tr,
-  Th,
-  Tbody,
-  Text,
   Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  IconButton,
   Input,
   InputGroup,
   InputLeftElement,
-  Stack,
-  Select,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
-  FormLabel,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
+  Stack,
+  Table,
+  TableContainer,
+  Tbody,
+  Text,
   Textarea,
-  FormControl,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { Search2Icon, AddIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
+import s from '../PlannerLayout.module.css';
 import AddEventOverlay from './AddEventOverlay';
 
 const PlannerEvents = () => {
