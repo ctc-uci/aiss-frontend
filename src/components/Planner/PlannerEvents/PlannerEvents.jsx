@@ -18,7 +18,7 @@ const PlannerEvents = () => {
     <div id={s['planner-events-container']}>
       {overlayIsVisible && <AddEventOverlay setOverlayIsVisible={handleCreateEventClick}/>}
       <div id={s['planner-browse']}>
-        {isVisible && ( 
+        {isVisible && (
           <>
             <Text fontSize="1.875rem" marginBottom="1rem">
               Add Event to Day
@@ -41,10 +41,10 @@ const PlannerEvents = () => {
               </Text>
               <AddIcon color="white" />
             </Button>
+            <hr className={s['header-divider']} />
+            <Catalog onDayPlanner={true}/>
           </>
         )}
-        <Catalog />
-        <hr className={s['header-divider']} />
       </div>
     </div>
   );

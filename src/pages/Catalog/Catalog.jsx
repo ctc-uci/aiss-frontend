@@ -1,57 +1,61 @@
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  Badge,
+  Text,
   Input,
-  Select,
   Flex,
   Box,
-  Center,
   IconButton,
   useDisclosure,
-  Button
+  Container,
+  Link,
+  TableContainer,
+  InputGroup,
+  InputLeftElement,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import PaginationFooter from '../../components/PaginationFooter/PaginationFooter';
-import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
-import DeleteEventModal from '../../components/DeleteEventModal/DeleteEventModal';
-import CreateEventFormModal from '../../components/CreateEventForm/CreateEventFormModal';
+import { AddIcon, SearchIcon } from '@chakra-ui/icons';
+import { useState, useEffect, useCallback } from 'react';
+import { NPOBackend } from '../../utils/auth_utils';
+import DeleteEventModal from '../../components/Catalog/DeleteEventModal/DeleteEventModal';
+import CreateEventFormModal from '../../components/Catalog/CreateEventForm/CreateEventFormModal';
+import PaginationFooter from '../../components/Catalog/PaginationFooter/PaginationFooter';
+import CatalogTable from '../../components/Catalog/CatalogTable';
+import SearchFilter from '../../components/Catalog/SearchFilter/SearchFilter';
+import useSearchFilters from '../../components/Catalog/SearchFilter/useSearchFilters';
+import { usePagination } from '@ajna/pagination';
+import {
+  seasonOptions,
+  yearOptions,
+  subjectOptions,
+  eventOptions,
+} from '../../components/Catalog/SearchFilter/filterOptions';
+import PropTypes from 'prop-types';
 
-const subjectsOptions = [
-  'life skills',
-  'science',
-  'technology',
-  'engineering',
-  'math',
-  'college readiness',
-];
-const eventOptions = ['guest speaker', 'study-trip', 'workshop', 'other'];
-const yearOptions = ['junior', 'senior', 'both'];
-const seasonOptions = ['fall', 'spring', 'summer', 'winter'];
-
-export default function Catalog() {
+export default function Catalog({ onDayPlanner }) {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const { isOpen: isEditFormOpen, onOpen: onEditFormOpen, onClose: onEditFormClose } = useDisclosure();
-  const { isOpen: isCreateFormOpen, onOpen: onCreateFormOpen, onClose: onCreateFormClose } = useDisclosure();
+  const {
+    isOpen: isEditFormOpen,
+    onOpen: onEditFormOpen,
+    onClose: onEditFormClose,
+  } = useDisclosure();
+  const {
+    isOpen: isCreateFormOpen,
+    onOpen: onCreateFormOpen,
+    onClose: onCreateFormClose,
+  } = useDisclosure();
 
   const [tableData, setTableData] = useState([]);
-  const [hoveredRow, setHoveredRow] = useState(null);
+  const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
+  const [totalRowCount, setTotalRowCount] = useState(0);
   const [deleteItemId, setDeleteItemId] = useState(-1);
   const [editData, setEditData] = useState({});
-  const [isModified, setModified] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleRowHover = index => {
-    setHoveredRow(index);
-  };
+  const { filters, clearFilters, filterValues } = useSearchFilters();
+  const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
-  const handleRowLeave = () => {
-    setHoveredRow(null);
-  };
+  const { currentPage, setCurrentPage, pagesCount, offset, pageSize, setPageSize } = usePagination({
+    initialState: { currentPage: 1, pageSize: 10 },
+    pagesCount: Math.ceil(totalRowCount / 10),
+  });
 
   const handleEditForm = data => {
     setEditData(data);
@@ -62,116 +66,168 @@ export default function Catalog() {
     setDeleteItemId(id);
     onDeleteOpen();
   };
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState({
-    subject: '',
-    eventType: '',
-    season: '',
-    year: '',
-  });
 
   const handleSearch = event => {
     console.log('searching for', event.target.value);
     setSearchTerm(event.target.value);
   };
 
-  const handleFilterChange = event => {
-    setSelectedFilters({
-      ...selectedFilters,
-      [event.target.name]: event.target.value,
+  const fetchTableData = useCallback(async () => {
+    console.log('Fetching Catalog');
+
+    const params = {
+      title: searchTerm,
+      limit: pageSize,
+      page: currentPage,
+      ...Object.assign(
+        {},
+        ...Object.entries(filterValues).map(([name, selected]) => {
+          return { [name]: selected.join(',') };
+        }),
+      ),
+    };
+
+    const { data } = await NPOBackend.get('/catalog', {
+      params: params,
     });
-  };
+    const { count, events: tableData } = data;
+
+    setTableData(tableData);
+    setTotalRowCount(Number(count[0].count));
+  }, [searchTerm, pageSize, currentPage, filterValues]);
+
+  // Fetch data on component mount and pagination update
+  useEffect(() => {
+    fetchTableData();
+  }, [fetchTableData]);
+
+  // Fetch data when should revalidate (e.g. creating or editing an event)
+  useEffect(() => {
+    if (dataShouldRevalidate) {
+      fetchTableData();
+      setDataShouldRevalidate(false);
+    }
+  }, [dataShouldRevalidate, fetchTableData]);
+
+  // Reset pagination on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterValues, setCurrentPage]);
 
   return (
-    <div>
-      <Button onClick={onCreateFormOpen}>Create</Button>
-      <Center>
-        <Box minW="950px" mt="8">
-          <h1 style={{ fontSize: 35}}>Event Catalog</h1>
-          <Flex gap="4" mt="4">
-            <Input placeholder="Search..." size="md" w="35%" bgColor="gray.200" className="searchBar" onChange={handleSearch} />
-            <Flex gap="4" ml="auto">
-              <Select placeholder="Subject" className="dropDown" bgColor="gray.200" name="subject" onChange={handleFilterChange}>
-                {subjectsOptions.map((subject, index) => (
-                  <option key={index} value={subject}>
-                    {subject}
-                  </option>
-                ))}
-              </Select>
-              <Select placeholder="Event Type" className="dropDown" bgColor="gray.200" name="eventType" onChange={handleFilterChange}>
-                {eventOptions.map((subject, index) => (
-                  <option key={index} value={subject}>
-                    {subject}
-                  </option>
-                ))}
-              </Select>
-              <Select placeholder="Year" className="dropDown" bgColor="gray.200" name="year" onChange={handleFilterChange}>
-                {yearOptions.map((subject, index) => (
-                  <option key={index} value={subject}>
-                    {subject}
-                  </option>
-                ))}
-              </Select>
-              <Select placeholder="Season" className="dropDown" bgColor="gray.200" name="season" onChange={handleFilterChange}>
-                {seasonOptions.map((subject, index) => (
-                  <option key={index} value={subject}>
-                    {subject}
-                  </option>
-                ))}
-              </Select>
-            </Flex>
+    <Container maxW="none" m="0" p="0">
+      { !onDayPlanner &&
+        <IconButton
+          bgColor="blue.700"
+          color="gray.50"
+          borderRadius="10rem"
+          position="fixed"
+          bottom="2rem"
+          right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
+          fontSize="0.75rem"
+          w="3rem"
+          h="3rem"
+          _hover={{ bgColor: 'blue.500' }}
+          onClick={onCreateFormOpen}
+          icon={<AddIcon />}
+        >
+          Create
+        </IconButton>
+      }
+      <Box pt="1rem" w="100%" px={{ base: '1rem', lg: '4rem' }} maxW="1440px" mx="auto">
+        <Text as="h1" fontSize="xx-large" fontWeight="bold">
+          {!onDayPlanner ? 'Event Catalog' : 'Add Event From Catalog'}
+        </Text>
+        <Flex gap="4" mt="4">
+          <InputGroup size="sm" maxW="sm">
+            <InputLeftElement>
+              <SearchIcon
+                position="absolute"
+                left="1rem"
+                top="50%"
+                transform="translateY(-50%)"
+                color="gray.600"
+                zIndex="10"
+              />
+            </InputLeftElement>
+            <Input
+              placeholder="Search..."
+              bgColor="blackAlpha.200"
+              borderRadius="6px"
+              pl="2.5rem"
+              className="searchBar"
+              onChange={handleSearch}
+            />
+          </InputGroup>
+          <Flex gap="3" justifyContent="flex-end" w="100%">
+            <SearchFilter name="Season" options={seasonOptions} filter={seasonFilter} />
+            <SearchFilter name="Cohort" options={yearOptions} filter={yearFilter} />
+            <SearchFilter name="Topic" options={subjectOptions} filter={subjectFilter} />
+            <SearchFilter name="Type" options={eventOptions} filter={eventFilter} />
+            <Link
+              fontSize="1rem"
+              mr="2"
+              mt="1"
+              textAlign="right"
+              color="blue.400"
+              whiteSpace="nowrap"
+              onClick={clearFilters}
+            >
+              Clear Filters
+            </Link>
           </Flex>
+        </Flex>
 
-          <TableContainer mt="8" mb = "8" borderRadius="md" overflowX="auto">
-            <Table variant="simple" className="space-table" borderWidth="3px" width="100%">
-              <Thead>
-                <Tr>
-                  <Th textAlign="left">Event</Th>
-                  <Th textAlign="left">Host</Th>
-                  <Th textAlign="left">Tags</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {tableData.map(({ id, host, title, eventType, subject, year, season, description }, index) => (
-                  <Tr key={id} onMouseEnter={() => handleRowHover(index)} onMouseLeave={handleRowLeave}>
-                    <Td textAlign="left">{title}</Td>
-                    <Td textAlign="left">{host}</Td>
-                    <Td textAlign="left">
-                      <Badge colorScheme="orange" mr={2}>
-                        {eventType}
-                      </Badge>
-                      <Badge colorScheme="cyan" mr={2}>
-                        {subject}
-                      </Badge>
-                      <Badge colorScheme="purple" mr={2}>
-                        {season}
-                      </Badge>
-                      <Badge colorScheme="red" mr={2}>
-                        {year}
-                      </Badge>
-                    </Td>
-                    <Td>
-                      {hoveredRow === index && (
-                        <>
-                          <IconButton
-                            icon={<EditIcon />}
-                            onClick={() => handleEditForm({id, title, host, year, eventType, subject, description})}
-                          />
-                          <IconButton icon={<DeleteIcon />} onClick={() => handleDeleteClick(id)} />
-                        </>
-                      )}
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-            <PaginationFooter table="catalog" setData={setTableData} searchTerm={searchTerm} selectedFilters={selectedFilters} isModified={isModified}/>
-          </TableContainer>
-          <CreateEventFormModal isOpen={isCreateFormOpen} onClose={onCreateFormClose} setModified={setModified} />
-          <CreateEventFormModal isOpen={isEditFormOpen} onClose={onEditFormClose} eventData={editData} setModified={setModified} />
-          <DeleteEventModal isOpen={isDeleteOpen} onClose={onDeleteClose} deleteItemId={deleteItemId} setModified={setModified} />
-        </Box>
-      </Center>
-    </div>
+        <TableContainer
+          mt="8"
+          mb="8"
+          px="1rem"
+          overflow="hidden"
+          borderWidth="1px"
+          borderRadius="12px"
+        >
+          <CatalogTable
+            tableData={tableData}
+            handleEditForm={handleEditForm}
+            handleDeleteClick={handleDeleteClick}
+            onDayPlanner={onDayPlanner}
+          />
+          <PaginationFooter
+            pagesCount={pagesCount}
+            totalRowCount={totalRowCount}
+            setPageSize={setPageSize}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            rangeString={`${offset + 1} - ${offset + tableData.length}`}
+          />
+        </TableContainer>
+
+        <CreateEventFormModal
+          isOpen={isCreateFormOpen}
+          onClose={onCreateFormClose}
+          setDataShouldRevalidate={setDataShouldRevalidate}
+        />
+        <CreateEventFormModal
+          isOpen={isEditFormOpen}
+          onClose={onEditFormClose}
+          eventData={editData}
+          setDataShouldRevalidate={setDataShouldRevalidate}
+        />
+        <DeleteEventModal
+          isOpen={isDeleteOpen}
+          onClose={onDeleteClose}
+          deleteItemId={deleteItemId}
+          setDataShouldRevalidate={setDataShouldRevalidate}
+        />
+      </Box>
+    </Container>
   );
 }
+
+Catalog.propTypes = {
+  onDayPlanner: PropTypes.bool
+};
+
+Catalog.defaultProps = {
+  onDayPlanner: false
+};

@@ -13,7 +13,7 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { NPOBackend } from '../../utils/auth_utils';
+import { NPOBackend } from '../../../utils/auth_utils';
 
 const schema = yup.object({
   // id: yup.string().required('ID required').max(10, 'ID exceeds 10 character limit'),
@@ -28,7 +28,7 @@ const schema = yup.object({
   year: yup.string().required('Year required'),
 });
 
-const CreateEventForm = ({ eventData, setModified, closeModal }) => {
+const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => {
   const toast = useToast();
   const {
     handleSubmit,
@@ -54,10 +54,10 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           title: title,
           eventType: eventType,
           subject: subject,
-          description: description, 
+          description: description,
           year: year,
         });
-        id = response.data[0].id
+        id = response.data[0].id;
       } else {
         response = await NPOBackend.post(`/catalog`, {
           host: host,
@@ -67,6 +67,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           description: description,
           year: year,
         });
+        id = response.data.id;
       }
       reset();
       toast({
@@ -81,11 +82,8 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
         duration: 3000,
         isClosable: true,
       });
-      if (setModified) {
-        setModified(true);
-      }
+      setDataShouldRevalidate(true);
       closeModal();
-
     } catch (error) {
       toast({
         title: `Error: ${error}`,
@@ -166,10 +164,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.description} width="47%">
               <FormLabel fontWeight="bold">Description</FormLabel>
-              <Input
-                {...register('description')}
-                border="1px solid"
-              />
+              <Input {...register('description')} border="1px solid" />
               <FormErrorMessage>
                 {errors.description && errors.description.message}
               </FormErrorMessage>
@@ -180,7 +175,7 @@ const CreateEventForm = ({ eventData, setModified, closeModal }) => {
           <Box mb="4vh">
             <FormControl width="47%">
               <FormLabel fontWeight="bold">Year</FormLabel>
-              <Select {...register('year')} >
+              <Select {...register('year')}>
                 <option value="junior">Junior</option>
                 <option value="senior">Senior</option>
                 <option value="both">Both</option>
@@ -201,19 +196,20 @@ CreateEventForm.propTypes = {
     id: PropTypes.number,
     title: PropTypes.string,
     host: PropTypes.string,
-    year: PropTypes.number,
+    year: PropTypes.string,
     eventType: PropTypes.string,
     subject: PropTypes.string,
-    description: PropTypes.string
+    description: PropTypes.string,
   }),
-  setModified: PropTypes.func,
-  closeModal:PropTypes.func,
-  dayId: PropTypes.number,
-}
+  setDataShouldRevalidate: PropTypes.func,
+  closeModal: PropTypes.func,
+};
+//   dayId: PropTypes.number,
+
 
 CreateEventForm.defaultProps = {
   eventData: undefined,
-  setModified: undefined,
+  setDataShouldRevalidate: undefined,
   closeModal: () => {},
 };
 
