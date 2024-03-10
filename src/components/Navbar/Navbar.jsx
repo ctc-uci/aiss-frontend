@@ -48,7 +48,7 @@ const Navbar = ({ hasLoaded, isAdmin }) => {
       >
         <HStack>
           <Flex align={'center'}>
-            <Image src="src/Logo.png" marginRight={'48px'}></Image>
+            <Image src="src/Logo.svg" marginRight={'48px'}></Image>
             {makeNavTabs('Schedule', '/publishedSchedule')}
             {makeNavTabs('Catalog', '/catalog')}
           </Flex>
