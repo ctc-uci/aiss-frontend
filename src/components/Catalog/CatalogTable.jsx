@@ -1,9 +1,9 @@
 import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody } from '@chakra-ui/react';
-import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import { /*EditIcon,*/ DeleteIcon } from '@chakra-ui/icons';  // add 'EditIcon' to reinstate edit button.
 import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
 
-const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
+const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
   return (
     <Table variant="simple" className={s['catalog-table']} borderWidth="0" width="100%" px="1rem">
       <Thead>
@@ -15,7 +15,7 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
         </Tr>
       </Thead>
       <Tbody>
-        {tableData.map(({ id, host, title, eventType, subject, year, season, description }) => (
+        {tableData.map(({ id, host, title, eventType, subject, year, season/*, description*/ }) => (
           <Tr key={id}>
             <Td textAlign="left" py="1.5rem">
               {title}
@@ -80,7 +80,7 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
               </Container>
             </Td>
             <Td>
-              <IconButton
+              {/* <IconButton
                 color="gray.400"
                 backgroundColor="transparent"
                 p="0.5rem"
@@ -98,7 +98,7 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
                     description,
                   })
                 }
-              />
+              /> */}
               <IconButton
                 color="gray.400"
                 backgroundColor="transparent"
