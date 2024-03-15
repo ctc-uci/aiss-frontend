@@ -4,7 +4,7 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { LuPen } from 'react-icons/lu';
 import DeleteDayModal from './DeleteDayModal/DeleteDayModal';
 
-const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes }) => {
+const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes, setRevalidateData }) => {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
   const handleDeleteClick = () => {
@@ -49,6 +49,7 @@ const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes 
           isOpen={isDeleteOpen}
           onClose={onDeleteClose}
           deleteItemId={dayId}
+          setRevalidateData={setRevalidateData}
         />
     </Box>
   );
@@ -62,6 +63,7 @@ EventInfo.propTypes = {
   endTime: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
   notes: PropTypes.string,
+  setRevalidateData: PropTypes.func.isRequired,
 };
 
 export default EventInfo;

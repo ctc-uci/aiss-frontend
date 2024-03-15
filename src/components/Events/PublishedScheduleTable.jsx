@@ -9,6 +9,7 @@ import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box } from '@chakra-ui
 
 const PublishedScheduleTable = ({ season }) => {
   const [eventsInDay, setEventsInDay] = useState([]);
+  const [revalidateData, setRevalidateData] = useState(false);
   const seasonType = season.split(' ')[0];
   const seasonYear = season.split(' ')[1];
 
@@ -17,10 +18,10 @@ const PublishedScheduleTable = ({ season }) => {
       const { data } = await NPOBackend.get(
         `/published-schedule/season?season=${seasonType}&year=${seasonYear}`,
       );
-      setEventsInDay(data);
+      setEventsInDay(data); 
     };
     renderTable();
-  }, [seasonType, seasonYear]);
+  }, [seasonType, seasonYear, revalidateData]);
 
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -54,13 +55,14 @@ const PublishedScheduleTable = ({ season }) => {
               <Tr key={item.day.id} verticalAlign={'top'}>
                 <Td>
                   <EventInfo
-
+                    dayId={item.day.id}
                     eventDate={getUTCDate(item.day.eventDate).toLocaleDateString('en-US')}
                     day={dayNames[getUTCDate(item.day.eventDate).getDay()]}
                     startTime={formatDate(item.day.startTime)}
                     endTime={formatDate(item.day.endTime)}
                     location={item.day.location}
                     notes={item.day.notes}
+                    setRevalidateData={setRevalidateData}
                   />
                 </Td>
 

@@ -12,10 +12,10 @@ import {
 import { NPOBackend } from '../../../utils/auth_utils';
 
 //delete day when delete button is clicked on ps
-const DeleteDayModal = ({ isOpen, onClose, deleteItemId }) => {
-  const handleConfirmDelete = async idToDelete => {
+const DeleteDayModal = ({ isOpen, onClose, deleteItemId, setRevalidateData }) => {
+  const handleConfirmDelete = async () => {
     try {
-      await NPOBackend.delete(`/day/${idToDelete}`);
+      await NPOBackend.delete(`/day/${deleteItemId}`).then(() => {setRevalidateData(toggle => !toggle)});
       onClose();
     } catch (error) {
       console.error(error);
@@ -31,7 +31,7 @@ const DeleteDayModal = ({ isOpen, onClose, deleteItemId }) => {
         <ModalBody>Are you sure? You can&apos;t undo this action afterwards.</ModalBody>
         <ModalFooter>
           <Button onClick={onClose} mr={3} >Cancel</Button>
-          <Button onClick={() => handleConfirmDelete(deleteItemId)} colorScheme='red'>Delete</Button>
+          <Button onClick={() => handleConfirmDelete()} colorScheme='red'>Delete</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
@@ -42,6 +42,7 @@ DeleteDayModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   deleteItemId: PropTypes.number.isRequired,
+  setRevalidateData: PropTypes.func.isRequired
 };
 
 export default DeleteDayModal;
