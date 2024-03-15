@@ -74,7 +74,7 @@ export default function Catalog({ onDayPlanner }) {
 
   const fetchTableData = useCallback(async () => {
     console.log('Fetching Catalog');
-
+  
     const params = {
       title: searchTerm,
       limit: pageSize,
@@ -86,16 +86,28 @@ export default function Catalog({ onDayPlanner }) {
         }),
       ),
     };
+  
+    try {
+      const { data } = await NPOBackend.get('/catalog', {
+        params: params,
+      });
+      console.log(data)
+      // const { count, events: tableData } = data;
+      // console.log(tableData)
+    
 
-    const { data } = await NPOBackend.get('/catalog', {
-      params: params,
-    });
-    const { count, events: tableData } = data;
+      setTableData(data);
+      setTotalRowCount(data.length);
 
-    setTableData(tableData);
-    setTotalRowCount(Number(count[0].count));
+      // console.log('count:', count);
+      // console.log('Invalid count data:', tableData);
+      // console.log('actual data:', data);  
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }, [searchTerm, pageSize, currentPage, filterValues]);
-
+  
   // Fetch data on component mount and pagination update
   useEffect(() => {
     fetchTableData();
@@ -186,20 +198,24 @@ export default function Catalog({ onDayPlanner }) {
           borderWidth="1px"
           borderRadius="12px"
         >
-          <CatalogTable
-            tableData={tableData}
-            handleEditForm={handleEditForm}
-            handleDeleteClick={handleDeleteClick}
-            onDayPlanner={onDayPlanner}
-          />
-          <PaginationFooter
-            pagesCount={pagesCount}
-            totalRowCount={totalRowCount}
-            setPageSize={setPageSize}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            rangeString={`${offset + 1} - ${offset + tableData.length}`}
-          />
+          {tableData && tableData.length > 0 && (
+            <>
+              <CatalogTable
+                tableData={tableData}
+                handleEditForm={handleEditForm}
+                handleDeleteClick={handleDeleteClick}
+                onDayPlanner={onDayPlanner}
+              />
+              <PaginationFooter
+                pagesCount={pagesCount}
+                totalRowCount={totalRowCount}
+                setPageSize={setPageSize}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                rangeString={`${offset + 1} - ${offset + tableData.length}`}
+              />
+            </>
+          )}
         </TableContainer>
 
         <CreateEventFormModal

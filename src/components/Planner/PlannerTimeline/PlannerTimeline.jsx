@@ -5,12 +5,18 @@ import { Badge, Text } from '@chakra-ui/react';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent from '../PlannedEvent';
 import { MINUTES_PER_HOUR } from '../chrono';
+import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
+import { NPOBackend } from '../../../utils/auth_utils';
 
 const PlannerTimeline = () => {
   const { plannedEventsContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+  const { dayId } = useContext(DayIdContext);
 
   useEffect(() => {
+    if (dayId) {
+      fetchDayInfo(dayId);
+    }
     // TODO: receive planned events via props and translate them here
     setPlannedEvents([
       new PlannedEvent(
@@ -41,6 +47,18 @@ const PlannerTimeline = () => {
     // sample-2:  11:00 - 1:00
     // sample-3:  13:30 - 16:00
   }, [setPlannedEvents]);
+
+  const fetchDayInfo = async (id) => {
+    const { data } = await NPOBackend.get(`/day/${id}`);
+    const dayData = data[0];
+
+    console.log(dayData)
+    const formattedDate = dayData.eventDate.split('T')[0];
+    console.log(formattedDate);
+
+    const { psEvents } = await NPOBackend.get((`/published-schedule/date/?date=${formattedDate}`));
+    console.log(psEvents)
+  }
 
   // Memoize function call for time labels to increase efficiency between component re-renders
   const timelineBlocks = useMemo(() => {

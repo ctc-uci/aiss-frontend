@@ -60,6 +60,7 @@ const AddEventToPublishedScheduleForm = () => {
           subject,
           description,
           year,
+          location   
         });
         const catalogEventId = response.data.id
         console.log(catalogEventId);
