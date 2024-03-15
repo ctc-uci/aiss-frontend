@@ -1,9 +1,16 @@
 import PropTypes from 'prop-types';
-import { Box, Text, Grid, IconButton } from '@chakra-ui/react';
+import { Box, Text, Grid, IconButton, useDisclosure } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { LuPen } from 'react-icons/lu';
+import DeleteDayModal from './DeleteDayModal/DeleteDayModal';
 
-const EventInfo = ({ eventDate, day, startTime, endTime, location, notes }) => {
+const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes }) => {
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+
+  const handleDeleteClick = () => {
+    onDeleteOpen();
+  };
+
   return (
     <Box p={10}>
       <Grid gap={7}>
@@ -29,16 +36,26 @@ const EventInfo = ({ eventDate, day, startTime, endTime, location, notes }) => {
           <IconButton bg="white">
             <LuPen color='#A0AEC0'/>
           </IconButton>
-          <IconButton bg="white">
-            <DeleteIcon color='#A0AEC0'/>
-          </IconButton>
+          <IconButton
+                color="white"
+                icon={<DeleteIcon color='#A0AEC0'/>}
+                onClick={() => handleDeleteClick(dayId)}
+              >
+            </IconButton>
+          
         </Grid>
       </Grid>
+      <DeleteDayModal
+          isOpen={isDeleteOpen}
+          onClose={onDeleteClose}
+          deleteItemId={dayId}
+        />
     </Box>
   );
 };
 
 EventInfo.propTypes = {
+  dayId: PropTypes.number.isRequired,
   eventDate: PropTypes.string.isRequired,
   day: PropTypes.string.isRequired,
   startTime: PropTypes.string.isRequired,
