@@ -37,9 +37,6 @@ const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes,
         </Grid>
 
         <Grid alignItems="end" templateColumns="repeat(7, 1fr)">
-          {/* <IconButton bg="white">
-            <LuPen color='#A0AEC0'/>
-          </IconButton> */}
           <IconButton bg="white"
                 color="white"
                 icon={<LuPen color='#A0AEC0'/>}

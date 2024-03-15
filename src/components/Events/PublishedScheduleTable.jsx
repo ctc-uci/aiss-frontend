@@ -18,7 +18,7 @@ const PublishedScheduleTable = ({ season }) => {
       const { data } = await NPOBackend.get(
         `/published-schedule/season?season=${seasonType}&year=${seasonYear}`,
       );
-      setEventsInDay(data); 
+      setEventsInDay(data);
     };
     renderTable();
   }, [seasonType, seasonYear, revalidateData]);

@@ -73,7 +73,7 @@ export default function Catalog() {
 
   const fetchTableData = useCallback(async () => {
     console.log('Fetching Catalog');
-    
+
     const params = {
       title: searchTerm,
       limit: pageSize,
