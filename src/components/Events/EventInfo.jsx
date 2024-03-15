@@ -11,6 +11,10 @@ const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes,
     onDeleteOpen();
   };
 
+  const handleEditClick = () => {
+    // open up modal for planner
+  };
+
   return (
     <Box p={10}>
       <Grid gap={7}>
@@ -33,15 +37,21 @@ const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes,
         </Grid>
 
         <Grid alignItems="end" templateColumns="repeat(7, 1fr)">
-          <IconButton bg="white">
+          {/* <IconButton bg="white">
             <LuPen color='#A0AEC0'/>
+          </IconButton> */}
+          <IconButton bg="white"
+                color="white"
+                icon={<LuPen color='#A0AEC0'/>}
+                onClick={() => handleEditClick(dayId)}
+          >
           </IconButton>
-          <IconButton
+          <IconButton bg="white"
                 color="white"
                 icon={<DeleteIcon color='#A0AEC0'/>}
                 onClick={() => handleDeleteClick(dayId)}
-              >
-            </IconButton>
+          >
+          </IconButton>
           
         </Grid>
       </Grid>

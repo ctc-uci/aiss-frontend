@@ -61,7 +61,7 @@ export default function Catalog() {
     onEditFormOpen();
   };
 
-  const handleDeleteClick = async id => {
+  const handleDeleteClick = id => {
     setDeleteItemId(id);
     onDeleteOpen();
   };
@@ -72,6 +72,8 @@ export default function Catalog() {
   };
 
   const fetchTableData = useCallback(async () => {
+    console.log('Fetching Catalog');
+    
     const params = {
       title: searchTerm,
       limit: pageSize,
