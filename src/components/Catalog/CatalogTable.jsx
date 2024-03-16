@@ -118,7 +118,7 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
 
 CatalogTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.any),
-  handleEditForm: PropTypes.func.isRequired,
+  // handleEditForm: PropTypes.func.isRequired,
   handleDeleteClick: PropTypes.func.isRequired,
 };
 
