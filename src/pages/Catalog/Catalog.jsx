@@ -30,11 +30,11 @@ import {
 
 export default function Catalog() {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const {
-    isOpen: isEditFormOpen,
-    onOpen: onEditFormOpen,
-    onClose: onEditFormClose,
-  } = useDisclosure();
+  // const {
+  //   isOpen: isEditFormOpen,
+  //   onOpen: onEditFormOpen,
+  //   onClose: onEditFormClose,
+  // } = useDisclosure();
   const {
     isOpen: isCreateFormOpen,
     onOpen: onCreateFormOpen,
@@ -45,7 +45,7 @@ export default function Catalog() {
   const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [deleteItemId, setDeleteItemId] = useState(-1);
-  const [editData, setEditData] = useState({});
+  // const [editData, setEditData] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
   const { filters, clearFilters, filterValues } = useSearchFilters();
@@ -56,10 +56,10 @@ export default function Catalog() {
     pagesCount: Math.ceil(totalRowCount / 10),
   });
 
-  const handleEditForm = data => {
-    setEditData(data);
-    onEditFormOpen();
-  };
+  // const handleEditForm = data => {
+  //   setEditData(data);
+  //   onEditFormOpen();
+  // };
 
   const handleDeleteClick = id => {
     setDeleteItemId(id);
@@ -186,7 +186,7 @@ export default function Catalog() {
         >
           <CatalogTable
             tableData={tableData}
-            handleEditForm={handleEditForm}
+            // handleEditForm={handleEditForm}
             handleDeleteClick={handleDeleteClick}
           />
           <PaginationFooter
@@ -204,12 +204,12 @@ export default function Catalog() {
           onClose={onCreateFormClose}
           setDataShouldRevalidate={setDataShouldRevalidate}
         />
-        <CreateEventFormModal
+        {/* <CreateEventFormModal
           isOpen={isEditFormOpen}
           onClose={onEditFormClose}
           eventData={editData}
           setDataShouldRevalidate={setDataShouldRevalidate}
-        />
+        /> */}
         <DeleteEventModal
           isOpen={isDeleteOpen}
           onClose={onDeleteClose}
