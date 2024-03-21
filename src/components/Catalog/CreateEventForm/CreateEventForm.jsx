@@ -46,10 +46,10 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
 
     // make post request to catalog backend route
     try {
-      let response;
-      let id;
+      // let response;
+      // let id;
       if (eventData) {
-        response = await NPOBackend.put(`/catalog/${eventData.id}`, {
+        await NPOBackend.put(`/catalog/${eventData.id}`, {
           host: host,
           title: title,
           eventType: eventType,
@@ -57,9 +57,9 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
           description: description,
           year: year,
         });
-        id = response.data[0].id;
+        // id = response.data[0].id;
       } else {
-        response = await NPOBackend.post(`/catalog`, {
+        await NPOBackend.post(`/catalog`, {
           host: host,
           title: title,
           eventType: eventType,
@@ -67,12 +67,12 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
           description: description,
           year: year,
         });
-        id = response.data.id;
+        // id = response.data.id;
       }
       reset();
       toast({
-        title: 'Event submitted!',
-        description: `Event has been submitted. ID: ${id}`,
+        title: 'Event has been added',
+        // description: `Event has been submitted. ID: ${id}`,
         status: 'success',
         variant: 'subtle',
         position: 'bottom',

@@ -23,6 +23,7 @@ const Events = ( {eventData, location} ) => {
             {eventData.map(item => (
                 <DailyEvent
                     key={item.id}
+                    id={item.id}
                     startTime={formatDate(item.startTime)}
                     endTime={formatDate(item.endTime)}
                     eventTitle={item.title}
