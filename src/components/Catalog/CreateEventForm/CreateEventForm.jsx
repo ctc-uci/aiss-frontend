@@ -3,7 +3,6 @@ import {
   Box,
   FormLabel,
   Input,
-  Select,
   FormControl,
   FormErrorMessage,
   Button,
@@ -15,17 +14,27 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { NPOBackend } from '../../../utils/auth_utils';
 
+import SearchFilter from '../../Catalog/SearchFilter/SearchFilter';
+import {
+  seasonOptions,
+  yearOptions,
+  subjectOptions,
+  eventOptions,
+} from '../../Catalog/SearchFilter/filterOptions';
+import useSearchFilters from '../../Catalog/SearchFilter/useSearchFilters';
+
 const schema = yup.object({
   // id: yup.string().required('ID required').max(10, 'ID exceeds 10 character limit'),
   host: yup.string().required('Host required').max(50, 'Host exceeds 50 character limit'),
   title: yup.string().required('Title required').max(50, 'Title exceeds 50 character limit'),
-  eventType: yup.string().required('Email required'),
-  subject: yup.string().required('Subject required'),
+  season: yup.array().min(1, 'Must select a season').default([]),
+  // eventType: yup.array().min(1, "Must select an event type").default([]),
+  // subject: yup.array().min(1, "Must select a subject").default([]),
   description: yup
     .string()
     .required('Description required')
     .max(50, 'Description exceeds 50 character limit'),
-  year: yup.string().required('Year required'),
+  // year: yup.array().min(1, "Must select a year").default([]),
 });
 
 const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => {
@@ -41,7 +50,13 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
   });
 
   const submitData = async data => {
-    const { host, title, eventType, subject, description, year } = data;
+    console.log(filterValues.eventType);
+    const { host, title, description } = data;
+    const season = filterValues.season;
+    const eventType = filterValues.eventType;
+    const year = filterValues.year;
+    const subject = filterValues.subject;
+
     toast.closeAll();
 
     // make post request to catalog backend route
@@ -52,6 +67,7 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
         response = await NPOBackend.put(`/catalog/${eventData.id}`, {
           host: host,
           title: title,
+          season: season,
           eventType: eventType,
           subject: subject,
           description: description,
@@ -62,6 +78,7 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
         response = await NPOBackend.post(`/catalog`, {
           host: host,
           title: title,
+          season: season,
           eventType: eventType,
           subject: subject,
           description: description,
@@ -99,19 +116,14 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
     }
   };
 
+  const { filters, clearFilters, filterValues } = useSearchFilters();
+  console.log(clearFilters);
+  const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
+
   return (
     <Box p="2vw">
       <form onSubmit={handleSubmit(data => submitData(data))}>
         <Box mb="4vh">
-          {/* ID */}
-          {/* <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.id} width="47%">
-              <FormLabel fontWeight="bold">Id</FormLabel>
-              <Input {...register('id')} border="1px solid" />
-              <FormErrorMessage>{errors.id && errors.id.message}</FormErrorMessage>
-            </FormControl>
-          </Box> */}
-
           {/* HOST */}
           <Box mb="4vh">
             <FormControl isInvalid={errors && errors.host} width="80%">
@@ -130,32 +142,29 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
             </FormControl>
           </Box>
 
-          {/* EVENT TYPE*/}
+          {/* SEASON */}
           <Box mb="4vh">
-            <FormControl width="47%">
+            <FormControl isInvalid={errors && errors.season} width="80%">
+              <FormLabel fontWeight="bold">Season</FormLabel>
+              <SearchFilter name="Season" options={seasonOptions} filter={seasonFilter} />
+              <FormErrorMessage>{errors.season && errors.season.message}</FormErrorMessage>
+            </FormControl>
+          </Box>
+
+          {/* EVENT TYPE */}
+          <Box mb="4vh">
+            <FormControl isInvalid={errors && errors.eventType} width="80%">
               <FormLabel fontWeight="bold">Event Type</FormLabel>
-              <Select {...register('eventType')}>
-                <option value="guest speaker">Guest Speaker</option>
-                <option value="study-trip">Study Trip</option>
-                <option value="workshop">Workshop</option>
-                <option value="other">Other</option>
-              </Select>
+              <SearchFilter name="Event Type" options={eventOptions} filter={eventFilter} />
               <FormErrorMessage>{errors.eventType && errors.eventType.message}</FormErrorMessage>
             </FormControl>
           </Box>
 
           {/* SUBJECT */}
           <Box mb="4vh">
-            <FormControl width="47%">
+            <FormControl isInvalid={errors && errors.subject} width="80%">
               <FormLabel fontWeight="bold">Subject</FormLabel>
-              <Select {...register('subject')}>
-                <option value="life skills">Life Skills</option>
-                <option value="science">Science</option>
-                <option value="technology">Technology</option>
-                <option value="engineering">Engineering</option>
-                <option value="math">Math</option>
-                <option value="college readiness">College Readiness</option>
-              </Select>
+              <SearchFilter name="Subject" options={subjectOptions} filter={subjectFilter} />
               <FormErrorMessage>{errors.subject && errors.subject.message}</FormErrorMessage>
             </FormControl>
           </Box>
@@ -171,16 +180,14 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
             </FormControl>
           </Box>
 
-          {/* YEAR */}
+          {/* YEAR - selected seasons stored in filterValues.year */}
           <Box mb="4vh">
-            <FormControl width="47%">
-              <FormLabel fontWeight="bold">Year</FormLabel>
-              <Select {...register('year')}>
-                <option value="junior">Junior</option>
-                <option value="senior">Senior</option>
-                <option value="both">Both</option>
-              </Select>
-              <FormErrorMessage>{errors.year && errors.year.message}</FormErrorMessage>
+            <FormControl isInvalid={filterValues.year < 1} width="80%">
+              {/* <FormControl isInvalid={errors && errors.year} width="80%"> */}
+              <FormLabel fontWeight="bold">Cohort</FormLabel>
+              <SearchFilter name="Cohort" options={yearOptions} filter={yearFilter} />
+              {/* <FormErrorMessage>{errors.year && errors.year.message}</FormErrorMessage> */}
+              <FormErrorMessage>OH NOOOO</FormErrorMessage>
             </FormControl>
           </Box>
         </Box>
@@ -196,9 +203,10 @@ CreateEventForm.propTypes = {
     id: PropTypes.number,
     title: PropTypes.string,
     host: PropTypes.string,
-    year: PropTypes.string,
-    eventType: PropTypes.string,
-    subject: PropTypes.string,
+    year: PropTypes.array,
+    season: PropTypes.array,
+    eventType: PropTypes.array,
+    subject: PropTypes.array,
     description: PropTypes.string,
   }),
   setDataShouldRevalidate: PropTypes.func,
