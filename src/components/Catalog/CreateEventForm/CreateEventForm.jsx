@@ -8,13 +8,13 @@ import {
   Button,
   Textarea,
   useToast,
+  Flex,
+  Heading
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { NPOBackend } from '../../../utils/auth_utils';
-
-import SearchFilter from '../../Catalog/SearchFilter/SearchFilter';
 import {
   seasonOptions,
   yearOptions,
@@ -22,18 +22,19 @@ import {
   eventOptions,
 } from '../../Catalog/SearchFilter/filterOptions';
 import useSearchFilters from '../../Catalog/SearchFilter/useSearchFilters';
+import Dropdown from '../../Dropdown/Dropdown';
 
 const schema = yup.object({
-  // id: yup.string().required('ID required').max(10, 'ID exceeds 10 character limit'),
-  host: yup.string().required('Host required').max(50, 'Host exceeds 50 character limit'),
-  title: yup.string().required('Title required').max(50, 'Title exceeds 50 character limit'),
-  season: yup.array().min(1, 'Must select a season').default([]),
+  host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
+  title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
+  //season: yup.array().min(1, 'Must select a season').default([]),
   // eventType: yup.array().min(1, "Must select an event type").default([]),
   // subject: yup.array().min(1, "Must select a subject").default([]),
   description: yup
     .string()
-    .required('Description required')
-    .max(50, 'Description exceeds 50 character limit'),
+    .max(50, 'Description exceeds 50 character limit')
+    .default('')
+    .nullable(),
   // year: yup.array().min(1, "Must select a year").default([]),
 });
 
@@ -50,7 +51,6 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
   });
 
   const submitData = async data => {
-    console.log(filterValues.eventType);
     const { host, title, description } = data;
     const season = filterValues.season;
     const eventType = filterValues.eventType;
@@ -116,84 +116,98 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
     }
   };
 
-  const { filters, clearFilters, filterValues } = useSearchFilters();
-  console.log(clearFilters);
+  const { filters, filterValues } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
   return (
-    <Box p="2vw">
+    <Box width="80%" m="auto" mt="20px">
+    {/* <Heading size="lg" color="gray.600" mb="20px">Event Form</Heading> */}
+    <Box p="20px" border="1px" borderRadius="10px" borderColor="gray.200">
       <form onSubmit={handleSubmit(data => submitData(data))}>
-        <Box mb="4vh">
-          {/* HOST */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.host} width="80%">
-              <FormLabel fontWeight="bold">Host</FormLabel>
-              <Textarea {...register('host')} border="1px solid" />
-              <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
+        <Heading size="md" color="gray.600">Event Information</Heading>
+        <Box padding="12px">
           {/* TITLE */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.title} width="80%">
-              <FormLabel fontWeight="bold">Title</FormLabel>
-              <Textarea {...register('title')} border="1px solid" />
+          <Box mb="15px">
+            <FormControl isInvalid={errors && errors.title} width="30vw">
+              <FormLabel fontWeight="bold" color="gray.600">Title *</FormLabel>
+              <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
             </FormControl>
           </Box>
 
-          {/* SEASON */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.season} width="80%">
-              <FormLabel fontWeight="bold">Season</FormLabel>
-              <SearchFilter name="Season" options={seasonOptions} filter={seasonFilter} />
-              <FormErrorMessage>{errors.season && errors.season.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
-          {/* EVENT TYPE */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.eventType} width="80%">
-              <FormLabel fontWeight="bold">Event Type</FormLabel>
-              <SearchFilter name="Event Type" options={eventOptions} filter={eventFilter} />
-              <FormErrorMessage>{errors.eventType && errors.eventType.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
-          {/* SUBJECT */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.subject} width="80%">
-              <FormLabel fontWeight="bold">Subject</FormLabel>
-              <SearchFilter name="Subject" options={subjectOptions} filter={subjectFilter} />
-              <FormErrorMessage>{errors.subject && errors.subject.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
           {/* DESCRIPTION */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.description} width="47%">
-              <FormLabel fontWeight="bold">Description</FormLabel>
-              <Input {...register('description')} border="1px solid" />
+          <Box mb="15px">
+            <FormControl isInvalid={errors && errors.description} width="30vw">
+              <FormLabel fontWeight="bold" color="gray.600">Description</FormLabel>
+              <Textarea {...register('description')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>
                 {errors.description && errors.description.message}
               </FormErrorMessage>
             </FormControl>
           </Box>
 
-          {/* YEAR - selected seasons stored in filterValues.year */}
-          <Box mb="4vh">
-            <FormControl isInvalid={filterValues.year < 1} width="80%">
-              {/* <FormControl isInvalid={errors && errors.year} width="80%"> */}
-              <FormLabel fontWeight="bold">Cohort</FormLabel>
-              <SearchFilter name="Cohort" options={yearOptions} filter={yearFilter} />
-              {/* <FormErrorMessage>{errors.year && errors.year.message}</FormErrorMessage> */}
-              <FormErrorMessage>OH NOOOO</FormErrorMessage>
+          <Flex justifyContent="space-between">
+            {/* SEASON */}
+            <Box mb="15px">
+              <FormControl>
+                <FormLabel fontWeight="bold" color="gray.600">Season</FormLabel>
+                <Dropdown options={seasonOptions} filter={seasonFilter} selected={filterValues.season} badgeColor="#CEECC3"/>
+              </FormControl>
+            </Box>
+
+            {/* YEAR - selected seasons stored in filterValues.year */}
+            <Box mb="15px">
+              <FormControl>
+                <FormLabel fontWeight="bold" color="gray.600">Cohort</FormLabel>
+                <Dropdown options={yearOptions} filter={yearFilter} selected={filterValues.year} badgeColor="#FFE1BE"/>
+              </FormControl>
+            </Box>
+          </Flex>
+
+          <Flex justifyContent="space-between">
+            {/* SUBJECT */}
+            <Box mb="15px">
+              <FormControl>
+                <FormLabel fontWeight="bold" color="gray.600">Subject</FormLabel>
+                <Dropdown options={subjectOptions} filter={subjectFilter} selected={filterValues.subject} badgeColor="#E8D7FF"/>
+              </FormControl>
+            </Box>
+
+            {/* EVENT TYPE */}
+            <Box mb="15px">
+              <FormControl>
+                <FormLabel fontWeight="bold" color="gray.600">Event Type</FormLabel>
+                <Dropdown options={eventOptions} filter={eventFilter} selected={filterValues.eventType} badgeColor="#CFDCFF"/>
+              </FormControl>
+            </Box>
+          </Flex>
+        </Box>
+
+        <Heading size="md" color="gray.600">Host Information</Heading>
+        <Box padding="12px">
+          {/* HOST */}
+          <Box>
+            <FormControl isInvalid={errors && errors.host} width="30vw">
+              <FormLabel fontWeight="bold" color="gray.600">Host</FormLabel>
+              <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200"/>
+              <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
             </FormControl>
           </Box>
         </Box>
 
-        <Button type="submit">Submit</Button>
+        <Flex justifyContent="flex-end" p="12px">
+          <Button onClick={closeModal} mr="16px">Cancel</Button>
+          <Button
+            type="submit"
+            bgColor="#2c93d1"
+            color="white"
+            _hover={{ bgColor: '#73bff0' }}
+          >
+            Add Event
+          </Button>
+        </Flex>
       </form>
+    </Box>
     </Box>
   );
 };
