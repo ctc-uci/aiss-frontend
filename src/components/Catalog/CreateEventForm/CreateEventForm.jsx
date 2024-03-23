@@ -27,15 +27,11 @@ import Dropdown from '../../Dropdown/Dropdown';
 const schema = yup.object({
   host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
   title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
-  //season: yup.array().min(1, 'Must select a season').default([]),
-  // eventType: yup.array().min(1, "Must select an event type").default([]),
-  // subject: yup.array().min(1, "Must select a subject").default([]),
   description: yup
     .string()
     .max(50, 'Description exceeds 50 character limit')
     .default('')
     .nullable(),
-  // year: yup.array().min(1, "Must select a year").default([]),
 });
 
 const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => {
