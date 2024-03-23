@@ -25,7 +25,7 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
             </Td>
             <Td textAlign="left" py="1.5rem">
               <Container p="0" m="0" maxW="16rem" display="flex" flexWrap="wrap" gap="0.375rem">
-                {season.map((seasonItem, index) => (
+                {season[0] !== '' && season.map((seasonItem, index) => (
                   <Badge
                     key={index}
                     backgroundColor="#CEECC3"
@@ -39,7 +39,7 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
                     {seasonItem}
                   </Badge>
                 ))}
-                {year.map((yearItem, index) => (
+                {year[0] !== '' && year.map((yearItem, index) => (
                   <Badge
                     key={index}
                     backgroundColor="#FFE1BE"
@@ -53,7 +53,7 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
                     {yearItem}
                   </Badge>
                 ))}
-                {subject.map((subjectItem, index) => (
+                {subject[0] !== '' && subject.map((subjectItem, index) => (
                   <Badge
                     key={index}
                     backgroundColor="#E8D7FF"
@@ -67,7 +67,7 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
                     {subjectItem}
                   </Badge>
                 ))}
-                {eventType.map((eventTypeItem, index) => (
+                {eventType[0] !== '' && eventType.map((eventTypeItem, index) => (
                   <Badge
                     key={index}
                     backgroundColor="#CFDCFF"
