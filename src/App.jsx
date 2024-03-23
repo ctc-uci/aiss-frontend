@@ -16,6 +16,7 @@ import Playground from './pages/Playground/Playground';
 import Planner from './pages/Planner/Planner';
 import Navbar from './components/Navbar/Navbar';
 import NotificationSandbox from './pages/NotificationSandbox/NotificationSandbox';
+import Accounts from './pages/Accounts/Accounts';
 import { AuthContextProvider, useAuthContext } from './common/AuthContext';
 
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
@@ -92,6 +93,13 @@ const App = () => {
                     roles={[ADMIN_ROLE]}
                   />
                 } />
+                <Route exact path='/accounts' element={
+                  <ProtectedRoute
+                    Component={Accounts}
+                    redirectPath="/login"
+                    roles={[ADMIN_ROLE]}
+                  />
+                } />  
             </Route>
           </Routes>
         </Router>

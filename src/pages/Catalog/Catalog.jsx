@@ -31,11 +31,11 @@ import PropTypes from 'prop-types';
 
 export default function Catalog({ onDayPlanner }) {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const {
-    isOpen: isEditFormOpen,
-    onOpen: onEditFormOpen,
-    onClose: onEditFormClose,
-  } = useDisclosure();
+  // const {
+  //   isOpen: isEditFormOpen,
+  //   onOpen: onEditFormOpen,
+  //   onClose: onEditFormClose,
+  // } = useDisclosure();
   const {
     isOpen: isCreateFormOpen,
     onOpen: onCreateFormOpen,
@@ -46,7 +46,7 @@ export default function Catalog({ onDayPlanner }) {
   const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [deleteItemId, setDeleteItemId] = useState(-1);
-  const [editData, setEditData] = useState({});
+  // const [editData, setEditData] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
   const { filters, clearFilters, filterValues } = useSearchFilters();
@@ -57,10 +57,10 @@ export default function Catalog({ onDayPlanner }) {
     pagesCount: Math.ceil(totalRowCount / 10),
   });
 
-  const handleEditForm = data => {
-    setEditData(data);
-    onEditFormOpen();
-  };
+  // const handleEditForm = data => {
+  //   setEditData(data);
+  //   onEditFormOpen();
+  // };
 
   const handleDeleteClick = id => {
     setDeleteItemId(id);
@@ -74,7 +74,7 @@ export default function Catalog({ onDayPlanner }) {
 
   const fetchTableData = useCallback(async () => {
     console.log('Fetching Catalog');
-  
+
     const params = {
       title: searchTerm,
       limit: pageSize,
@@ -86,7 +86,7 @@ export default function Catalog({ onDayPlanner }) {
         }),
       ),
     };
-  
+
     try {
       const { data } = await NPOBackend.get('/catalog', {
         params: params,
@@ -94,20 +94,20 @@ export default function Catalog({ onDayPlanner }) {
       console.log(data)
       // const { count, events: tableData } = data;
       // console.log(tableData)
-    
+
 
       setTableData(data);
       setTotalRowCount(data.length);
 
       // console.log('count:', count);
       // console.log('Invalid count data:', tableData);
-      // console.log('actual data:', data);  
-      
+      // console.log('actual data:', data);
+
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }, [searchTerm, pageSize, currentPage, filterValues]);
-  
+
   // Fetch data on component mount and pagination update
   useEffect(() => {
     fetchTableData();
@@ -202,7 +202,7 @@ export default function Catalog({ onDayPlanner }) {
             <>
               <CatalogTable
                 tableData={tableData}
-                handleEditForm={handleEditForm}
+                // handleEditForm={handleEditForm}
                 handleDeleteClick={handleDeleteClick}
                 onDayPlanner={onDayPlanner}
               />
@@ -223,12 +223,12 @@ export default function Catalog({ onDayPlanner }) {
           onClose={onCreateFormClose}
           setDataShouldRevalidate={setDataShouldRevalidate}
         />
-        <CreateEventFormModal
+        {/* <CreateEventFormModal
           isOpen={isEditFormOpen}
           onClose={onEditFormClose}
           eventData={editData}
           setDataShouldRevalidate={setDataShouldRevalidate}
-        />
+        /> */}
         <DeleteEventModal
           isOpen={isDeleteOpen}
           onClose={onDeleteClose}
