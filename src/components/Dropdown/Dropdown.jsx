@@ -12,13 +12,18 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { FilterCheckbox } from '../Catalog/SearchFilter/SearchFilter';
 import { useState, useEffect } from 'react';
 
-const Dropdown = ({ options, filter, selected, badgeColor }) => {
+const Dropdown = ({ options, filter, selected, defaults, badgeColor }) => {
   const { getCheckboxProps } = filter;
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   useEffect(() => {
     setSelectedOptions(selected);
   }, [selected]);
+
+  useEffect(() => {
+    if (defaults)
+      filter.setValue(defaults);
+  }, [])
 
   return (
     <Menu>
@@ -36,6 +41,8 @@ const Dropdown = ({ options, filter, selected, badgeColor }) => {
           />
         }
         border="1px"
+        size="auto"
+        p="0.5rem"
         borderColor="gray.200"
         width="35vw"
         bgColor="white"
@@ -43,7 +50,7 @@ const Dropdown = ({ options, filter, selected, badgeColor }) => {
         _active={{ bgColor: 'white' }}
         fontWeight="normal"
       >
-        <HStack>
+        <HStack wrap="wrap">
           {selectedOptions.length == 0 ? (
             <Text pr="4" color="gray.400" size="sm">
               Choose
@@ -68,7 +75,7 @@ const Dropdown = ({ options, filter, selected, badgeColor }) => {
       </MenuButton>
       <MenuList>
         {options.map(({ value, name }) => (
-          <FilterCheckbox key={value} {...getCheckboxProps({ value: value })} name={name} />
+          <FilterCheckbox key={value} {...getCheckboxProps({ value: value })} name={name} defaultChecked={defaults && defaults.includes(value)} />
         ))}
       </MenuList>
     </Menu>
@@ -77,7 +84,8 @@ const Dropdown = ({ options, filter, selected, badgeColor }) => {
 
 Dropdown.propTypes = {
   name: PropTypes.string,
-  selected: PropTypes.string,
+  selected: PropTypes.array,
+  defaults: PropTypes.array,
   badgeColor: PropTypes.string,
   options: PropTypes.arrayOf(
     PropTypes.shape({
@@ -87,6 +95,7 @@ Dropdown.propTypes = {
   ),
   filter: PropTypes.shape({
     getCheckboxProps: PropTypes.func,
+    setValue: PropTypes.func,
   }),
 };
 

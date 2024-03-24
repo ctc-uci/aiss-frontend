@@ -29,7 +29,7 @@ const schema = yup.object({
   title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
   description: yup
     .string()
-    .max(50, 'Description exceeds 50 character limit')
+    .max(256, 'Description exceeds 256 character limit')
     .default('')
     .nullable(),
 });
@@ -147,7 +147,13 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
             <Box mb="15px">
               <FormControl>
                 <FormLabel fontWeight="bold" color="gray.600">Season</FormLabel>
-                <Dropdown options={seasonOptions} filter={seasonFilter} selected={filterValues.season} badgeColor="#CEECC3"/>
+                <Dropdown
+                  options={seasonOptions}
+                  filter={seasonFilter}
+                  selected={filterValues.season}
+                  defaults={eventData && eventData.season}
+                  badgeColor="#CEECC3"
+                />
               </FormControl>
             </Box>
 
@@ -155,7 +161,13 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
             <Box mb="15px">
               <FormControl>
                 <FormLabel fontWeight="bold" color="gray.600">Cohort</FormLabel>
-                <Dropdown options={yearOptions} filter={yearFilter} selected={filterValues.year} badgeColor="#FFE1BE"/>
+                <Dropdown
+                  options={yearOptions}
+                  filter={yearFilter}
+                  selected={filterValues.year}
+                  defaults={eventData && eventData.year}
+                  badgeColor="#FFE1BE"
+                />
               </FormControl>
             </Box>
           </Flex>
@@ -165,7 +177,13 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
             <Box mb="15px">
               <FormControl>
                 <FormLabel fontWeight="bold" color="gray.600">Subject</FormLabel>
-                <Dropdown options={subjectOptions} filter={subjectFilter} selected={filterValues.subject} badgeColor="#E8D7FF"/>
+                <Dropdown
+                  options={subjectOptions}
+                  filter={subjectFilter}
+                  selected={filterValues.subject}
+                  defaults={eventData && eventData.subject}
+                  badgeColor="#E8D7FF"
+                />
               </FormControl>
             </Box>
 
@@ -173,7 +191,13 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
             <Box mb="15px">
               <FormControl>
                 <FormLabel fontWeight="bold" color="gray.600">Event Type</FormLabel>
-                <Dropdown options={eventOptions} filter={eventFilter} selected={filterValues.eventType} badgeColor="#CFDCFF"/>
+                <Dropdown
+                  options={eventOptions}
+                  filter={eventFilter}
+                  selected={filterValues.eventType}
+                  defaults={eventData && eventData.eventType}
+                  badgeColor="#CFDCFF"
+                />
               </FormControl>
             </Box>
           </Flex>

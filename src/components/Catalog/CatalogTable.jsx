@@ -1,4 +1,4 @@
-import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody } from '@chakra-ui/react';
+import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody, Text } from '@chakra-ui/react';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
@@ -17,8 +17,9 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
       <Tbody>
         {tableData.map(({ id, host, title, eventType, subject, year, season, description }) => (
           <Tr key={id}>
-            <Td textAlign="left" py="1.5rem">
-              {title}
+            <Td textAlign="left" py="1.5rem" color="#2D3748">
+              <Text mb="0.5rem" fontWeight="700">{title}</Text>
+              <Text maxW="20vw" whiteSpace="pre-wrap">{description}</Text>
             </Td>
             <Td textAlign="left" py="1.5rem">
               {host}
@@ -100,6 +101,7 @@ const CatalogTable = ({ tableData, handleEditForm, handleDeleteClick }) => {
                     eventType,
                     subject,
                     description,
+                    season
                   })
                 }
               />
