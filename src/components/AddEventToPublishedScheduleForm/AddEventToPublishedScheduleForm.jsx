@@ -1,33 +1,57 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import {
-    Box,
-    FormLabel,
-    Input,
-    FormControl,
-    FormErrorMessage,
-    Button,
-    Textarea,
-    Checkbox,
-    Select,
-    useToast,
-  } from '@chakra-ui/react';
-  import { yupResolver } from '@hookform/resolvers/yup';
-  import { useForm } from 'react-hook-form';
-  import { useContext } from 'react';
-  import { NPOBackend } from '../../utils/auth_utils';
-  import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
-  import * as yup from 'yup';
-  
+  Box,
+  FormLabel,
+  Input,
+  FormControl,
+  FormErrorMessage,
+  Button,
+  Textarea,
+  Checkbox,
+  useToast,
+  Heading,
+  Flex,
+  Text
+} from '@chakra-ui/react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import { useContext } from 'react';
+import { NPOBackend } from '../../utils/auth_utils';
+import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
+import * as yup from 'yup';
+import {
+  seasonOptions,
+  yearOptions,
+  subjectOptions,
+  eventOptions,
+} from '../Catalog/SearchFilter/filterOptions';
+import useSearchFilters from '../Catalog/SearchFilter/useSearchFilters';
+import Dropdown from '../Dropdown/Dropdown';
+
   const schema = yup.object({
       confirmed: yup.boolean().default(true).required("Confirmation required"),
-      startTime: yup.date().required('Start time required'),
-      endTime: yup.date().required('End time required').min(yup.ref('startTime'), 'End time must be after start time'),
-      //cohort: yup.number().required('Cohort required').min(2000),
-      notes: yup.string().nullable()
+      // startTime: yup.date().required('Start time required'),
+      // endTime: yup.date().required('End time required').min(yup.ref('startTime'), 'End time must be after start time'),
+      startTime: yup.string().required('Start time is required'),
+      endTime: yup.string()
+        .required('End time is required')
+        .test('is-after', 'End time must be after start time', function(endTime) {
+          const startTime = this.parent.startTime;
+          return startTime && endTime && startTime < endTime;
+        }),
+      // cohort: yup.number().required('Cohort required').min(2000),
+      // notes: yup.string().nullable(),
+      host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
+      title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
+      description: yup
+        .string()
+        .max(256, 'Description exceeds 256 character limit')
+        .default('')
+        .nullable(),
   });
-  
-  
-const AddEventToPublishedScheduleForm = () => {
+
+
+const AddEventToPublishedScheduleForm = (eventData) => {
     const toast = useToast();
     const {
       register,
@@ -37,7 +61,7 @@ const AddEventToPublishedScheduleForm = () => {
       formState: { errors },
     } = useForm({
       resolver: yupResolver(schema),
-    });  
+    });
 
 
     const handleConfirmedChange = (e) => {
@@ -45,41 +69,47 @@ const AddEventToPublishedScheduleForm = () => {
     };
 
     const { dayId } = useContext(DayIdContext);
+    // const dayId = 2;
 
     const submitData = async (data) => {
       try {
-        const { title, host, eventType, subject, description, year, confirmed, startTime, endTime, notes } = data;
-        toast.closeAll();
-        let response;
-        console.log("hi")
+        const { title, host, description, confirmed, startTime, endTime } = data;
+        const season = filterValues.season;
+        const eventType = filterValues.eventType;
+        const year = filterValues.year;
+        const subject = filterValues.subject;
 
-        response = await NPOBackend.post(`/catalog`, {
-          host,
+        toast.closeAll();
+        // console.log("hi")
+
+        const catalogResponse = await NPOBackend.post(`/catalog`, {
           title,
+          host,
+          description,
           eventType,
           subject,
-          description,
           year,
-          location   
+          season
         });
-        const catalogEventId = response.data.id
+        const catalogEventId = catalogResponse.data.id
         console.log(catalogEventId);
 
         //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
 
         // Format the start time and end time to remove the date component
-        const formattedStartTime = new Date(startTime).toISOString().split('T')[1].slice(0, -1);
-        const formattedEndTime = new Date(endTime).toISOString().split('T')[1].slice(0, -1);
-  
+        // const formattedStartTime = new Date(startTime).toISOString().split('T')[1].slice(0, -1);
+        // const formattedEndTime = new Date(endTime).toISOString().split('T')[1].slice(0, -1);
+        console.log('startTime', startTime);
+        console.log('endTime', endTime)
+
         // Send a POST request to the appropriate backend route
         const response2 = await NPOBackend.post('/published-schedule', {
           eventId: catalogEventId,
-          dayId: dayId,
+          dayId,
           confirmed,
-          startTime: formattedStartTime,
-          endTime: formattedEndTime,
+          startTime,
+          endTime,
           cohort: year,
-          notes,
         });
         console.log(response2);
         reset();
@@ -100,87 +130,139 @@ const AddEventToPublishedScheduleForm = () => {
       }
     };
 
-      
+  const { filters, filterValues } = useSearchFilters();
+  const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
+
   return (
     <Box p="2vw">
       <form onSubmit={handleSubmit(submitData)}>
-        <Box mb="4vh">
-
+        <Heading size="md" color="gray.600">Event Information</Heading>
+        {/* <Box padding="12px"> */}
           {/* TITLE */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.title} width="80%">
-              <FormLabel fontWeight="bold">Title</FormLabel>
-              <Textarea {...register('title')} border="1px solid" />
+          <Box mb="15px">
+            <FormControl isInvalid={errors && errors.title} width="30vw">
+              <FormLabel fontWeight="bold" color="gray.600">Title *</FormLabel>
+              <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
             </FormControl>
           </Box>
 
-          {/* HOST */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.host} width="80%">
-              <FormLabel fontWeight="bold">Host</FormLabel>
-              <Textarea {...register('host')} border="1px solid" />
-              <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
-          {/* EVENT TYPE*/}
-          <Box mb="4vh">
-            <FormControl width="47%">
-              <FormLabel fontWeight="bold">Event Type</FormLabel>
-              <Select {...register('eventType')}>
-                <option value="guest speaker">Guest Speaker</option>
-                <option value="study-trip">Study Trip</option>
-                <option value="workshop">Workshop</option>
-                <option value="other">Other</option>
-              </Select>
-              <FormErrorMessage>{errors.eventType && errors.eventType.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
-          {/* SUBJECT */}
-          <Box mb="4vh">
-            <FormControl width="47%">
-              <FormLabel fontWeight="bold">Subject</FormLabel>
-              <Select {...register('subject')}>
-                <option value="life skills">Life Skills</option>
-                <option value="science">Science</option>
-                <option value="technology">Technology</option>
-                <option value="engineering">Engineering</option>
-                <option value="math">Math</option>
-                <option value="college readiness">College Readiness</option>
-              </Select>
-              <FormErrorMessage>{errors.subject && errors.subject.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
           {/* DESCRIPTION */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.description} width="47%">
-              <FormLabel fontWeight="bold">Description</FormLabel>
-              <Input
-                {...register('description')}
-                border="1px solid"
-              />
+          <Box mb="15px">
+            <FormControl isInvalid={errors && errors.description} width="30vw">
+              <FormLabel fontWeight="bold" color="gray.600">Description</FormLabel>
+              <Textarea {...register('description')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>
                 {errors.description && errors.description.message}
               </FormErrorMessage>
             </FormControl>
           </Box>
 
-          {/* YEAR */}
-          <Box mb="4vh">
-            <FormControl width="47%">
-              <FormLabel fontWeight="bold">Year</FormLabel>
-              <Select {...register('year')} >
-                <option value="junior">Junior</option>
-                <option value="senior">Senior</option>
-                <option value="both">Both</option>
-              </Select>
-              <FormErrorMessage>{errors.year && errors.year.message}</FormErrorMessage>
+          <Flex justifyContent="space-between" alignItems="flex-end">
+          {/* START TIME? */}
+          <Box mb="15px">
+            <FormControl isInvalid={errors && errors.startTime} width="30vw">
+                <FormLabel fontWeight="bold" color="gray.600">Time</FormLabel>
+                <Input
+                    size="md"
+                    type="time"
+                    {...register('startTime')}
+                    border="1px solid"
+                    borderColor="gray.200"
+                />
+                <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
             </FormControl>
           </Box>
-          
+
+          <Text pb="2rem" color="gray.600">-</Text>
+
+          {/* END TIME? */}
+          <Box mb="15px">
+            <FormControl isInvalid={errors && errors.endTime} width="30vw">
+                <Input
+                    size="md"
+                    type="time"
+                    {...register('endTime')}
+                    border="1px solid"
+                    borderColor="gray.200"
+                />
+                <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
+            </FormControl>
+          </Box>
+          </Flex>
+
+          <Flex justifyContent="space-between">
+            {/* SEASON */}
+            <Box mb="15px">
+              <FormControl>
+                <FormLabel fontWeight="bold" color="gray.600">Season</FormLabel>
+                <Dropdown
+                  options={seasonOptions}
+                  filter={seasonFilter}
+                  selected={filterValues.season}
+                  defaults={eventData && eventData.season}
+                  badgeColor="#CEECC3"
+                />
+              </FormControl>
+            </Box>
+
+            {/* YEAR - selected seasons stored in filterValues.year */}
+            <Box mb="15px">
+              <FormControl>
+                <FormLabel fontWeight="bold" color="gray.600">Cohort</FormLabel>
+                <Dropdown
+                  options={yearOptions}
+                  filter={yearFilter}
+                  selected={filterValues.year}
+                  defaults={eventData && eventData.year}
+                  badgeColor="#FFE1BE"
+                />
+              </FormControl>
+            </Box>
+          </Flex>
+
+          <Flex justifyContent="space-between">
+            {/* SUBJECT */}
+            <Box mb="15px">
+              <FormControl>
+                <FormLabel fontWeight="bold" color="gray.600">Subject</FormLabel>
+                <Dropdown
+                  options={subjectOptions}
+                  filter={subjectFilter}
+                  selected={filterValues.subject}
+                  defaults={eventData && eventData.subject}
+                  badgeColor="#E8D7FF"
+                />
+              </FormControl>
+            </Box>
+
+            {/* EVENT TYPE */}
+            <Box mb="15px">
+              <FormControl>
+                <FormLabel fontWeight="bold" color="gray.600">Event Type</FormLabel>
+                <Dropdown
+                  options={eventOptions}
+                  filter={eventFilter}
+                  selected={filterValues.eventType}
+                  defaults={eventData && eventData.eventType}
+                  badgeColor="#CFDCFF"
+                />
+              </FormControl>
+            </Box>
+          </Flex>
+
+          <Heading size="md" color="gray.600">Host Information</Heading>
+          <Box padding="12px">
+            {/* HOST */}
+            <Box>
+              <FormControl isInvalid={errors && errors.host} width="30vw">
+                <FormLabel fontWeight="bold" color="gray.600">Host</FormLabel>
+                <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200"/>
+                <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
+              </FormControl>
+            </Box>
+          </Box>
+
           {/* CONFIRMED?*/}
           <Box mb="4vh">
           <FormControl isInvalid={errors && errors.confirmed} width="47%">
@@ -188,34 +270,6 @@ const AddEventToPublishedScheduleForm = () => {
             <Checkbox defaultChecked onChange={handleConfirmedChange}>Confirmed?</Checkbox>
             <FormErrorMessage>{errors.confirmed && errors.confirmed.message}</FormErrorMessage>
           </FormControl>
-          </Box>
-
-          {/* START TIME? */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.startTime} width="80%">
-                <FormLabel fontWeight="bold">Start time</FormLabel>
-                <Input
-                    size="md"
-                    type="datetime-local"
-                    {...register('startTime')}
-                    border="1px solid"
-                />
-                <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
-          {/* END TIME? */}
-          <Box mb="4vh">
-            <FormControl isInvalid={errors && errors.endTime} width="80%">
-                <FormLabel fontWeight="bold">End time</FormLabel>
-                <Input
-                    size="md"
-                    type="datetime-local"
-                    {...register('endTime')}
-                    border="1px solid"
-                />
-                <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
-            </FormControl>
           </Box>
 
           {/* COHORT? */}
@@ -230,15 +284,14 @@ const AddEventToPublishedScheduleForm = () => {
   */}
 
           {/* NOTES? */}
-          <Box mb="4vh">
+          {/* <Box mb="4vh">
           <FormControl isInvalid={errors && errors.notes} width="47%">
             <FormLabel fontWeight="bold">Notes</FormLabel>
             <Textarea {...register('notes')} border="1px solid"/>
             <FormErrorMessage>{errors.notes && errors.notes.message}</FormErrorMessage>
           </FormControl>
-          </Box>    
+          </Box>     */}
 
-        </Box>
 
         <Button type="submit">Submit</Button>
       </form>
