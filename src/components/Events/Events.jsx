@@ -4,6 +4,17 @@ import PropTypes from 'prop-types';
 import { Grid } from '@chakra-ui/react';
 
 const Events = ({ eventData, location }) => {
+  
+  const formatDate = (date) => {
+    let time = date.split(":");
+    let hours = time[0];
+    let mins = time[1];
+    let ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    return `${hours}:${mins} ${ampm}`;
+  }
+  
   const eventDataWithBreaks = [];
   if (eventData.length == 1) {
     eventDataWithBreaks.push(eventData[0]);
@@ -28,8 +39,8 @@ const Events = ({ eventData, location }) => {
       {eventDataWithBreaks.map(item => (
         <DailyEvent
           key={item.id}
-          startTime={item.startTime}
-          endTime={item.endTime}
+          startTime={formatDate(item.startTime)}
+          endTime={formatDate(item.endTime)}
           eventTitle={item.title}
           location={item.location == null ? location : null}
         />
