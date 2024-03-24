@@ -1,4 +1,4 @@
-import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody } from '@chakra-ui/react';
+import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody, Text } from '@chakra-ui/react';
 import { /*EditIcon,*/ DeleteIcon } from '@chakra-ui/icons';  // add 'EditIcon' to reinstate edit button.
 import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
@@ -15,18 +15,20 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
         </Tr>
       </Thead>
       <Tbody>
-        {tableData.map(({ id, host, title, eventType, subject, year, season/*, description*/ }) => (
+        {tableData.map(({ id, host, title, eventType, subject, year, season, description}) => (
           <Tr key={id}>
-            <Td textAlign="left" py="1.5rem">
-              {title}
+            <Td textAlign="left" py="1.5rem" color="#2D3748">
+              <Text mb="0.5rem" fontWeight="700">{title}</Text>
+              <Text maxW="20vw" whiteSpace="pre-wrap">{description}</Text>
             </Td>
             <Td textAlign="left" py="1.5rem">
               {host}
             </Td>
             <Td textAlign="left" py="1.5rem">
               <Container p="0" m="0" maxW="16rem" display="flex" flexWrap="wrap" gap="0.375rem">
-                {season && (
+                {season[0] !== '' && season.map((seasonItem, index) => (
                   <Badge
+                    key={index}
                     backgroundColor="#CEECC3"
                     color="gray.900"
                     textTransform="capitalize"
@@ -35,11 +37,12 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
                     px="0.5rem"
                     mr="0.125rem"
                   >
-                    {season}
+                    {seasonItem}
                   </Badge>
-                )}
-                {year && (
+                ))}
+                {year[0] !== '' && year.map((yearItem, index) => (
                   <Badge
+                    key={index}
                     backgroundColor="#FFE1BE"
                     color="gray.900"
                     textTransform="capitalize"
@@ -48,11 +51,12 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
                     px="0.5rem"
                     mr="0.125rem"
                   >
-                    {year}
+                    {yearItem}
                   </Badge>
-                )}
-                {subject && (
+                ))}
+                {subject[0] !== '' && subject.map((subjectItem, index) => (
                   <Badge
+                    key={index}
                     backgroundColor="#E8D7FF"
                     color="gray.900"
                     textTransform="capitalize"
@@ -61,11 +65,12 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
                     px="0.5rem"
                     mr="0.125rem"
                   >
-                    {subject}
+                    {subjectItem}
                   </Badge>
-                )}
-                {eventType && (
+                ))}
+                {eventType[0] !== '' && eventType.map((eventTypeItem, index) => (
                   <Badge
+                    key={index}
                     backgroundColor="#CFDCFF"
                     color="gray.900"
                     textTransform="capitalize"
@@ -74,9 +79,9 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
                     px="0.5rem"
                     mr="0.125rem"
                   >
-                    {eventType}
+                    {eventTypeItem}
                   </Badge>
-                )}
+                ))}
               </Container>
             </Td>
             <Td>
@@ -96,6 +101,7 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
                     eventType,
                     subject,
                     description,
+                    season
                   })
                 }
               /> */}

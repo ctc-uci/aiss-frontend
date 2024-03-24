@@ -116,3 +116,4 @@ FilterCheckbox.propTypes = {
 };
 
 export default SearchFilter;
+export { FilterCheckbox };
