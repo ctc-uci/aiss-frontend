@@ -91,18 +91,10 @@ export default function Catalog({ onDayPlanner }) {
       const { data } = await NPOBackend.get('/catalog', {
         params: params,
       });
-      console.log(data)
-      // const { count, events: tableData } = data;
-      // console.log(tableData)
+      const { count, events: tableData } = data;
 
-
-      setTableData(data);
-      setTotalRowCount(data.length);
-
-      // console.log('count:', count);
-      // console.log('Invalid count data:', tableData);
-      // console.log('actual data:', data);
-
+      setTableData(tableData);
+      setTotalRowCount(Number(count[0].count));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -146,9 +138,9 @@ export default function Catalog({ onDayPlanner }) {
           Create
         </IconButton>
       }
-      <Box pt="1rem" w="100%" px={{ base: '1rem', lg: '4rem' }} maxW="1440px" mx="auto">
+      <Box pt={!onDayPlanner && "1rem"} w="100%" px={!onDayPlanner && { base: '1rem', lg: '4rem' }} maxW="1440px" mx="auto">
         <Text as="h1" fontSize="xx-large" fontWeight="bold">
-          {!onDayPlanner ? 'Event Catalog' : 'Add Event From Catalog'}
+          {!onDayPlanner && 'Event Catalog'}
         </Text>
         <Flex gap="4" mt="4">
           <InputGroup size="sm" maxW="sm">

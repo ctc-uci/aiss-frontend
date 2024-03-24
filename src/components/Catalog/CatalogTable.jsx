@@ -1,17 +1,25 @@
-import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody } from '@chakra-ui/react';
+import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody, Box } from '@chakra-ui/react';
 import { /*EditIcon,*/ DeleteIcon } from '@chakra-ui/icons';  // add 'EditIcon' to reinstate edit button.
+import { IoIosAddCircleOutline } from "react-icons/io";
 import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
 
 const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick, onDayPlanner }) => {
   return (
-    <Table variant="simple" className={s['catalog-table']} borderWidth="0" width="100%" px="1rem">
-      <Thead>
+    <Box maxH={onDayPlanner && '50vh'} overflowY="auto">
+    <Table
+      variant="simple"
+      className={s['catalog-table']}
+      borderWidth="0"
+      width="100%"
+      px="1rem"
+    >
+      <Thead style={onDayPlanner ? { position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 } : {}}>
         <Tr>
           <Th textAlign="left">Event</Th>
           <Th textAlign="left">Host</Th>
           <Th textAlign="left">Tags</Th>
-          { !onDayPlanner && <Th width="8rem"></Th> }
+          <Th width="8rem"></Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -79,7 +87,7 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick, onDayP
                 )}
               </Container>
             </Td>
-            { !onDayPlanner &&
+            { !onDayPlanner ?
               <Td>
                 {/* <IconButton
                   color="gray.400"
@@ -110,11 +118,24 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick, onDayP
                   onClick={() => handleDeleteClick(id)}
                 />
               </Td>
+            :
+              <Td>
+                <IconButton
+                  color="gray.400"
+                  backgroundColor="transparent"
+                  p="0.5rem"
+                  h="fit-content"
+                  w="fit-content"
+                  icon={<IoIosAddCircleOutline />}
+                  onClick={() => handleDeleteClick(id)}
+                />
+              </Td>
             }
           </Tr>
         ))}
       </Tbody>
     </Table>
+    </Box>
   );
 };
 

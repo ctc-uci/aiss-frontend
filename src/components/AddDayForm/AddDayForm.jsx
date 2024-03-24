@@ -8,28 +8,25 @@ import {
     Button,
     Textarea,
     useToast,
-    HStack,
-  } from '@chakra-ui/react';
-  import { PropTypes } from 'prop-types';
-  import { yupResolver } from '@hookform/resolvers/yup';
-  import { useForm } from 'react-hook-form';
-  // import axios from 'axios';
-  import * as yup from 'yup';
+    Heading,
+    Flex
+} from '@chakra-ui/react';
+import { PropTypes } from 'prop-types';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
 import { NPOBackend } from '../../utils/auth_utils';
 import { useContext } from 'react';
 import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
-    
+
   const schema = yup.object({
-    // month: yup.number("Must be type number").required('Month required').min(2, "Must be 2 numbers.").max(2, "Must be 2 numbers."),
-    // day: yup.number("Must be type number").required('Day required').min(2, "Must be 2 numbers.").max(2, "Must be 2 numbers."),
-    // year: yup.number("Must be type number").required('Year required').min(1000, "Must be 4 numbers.").max(, "Must be 4 numbers."),
-    date: yup.date().required('Date required'),
+    date: yup.date().nullable().transform((curr, orig) => orig === '' ? null : curr).required('Date required'),
     location: yup.string().required('Location required').max(50, 'Location exceeds 50 character limit'),
     details: yup
       .string()
       .max(50, 'Details exceeds 50 character limit'),
   });
-  
+
   const AddDayForm = ({ onClose, onOpen }) => {
     const { setDayId } = useContext(DayIdContext);
 
@@ -41,7 +38,7 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
     } = useForm({
       resolver: yupResolver(schema),
     });
-  
+
     const submitData = async data => {
       const { date, details, location } = data;
       toast.closeAll();
@@ -84,7 +81,7 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
             isClosable: true,
           });
         }
-        
+
       } catch (error) {
         console.log(error);
         toast({
@@ -101,18 +98,17 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
         });
       }
     }
-  
+
     return (
-      <Box p="2vw">
+      <Box p="20px">
+        <Heading size="lg" textAlign="center" mb="8px" color="#2D3748">Add New Day</Heading>
         <form onSubmit={handleSubmit(data => submitData(data))}>
           <Box mb="4vh">
-  
             {/* DATE */}
-            <Box mb="4vh">
+            <Box mb="15px">
               <FormControl isInvalid={errors && errors.date} >
-                <FormLabel fontWeight="bold">Date</FormLabel>
+                <FormLabel fontWeight="bold" color="gray.600">Date *</FormLabel>
                 <Input
-                  placeholder="Select Date and Time"
                   size="md"
                   type="date"
                   {...register('date')}
@@ -122,9 +118,9 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
             </Box>
 
             {/* LOCATION */}
-            <Box mb="4vh">
+            <Box mb="15px">
               <FormControl isInvalid={errors && errors.location} >
-                <FormLabel fontWeight="bold">Location</FormLabel>
+                <FormLabel fontWeight="bold" color="gray.600">Location *</FormLabel>
                 <Input placeholder='Location' {...register('location')} />
                 <FormErrorMessage>{errors.location && errors.location.message}</FormErrorMessage>
               </FormControl>
@@ -132,9 +128,9 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
 
 
             {/* DETAILS */}
-            <Box mb="4vh">
+            <Box mb="15px">
               <FormControl isInvalid={errors && errors.details}>
-                <FormLabel fontWeight="bold">Details</FormLabel>
+                <FormLabel fontWeight="bold" color="gray.600">Details</FormLabel>
                 <Textarea placeholder='Details' {...register('details')} />
                 <FormErrorMessage>
                   {errors.details && errors.details.message}
@@ -143,15 +139,21 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
             </Box>
           </Box>
 
-          <HStack spacing='1vh'>
-            <Button size='lg' onClick={onClose}>
+          <Flex justifyContent="space-between">
+            <Button width="48%" size='lg' onClick={onClose}>
                 Cancel
             </Button>
-            {/* <Button type='submit' size='lg'> */}
-            <Button type='submit' size='lg' >
-                Add To Schedule
+            <Button
+              width="48%"
+              type='submit'
+              size='lg'
+              bgColor="#2c93d1"
+              color="white"
+              _hover={{ bgColor: '#1b6896' }}
+            >
+              + Add To Schedule
             </Button>
-          </HStack>
+          </Flex>
         </form>
       </Box>
     );
@@ -166,4 +168,3 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
     onOpen: () => {},
   };
   export default AddDayForm;
-  

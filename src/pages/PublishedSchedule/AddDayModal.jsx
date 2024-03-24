@@ -3,12 +3,10 @@ import {
     Modal,
     ModalOverlay,
     ModalContent,
-    ModalHeader,
     ModalFooter,
     ModalBody,
     ModalCloseButton,
     useDisclosure,
-    Text,
   } from '@chakra-ui/react'
   import { DayIdProvider } from './AddDayContext.jsx';
 import Planner from '../../pages/Planner/Planner.jsx';
@@ -28,11 +26,10 @@ import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
       <DayIdProvider>
         <>
           <Button onClick={onOpenDay}>Add Day</Button>
-    
+
           <Modal isOpen={isOpenDay} size={'xl'} onClose={onCloseDay}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader> Add New Day</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
                 <AddDayForm
@@ -46,18 +43,16 @@ import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
           <Modal isOpen={isOpenPlanner} size={'full'} onClose={onClosePlanner}>
             <ModalOverlay />
             <ModalContent>
-            <ModalHeader>Planner Modal</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-            <Text>This is the planner modal</Text>
-            <Planner/>
-            </ModalBody>
+              <ModalCloseButton />
+              <ModalBody>
+                <Planner/>
+              </ModalBody>
 
-            <ModalFooter>
-                <Button colorScheme='blue' mr={3} onClick={onClosePlanner}>
-                Close
-                </Button>
-            </ModalFooter>
+              <ModalFooter>
+                  <Button colorScheme='blue' mr={3} onClick={onClosePlanner}>
+                  Close
+                  </Button>
+              </ModalFooter>
             </ModalContent>
           </Modal>
         </>
