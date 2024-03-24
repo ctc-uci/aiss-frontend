@@ -21,7 +21,7 @@ const Dropdown = ({ options, filter, selected, defaults, badgeColor }) => {
   }, [selected]);
 
   useEffect(() => {
-    if (defaults)
+    if (defaults && defaults[0] !== '')
       filter.setValue(defaults);
   }, [])
 
