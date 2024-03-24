@@ -54,7 +54,6 @@ const PublishedScheduleTable = ({ season }) => {
               <Tr key={item.day.id} verticalAlign={'top'}>
                 <Td>
                   <EventInfo
-
                     eventDate={getUTCDate(item.day.eventDate).toLocaleDateString('en-US')}
                     day={dayNames[getUTCDate(item.day.eventDate).getDay()]}
                     startTime={formatDate(item.day.startTime)}
@@ -63,7 +62,6 @@ const PublishedScheduleTable = ({ season }) => {
                     notes={item.day.notes}
                   />
                 </Td>
-
                 <Td style={{ textAlign: 'left' }} width="75%">
                   <Events eventData={item.data} location={item.day.location} />
                 </Td>
