@@ -38,6 +38,9 @@ const messageReviewer = async ({ context }) => {
     try {
       const UserModel = getUserModel();
       const user = await UserModel.findOne({ github: reviewer });
+      console.log(context.payload.requested_reviewer);
+      console.log(reviewer);
+      console.log(user);
       await Bot.client.chat.postMessage({
         channel: user.slackId,
         text: `A review for a <${url}|PR> has been requested by ${sender}! :catjam:`,
