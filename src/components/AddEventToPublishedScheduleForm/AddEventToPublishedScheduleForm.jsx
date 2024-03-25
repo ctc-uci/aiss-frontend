@@ -29,9 +29,6 @@ import useSearchFilters from '../Catalog/SearchFilter/useSearchFilters';
 import Dropdown from '../Dropdown/Dropdown';
 
   const schema = yup.object({
-      confirmed: yup.boolean().default(true).required("Confirmation required"),
-      // startTime: yup.date().required('Start time required'),
-      // endTime: yup.date().required('End time required').min(yup.ref('startTime'), 'End time must be after start time'),
       startTime: yup.string().required('Start time is required'),
       endTime: yup.string()
         .required('End time is required')
@@ -39,8 +36,6 @@ import Dropdown from '../Dropdown/Dropdown';
           const startTime = this.parent.startTime;
           return startTime && endTime && startTime < endTime;
         }),
-      // cohort: yup.number().required('Cohort required').min(2000),
-      // notes: yup.string().nullable(),
       host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
       title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
       description: yup
@@ -48,6 +43,7 @@ import Dropdown from '../Dropdown/Dropdown';
         .max(256, 'Description exceeds 256 character limit')
         .default('')
         .nullable(),
+      tentative: yup.boolean()
   });
 
 
@@ -57,23 +53,16 @@ const AddEventToPublishedScheduleForm = (eventData) => {
       register,
       handleSubmit,
       reset,
-      setValue,
       formState: { errors },
     } = useForm({
       resolver: yupResolver(schema),
     });
 
-
-    const handleConfirmedChange = (e) => {
-      setValue('confirmed', e.target.checked);
-    };
-
     const { dayId } = useContext(DayIdContext);
-    // const dayId = 2;
 
     const submitData = async (data) => {
       try {
-        const { title, host, description, confirmed, startTime, endTime } = data;
+        const { title, host, description, tentative, startTime, endTime } = data;
         const season = filterValues.season;
         const eventType = filterValues.eventType;
         const year = filterValues.year;
@@ -96,17 +85,11 @@ const AddEventToPublishedScheduleForm = (eventData) => {
 
         //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
 
-        // Format the start time and end time to remove the date component
-        // const formattedStartTime = new Date(startTime).toISOString().split('T')[1].slice(0, -1);
-        // const formattedEndTime = new Date(endTime).toISOString().split('T')[1].slice(0, -1);
-        console.log('startTime', startTime);
-        console.log('endTime', endTime)
-
         // Send a POST request to the appropriate backend route
         const response2 = await NPOBackend.post('/published-schedule', {
           eventId: catalogEventId,
           dayId,
-          confirmed,
+          confirmed: !tentative,
           startTime,
           endTime,
           cohort: year,
@@ -134,13 +117,13 @@ const AddEventToPublishedScheduleForm = (eventData) => {
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
   return (
-    <Box p="2vw">
+    <Box p="1rem" bgColor="white" borderRadius="5px">
       <form onSubmit={handleSubmit(submitData)}>
-        <Heading size="md" color="gray.600">Event Information</Heading>
-        {/* <Box padding="12px"> */}
+        <Heading size="md" color="gray.600" mb="0.5rem">Event Information</Heading>
+        <Box px="1rem">
           {/* TITLE */}
-          <Box mb="15px">
-            <FormControl isInvalid={errors && errors.title} width="30vw">
+          <Box mb="1rem">
+            <FormControl isInvalid={errors && errors.title} width="35vw">
               <FormLabel fontWeight="bold" color="gray.600">Title *</FormLabel>
               <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
@@ -148,8 +131,8 @@ const AddEventToPublishedScheduleForm = (eventData) => {
           </Box>
 
           {/* DESCRIPTION */}
-          <Box mb="15px">
-            <FormControl isInvalid={errors && errors.description} width="30vw">
+          <Box mb="1rem">
+            <FormControl isInvalid={errors && errors.description} width="35vw">
               <FormLabel fontWeight="bold" color="gray.600">Description</FormLabel>
               <Textarea {...register('description')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>
@@ -158,10 +141,10 @@ const AddEventToPublishedScheduleForm = (eventData) => {
             </FormControl>
           </Box>
 
-          <Flex justifyContent="space-between" alignItems="flex-end">
+          <Flex alignItems="flex-end" >
           {/* START TIME? */}
-          <Box mb="15px">
-            <FormControl isInvalid={errors && errors.startTime} width="30vw">
+          <Box mb="1rem">
+            <FormControl isInvalid={errors && errors.startTime}>
                 <FormLabel fontWeight="bold" color="gray.600">Time</FormLabel>
                 <Input
                     size="md"
@@ -174,11 +157,11 @@ const AddEventToPublishedScheduleForm = (eventData) => {
             </FormControl>
           </Box>
 
-          <Text pb="2rem" color="gray.600">-</Text>
+          <Text pb="1.5rem" color="gray.600" mx="1rem">&mdash;</Text>
 
           {/* END TIME? */}
-          <Box mb="15px">
-            <FormControl isInvalid={errors && errors.endTime} width="30vw">
+          <Box mb="1rem">
+            <FormControl isInvalid={errors && errors.endTime}>
                 <Input
                     size="md"
                     type="time"
@@ -193,7 +176,7 @@ const AddEventToPublishedScheduleForm = (eventData) => {
 
           <Flex justifyContent="space-between">
             {/* SEASON */}
-            <Box mb="15px">
+            <Box mb="1rem">
               <FormControl>
                 <FormLabel fontWeight="bold" color="gray.600">Season</FormLabel>
                 <Dropdown
@@ -202,12 +185,13 @@ const AddEventToPublishedScheduleForm = (eventData) => {
                   selected={filterValues.season}
                   defaults={eventData && eventData.season}
                   badgeColor="#CEECC3"
+                  width="28vw"
                 />
               </FormControl>
             </Box>
 
             {/* YEAR - selected seasons stored in filterValues.year */}
-            <Box mb="15px">
+            <Box mb="1rem">
               <FormControl>
                 <FormLabel fontWeight="bold" color="gray.600">Cohort</FormLabel>
                 <Dropdown
@@ -216,6 +200,7 @@ const AddEventToPublishedScheduleForm = (eventData) => {
                   selected={filterValues.year}
                   defaults={eventData && eventData.year}
                   badgeColor="#FFE1BE"
+                  width="28vw"
                 />
               </FormControl>
             </Box>
@@ -223,7 +208,7 @@ const AddEventToPublishedScheduleForm = (eventData) => {
 
           <Flex justifyContent="space-between">
             {/* SUBJECT */}
-            <Box mb="15px">
+            <Box mb="1rem">
               <FormControl>
                 <FormLabel fontWeight="bold" color="gray.600">Subject</FormLabel>
                 <Dropdown
@@ -232,12 +217,13 @@ const AddEventToPublishedScheduleForm = (eventData) => {
                   selected={filterValues.subject}
                   defaults={eventData && eventData.subject}
                   badgeColor="#E8D7FF"
+                  width="28vw"
                 />
               </FormControl>
             </Box>
 
             {/* EVENT TYPE */}
-            <Box mb="15px">
+            <Box mb="1rem">
               <FormControl>
                 <FormLabel fontWeight="bold" color="gray.600">Event Type</FormLabel>
                 <Dropdown
@@ -246,16 +232,18 @@ const AddEventToPublishedScheduleForm = (eventData) => {
                   selected={filterValues.eventType}
                   defaults={eventData && eventData.eventType}
                   badgeColor="#CFDCFF"
+                  width="28vw"
                 />
               </FormControl>
             </Box>
           </Flex>
+          </Box>
 
           <Heading size="md" color="gray.600">Host Information</Heading>
-          <Box padding="12px">
+          <Box padding="1rem">
             {/* HOST */}
             <Box>
-              <FormControl isInvalid={errors && errors.host} width="30vw">
+              <FormControl isInvalid={errors && errors.host} width="35vw">
                 <FormLabel fontWeight="bold" color="gray.600">Host</FormLabel>
                 <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200"/>
                 <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
@@ -263,36 +251,15 @@ const AddEventToPublishedScheduleForm = (eventData) => {
             </Box>
           </Box>
 
-          {/* CONFIRMED?*/}
-          <Box mb="4vh">
-          <FormControl isInvalid={errors && errors.confirmed} width="47%">
-            <FormLabel fontWeight="bold">Confirmed</FormLabel>
-            <Checkbox defaultChecked onChange={handleConfirmedChange}>Confirmed?</Checkbox>
-            <FormErrorMessage>{errors.confirmed && errors.confirmed.message}</FormErrorMessage>
-          </FormControl>
+          <Heading size="md" color="gray.600">Event Status</Heading>
+          <Box padding="1rem">
+            {/* TENTATIVE */}
+            <Box mb="1rem">
+              <FormControl>
+                <Checkbox {...register('tentative')}>Tentative</Checkbox>
+              </FormControl>
+            </Box>
           </Box>
-
-          {/* COHORT? */}
-{/*}
-          <Box mb="4vh">
-          <FormControl isInvalid={errors && errors.cohort} width="47%">
-            <FormLabel fontWeight="bold">Cohort</FormLabel>
-            <Input {...register('cohort')} border="1px solid"/>
-            <FormErrorMessage>{errors.cohort && errors.cohort.message}</FormErrorMessage>
-          </FormControl>
-          </Box>
-  */}
-
-          {/* NOTES? */}
-          {/* <Box mb="4vh">
-          <FormControl isInvalid={errors && errors.notes} width="47%">
-            <FormLabel fontWeight="bold">Notes</FormLabel>
-            <Textarea {...register('notes')} border="1px solid"/>
-            <FormErrorMessage>{errors.notes && errors.notes.message}</FormErrorMessage>
-          </FormControl>
-          </Box>     */}
-
-
         <Button type="submit">Submit</Button>
       </form>
     </Box>
