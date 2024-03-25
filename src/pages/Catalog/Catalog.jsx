@@ -15,7 +15,7 @@ import { AddIcon, SearchIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useCallback } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 import DeleteEventModal from '../../components/Catalog/DeleteEventModal/DeleteEventModal';
-import CreateEventFormModal from '../../components/Catalog/CreateEventForm/CreateEventFormModal';
+// import AddExistingEventToScheduleModal from '../../components/Catalog/CreateEventForm/AddExistingEventToScheduleModal';
 import PaginationFooter from '../../components/Catalog/PaginationFooter/PaginationFooter';
 import CatalogTable from '../../components/Catalog/CatalogTable';
 import SearchFilter from '../../components/Catalog/SearchFilter/SearchFilter';
@@ -29,24 +29,23 @@ import {
 } from '../../components/Catalog/SearchFilter/filterOptions';
 import PropTypes from 'prop-types';
 
-export default function Catalog({ onDayPlanner }) {
+export default function Catalog({ onDayPlanner, addExistingEventFunc, setExistingEventData }) {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   // const {
   //   isOpen: isEditFormOpen,
   //   onOpen: onEditFormOpen,
   //   onClose: onEditFormClose,
   // } = useDisclosure();
-  const {
-    isOpen: isCreateFormOpen,
-    onOpen: onCreateFormOpen,
-    onClose: onCreateFormClose,
-  } = useDisclosure();
+  // const {
+  //   isOpen: isCreateFormOpen,
+  //   onOpen: onCreateFormOpen,
+  //   onClose: onCreateFormClose,
+  // } = useDisclosure();
 
   const [tableData, setTableData] = useState([]);
   const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [deleteItemId, setDeleteItemId] = useState(-1);
-  // const [editData, setEditData] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
   const { filters, clearFilters, filterValues } = useSearchFilters();
@@ -132,7 +131,7 @@ export default function Catalog({ onDayPlanner }) {
           w="3rem"
           h="3rem"
           _hover={{ bgColor: 'blue.500' }}
-          onClick={onCreateFormOpen}
+          onClick={addExistingEventFunc}
           icon={<AddIcon />}
         >
           Create
@@ -194,8 +193,9 @@ export default function Catalog({ onDayPlanner }) {
             <>
               <CatalogTable
                 tableData={tableData}
+                setExistingEventData={setExistingEventData}
                 // handleEditForm={handleEditForm}
-                handleDeleteClick={handleDeleteClick}
+                handleActionClick={onDayPlanner ? addExistingEventFunc : handleDeleteClick}
                 onDayPlanner={onDayPlanner}
               />
               <PaginationFooter
@@ -210,11 +210,11 @@ export default function Catalog({ onDayPlanner }) {
           )}
         </TableContainer>
 
-        <CreateEventFormModal
+        {/* <AddExistingEventToScheduleModal
           isOpen={isCreateFormOpen}
           onClose={onCreateFormClose}
           setDataShouldRevalidate={setDataShouldRevalidate}
-        />
+        /> */}
         {/* <CreateEventFormModal
           isOpen={isEditFormOpen}
           onClose={onEditFormClose}
@@ -233,7 +233,9 @@ export default function Catalog({ onDayPlanner }) {
 }
 
 Catalog.propTypes = {
-  onDayPlanner: PropTypes.bool
+  onDayPlanner: PropTypes.bool,
+  addExistingEventFunc: PropTypes.func,
+  setExistingEventData: PropTypes.func
 };
 
 Catalog.defaultProps = {

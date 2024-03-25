@@ -6,7 +6,7 @@ import { useEffect, useState, useContext } from 'react';
 import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
 
 // eslint-disable-next-line react/prop-types
-const AddEventOverlay = ({ setOverlayIsVisible, setUpdateTimelineFunc, updateTimelineCount }) => {
+const AddEventOverlay = ({ setOverlayIsVisible, setUpdateTimelineFunc, updateTimelineCount, eventData }) => {
   const { dayId } = useContext(DayIdContext);
   const [datePart, setDatePart] = useState('');
   const [locationPart, setLocationPart] = useState('');
@@ -35,7 +35,7 @@ const AddEventOverlay = ({ setOverlayIsVisible, setUpdateTimelineFunc, updateTim
       {/* <div className={s['add-event-container']}> */}
       <div>
         <div>
-          <AddEventToPublishedScheduleForm updateTimeline={() => setUpdateTimelineFunc(updateTimelineCount+1)} cancelFunction={() => {
+          <AddEventToPublishedScheduleForm eventData={eventData} updateTimeline={() => setUpdateTimelineFunc(updateTimelineCount+1)} cancelFunction={() => {
               setOverlayIsVisible(false);
             }}/>
           {/* <Text fontSize="1.25rem">Event Information</Text> */}

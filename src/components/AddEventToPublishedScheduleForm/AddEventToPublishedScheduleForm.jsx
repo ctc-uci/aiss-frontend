@@ -63,6 +63,17 @@ const AddEventToPublishedScheduleForm = (props) => {
 
     const { dayId } = useContext(DayIdContext);
 
+    const compareOriginalToCurrentData = (originalData, currData) => {
+      for (let key of Object.keys(currData)) {
+        if (originalData[key] === undefined || originalData[key] !== currData[key]) {
+          console.log('changed: ', originalData[key], currData[key]);
+          return false;
+        }
+      }
+      console.log('no changes to catalog data');
+      return true;
+    }
+
     const submitData = async (data) => {
       try {
         const { title, host, description, tentative, startTime, endTime } = data;
@@ -72,9 +83,8 @@ const AddEventToPublishedScheduleForm = (props) => {
         const subject = filterValues.subject;
 
         toast.closeAll();
-        // console.log("hi")
 
-        const catalogResponse = await NPOBackend.post(`/catalog`, {
+        const catalogDataChanged = compareOriginalToCurrentData(eventData, {
           title,
           host,
           description,
@@ -83,7 +93,23 @@ const AddEventToPublishedScheduleForm = (props) => {
           year,
           season
         });
-        const catalogEventId = catalogResponse.data.id
+
+        let catalogEventId = eventData.id;
+
+        if (catalogDataChanged) {
+          const catalogResponse = await NPOBackend.post(`/catalog`, {
+            title,
+            host,
+            description,
+            eventType,
+            subject,
+            year,
+            season
+          });
+
+          catalogEventId = catalogResponse.data.id;
+        }
+
         console.log(catalogEventId);
 
         //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
@@ -130,7 +156,7 @@ const AddEventToPublishedScheduleForm = (props) => {
             <Box mb="1rem">
               <FormControl isInvalid={errors && errors.title} width="35vw">
                 <FormLabel fontWeight="bold" color="gray.600">Event Name *</FormLabel>
-                <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200"/>
+                <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200" defaultValue={eventData && eventData.title}/>
                 <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
               </FormControl>
             </Box>
@@ -139,7 +165,7 @@ const AddEventToPublishedScheduleForm = (props) => {
             <Box mb="1rem">
               <FormControl isInvalid={errors && errors.description} width="35vw">
                 <FormLabel fontWeight="bold" color="gray.600">Event Description</FormLabel>
-                <Textarea {...register('description')} border="1px solid" borderColor="gray.200"/>
+                <Textarea {...register('description')} border="1px solid" borderColor="gray.200" defaultValue={eventData && eventData.description}/>
                 <FormErrorMessage>
                   {errors.description && errors.description.message}
                 </FormErrorMessage>
@@ -250,7 +276,7 @@ const AddEventToPublishedScheduleForm = (props) => {
               <Box>
                 <FormControl isInvalid={errors && errors.host} width="35vw">
                   <FormLabel fontWeight="bold" color="gray.600">Host Name</FormLabel>
-                  <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200"/>
+                  <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200" defaultValue={eventData && eventData.host}/>
                   <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
                 </FormControl>
               </Box>

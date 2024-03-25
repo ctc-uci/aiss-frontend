@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Modal, ModalBody, ModalContent, ModalOverlay, ModalCloseButton } from '@chakra-ui/react';
 import CreateEventForm from './CreateEventForm';
 
-const CreateEventFormModal = ({ isOpen, onClose, eventData, setDataShouldRevalidate }) => {
+const AddExistingEventToScheduleModal = ({ isOpen, onClose, eventData, setDataShouldRevalidate }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="full">
       <ModalOverlay />
@@ -27,7 +27,7 @@ const CreateEventFormModal = ({ isOpen, onClose, eventData, setDataShouldRevalid
   );
 };
 
-CreateEventFormModal.propTypes = {
+AddExistingEventToScheduleModal.propTypes = {
   eventData: PropTypes.shape({
     id: PropTypes.number,
     title: PropTypes.string,
@@ -46,4 +46,4 @@ CreateEventForm.defaultProps = {
   eventData: undefined,
 };
 
-export default CreateEventFormModal;
+export default AddExistingEventToScheduleModal;

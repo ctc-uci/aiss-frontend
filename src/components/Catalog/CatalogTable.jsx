@@ -4,7 +4,13 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
 
-const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick, onDayPlanner }) => {
+const CatalogTable = ({ tableData, setExistingEventData, handleActionClick, onDayPlanner }) => {
+
+  const setDataAndOpenPSForm = (eventData) => {
+    setExistingEventData(eventData);
+    handleActionClick();
+  }
+
   return (
     <Box maxH={onDayPlanner && '50vh'} overflowY="auto">
     <Table
@@ -120,7 +126,7 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick, onDayP
                   h="fit-content"
                   w="fit-content"
                   icon={<DeleteIcon />}
-                  onClick={() => handleDeleteClick(id)}
+                  onClick={() => handleActionClick(id)}
                 />
               </Td>
             :
@@ -132,7 +138,16 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick, onDayP
                   h="fit-content"
                   w="fit-content"
                   icon={<IoIosAddCircleOutline />}
-                  onClick={() => handleDeleteClick(id)}
+                  onClick={() => setDataAndOpenPSForm({
+                    id,
+                    title,
+                    host,
+                    year,
+                    eventType,
+                    subject,
+                    description,
+                    season
+                  })}
                 />
               </Td>
             }
@@ -146,8 +161,8 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick, onDayP
 
 CatalogTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.any),
-  // handleEditForm: PropTypes.func.isRequired,
-  handleDeleteClick: PropTypes.func.isRequired,
+  setExistingEventData: PropTypes.func,
+  handleActionClick: PropTypes.func.isRequired,
   onDayPlanner: PropTypes.bool
 };
 
