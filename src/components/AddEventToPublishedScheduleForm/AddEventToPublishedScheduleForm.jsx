@@ -66,7 +66,7 @@ const AddEventToPublishedScheduleForm = (props) => {
     const compareOriginalToCurrentData = (originalData, currData) => {
       for (let key of Object.keys(currData)) {
         if (originalData[key] === undefined || originalData[key] !== currData[key]) {
-          console.log('changed: ', originalData[key], currData[key]);
+          console.log('changed: ', key, originalData[key], currData[key]);
           return false;
         }
       }
@@ -96,7 +96,7 @@ const AddEventToPublishedScheduleForm = (props) => {
 
         let catalogEventId = eventData.id;
 
-        if (catalogDataChanged) {
+        if (catalogDataChanged || !catalogEventId) {
           const catalogResponse = await NPOBackend.post(`/catalog`, {
             title,
             host,
