@@ -1,4 +1,4 @@
-import { Stack, Text, Button } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 // import s from '../PlannerLayout.module.css';
 import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
 import { NPOBackend } from '../../../utils/auth_utils';
@@ -6,7 +6,7 @@ import { useEffect, useState, useContext } from 'react';
 import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
 
 // eslint-disable-next-line react/prop-types
-const AddEventOverlay = ({ setOverlayIsVisible }) => {
+const AddEventOverlay = ({ setOverlayIsVisible, setUpdateTimelineFunc, updateTimelineCount }) => {
   const { dayId } = useContext(DayIdContext);
   const [datePart, setDatePart] = useState('');
   const [locationPart, setLocationPart] = useState('');
@@ -35,10 +35,12 @@ const AddEventOverlay = ({ setOverlayIsVisible }) => {
       {/* <div className={s['add-event-container']}> */}
       <div>
         <div>
-          <AddEventToPublishedScheduleForm/>
+          <AddEventToPublishedScheduleForm updateTimeline={() => setUpdateTimelineFunc(updateTimelineCount+1)} cancelFunction={() => {
+              setOverlayIsVisible(false);
+            }}/>
           {/* <Text fontSize="1.25rem">Event Information</Text> */}
-        </div>  
-        <Stack spacing={2} justifyContent="right" direction="row">
+        </div>
+        {/* <Stack spacing={2} justifyContent="right" direction="row">
           <Button
             paddingX="1.5rem"
             size="sm"
@@ -61,7 +63,7 @@ const AddEventOverlay = ({ setOverlayIsVisible }) => {
           >
             Add Event
           </Button>
-        </Stack>
+        </Stack> */}
       </div>
     </div>
   );

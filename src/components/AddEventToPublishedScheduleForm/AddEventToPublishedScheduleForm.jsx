@@ -11,7 +11,8 @@ import {
   useToast,
   Heading,
   Flex,
-  Text
+  Text,
+  Stack
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -27,6 +28,7 @@ import {
 } from '../Catalog/SearchFilter/filterOptions';
 import useSearchFilters from '../Catalog/SearchFilter/useSearchFilters';
 import Dropdown from '../Dropdown/Dropdown';
+import PropTypes from 'prop-types';
 
   const schema = yup.object({
       startTime: yup.string().required('Start time is required'),
@@ -47,7 +49,8 @@ import Dropdown from '../Dropdown/Dropdown';
   });
 
 
-const AddEventToPublishedScheduleForm = (eventData) => {
+const AddEventToPublishedScheduleForm = (props) => {
+    const { cancelFunction, updateTimeline, eventData } = props;
     const toast = useToast();
     const {
       register,
@@ -95,6 +98,7 @@ const AddEventToPublishedScheduleForm = (eventData) => {
           cohort: year,
         });
         console.log(response2);
+        updateTimeline();
         reset();
         toast({
           title: 'Event submitted!',
@@ -117,153 +121,164 @@ const AddEventToPublishedScheduleForm = (eventData) => {
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
   return (
-    <Box p="1rem" bgColor="white" borderRadius="5px">
+    <Box p="1rem" borderRadius="5px">
       <form onSubmit={handleSubmit(submitData)}>
-        <Heading size="md" color="gray.600" mb="0.5rem">Event Information</Heading>
-        <Box px="1rem">
-          {/* TITLE */}
-          <Box mb="1rem">
-            <FormControl isInvalid={errors && errors.title} width="35vw">
-              <FormLabel fontWeight="bold" color="gray.600">Title *</FormLabel>
-              <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200"/>
-              <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
-          {/* DESCRIPTION */}
-          <Box mb="1rem">
-            <FormControl isInvalid={errors && errors.description} width="35vw">
-              <FormLabel fontWeight="bold" color="gray.600">Description</FormLabel>
-              <Textarea {...register('description')} border="1px solid" borderColor="gray.200"/>
-              <FormErrorMessage>
-                {errors.description && errors.description.message}
-              </FormErrorMessage>
-            </FormControl>
-          </Box>
-
-          <Flex alignItems="flex-end" >
-          {/* START TIME? */}
-          <Box mb="1rem">
-            <FormControl isInvalid={errors && errors.startTime}>
-                <FormLabel fontWeight="bold" color="gray.600">Time</FormLabel>
-                <Input
-                    size="md"
-                    type="time"
-                    {...register('startTime')}
-                    border="1px solid"
-                    borderColor="gray.200"
-                />
-                <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-
-          <Text pb="1.5rem" color="gray.600" mx="1rem">&mdash;</Text>
-
-          {/* END TIME? */}
-          <Box mb="1rem">
-            <FormControl isInvalid={errors && errors.endTime}>
-                <Input
-                    size="md"
-                    type="time"
-                    {...register('endTime')}
-                    border="1px solid"
-                    borderColor="gray.200"
-                />
-                <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
-            </FormControl>
-          </Box>
-          </Flex>
-
-          <Flex justifyContent="space-between">
-            {/* SEASON */}
+        <Box bgColor="white" borderRadius="5px" p="1rem">
+          <Heading size="md" color="gray.600" mb="0.5rem">Event Information</Heading>
+          <Box px="1rem">
+            {/* TITLE */}
             <Box mb="1rem">
-              <FormControl>
-                <FormLabel fontWeight="bold" color="gray.600">Season</FormLabel>
-                <Dropdown
-                  options={seasonOptions}
-                  filter={seasonFilter}
-                  selected={filterValues.season}
-                  defaults={eventData && eventData.season}
-                  badgeColor="#CEECC3"
-                  width="28vw"
-                />
+              <FormControl isInvalid={errors && errors.title} width="35vw">
+                <FormLabel fontWeight="bold" color="gray.600">Event Name *</FormLabel>
+                <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200"/>
+                <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
               </FormControl>
             </Box>
 
-            {/* YEAR - selected seasons stored in filterValues.year */}
+            {/* DESCRIPTION */}
             <Box mb="1rem">
-              <FormControl>
-                <FormLabel fontWeight="bold" color="gray.600">Cohort</FormLabel>
-                <Dropdown
-                  options={yearOptions}
-                  filter={yearFilter}
-                  selected={filterValues.year}
-                  defaults={eventData && eventData.year}
-                  badgeColor="#FFE1BE"
-                  width="28vw"
-                />
+              <FormControl isInvalid={errors && errors.description} width="35vw">
+                <FormLabel fontWeight="bold" color="gray.600">Event Description</FormLabel>
+                <Textarea {...register('description')} border="1px solid" borderColor="gray.200"/>
+                <FormErrorMessage>
+                  {errors.description && errors.description.message}
+                </FormErrorMessage>
               </FormControl>
             </Box>
-          </Flex>
 
-          <Flex justifyContent="space-between">
-            {/* SUBJECT */}
+            <Flex alignItems="flex-end" >
+            {/* START TIME? */}
             <Box mb="1rem">
-              <FormControl>
-                <FormLabel fontWeight="bold" color="gray.600">Subject</FormLabel>
-                <Dropdown
-                  options={subjectOptions}
-                  filter={subjectFilter}
-                  selected={filterValues.subject}
-                  defaults={eventData && eventData.subject}
-                  badgeColor="#E8D7FF"
-                  width="28vw"
-                />
+              <FormControl isInvalid={errors && errors.startTime}>
+                  <FormLabel fontWeight="bold" color="gray.600">Time</FormLabel>
+                  <Input
+                      size="md"
+                      type="time"
+                      {...register('startTime')}
+                      border="1px solid"
+                      borderColor="gray.200"
+                  />
+                  <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
               </FormControl>
             </Box>
 
-            {/* EVENT TYPE */}
+            <Text pb="1.5rem" color="gray.600" mx="1rem">&mdash;</Text>
+
+            {/* END TIME? */}
             <Box mb="1rem">
-              <FormControl>
-                <FormLabel fontWeight="bold" color="gray.600">Event Type</FormLabel>
-                <Dropdown
-                  options={eventOptions}
-                  filter={eventFilter}
-                  selected={filterValues.eventType}
-                  defaults={eventData && eventData.eventType}
-                  badgeColor="#CFDCFF"
-                  width="28vw"
-                />
+              <FormControl isInvalid={errors && errors.endTime}>
+                  <Input
+                      size="md"
+                      type="time"
+                      {...register('endTime')}
+                      border="1px solid"
+                      borderColor="gray.200"
+                  />
+                  <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
               </FormControl>
             </Box>
-          </Flex>
-          </Box>
+            </Flex>
 
-          <Heading size="md" color="gray.600">Host Information</Heading>
-          <Box padding="1rem">
-            {/* HOST */}
-            <Box>
-              <FormControl isInvalid={errors && errors.host} width="35vw">
-                <FormLabel fontWeight="bold" color="gray.600">Host</FormLabel>
-                <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200"/>
-                <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
-              </FormControl>
-            </Box>
-          </Box>
+            <Flex justifyContent="space-between">
+              {/* SEASON */}
+              <Box mb="1rem">
+                <FormControl>
+                  <FormLabel fontWeight="bold" color="gray.600">Season</FormLabel>
+                  <Dropdown
+                    options={seasonOptions}
+                    filter={seasonFilter}
+                    selected={filterValues.season}
+                    defaults={eventData && eventData.season}
+                    badgeColor="#CEECC3"
+                    width="28vw"
+                  />
+                </FormControl>
+              </Box>
 
-          <Heading size="md" color="gray.600">Event Status</Heading>
-          <Box padding="1rem">
-            {/* TENTATIVE */}
-            <Box mb="1rem">
-              <FormControl>
-                <Checkbox {...register('tentative')}>Tentative</Checkbox>
-              </FormControl>
+              {/* YEAR - selected seasons stored in filterValues.year */}
+              <Box mb="1rem">
+                <FormControl>
+                  <FormLabel fontWeight="bold" color="gray.600">Cohort</FormLabel>
+                  <Dropdown
+                    options={yearOptions}
+                    filter={yearFilter}
+                    selected={filterValues.year}
+                    defaults={eventData && eventData.year}
+                    badgeColor="#FFE1BE"
+                    width="28vw"
+                  />
+                </FormControl>
+              </Box>
+            </Flex>
+
+            <Flex justifyContent="space-between">
+              {/* SUBJECT */}
+              <Box mb="1rem">
+                <FormControl>
+                  <FormLabel fontWeight="bold" color="gray.600">Topic</FormLabel>
+                  <Dropdown
+                    options={subjectOptions}
+                    filter={subjectFilter}
+                    selected={filterValues.subject}
+                    defaults={eventData && eventData.subject}
+                    badgeColor="#E8D7FF"
+                    width="28vw"
+                  />
+                </FormControl>
+              </Box>
+
+              {/* EVENT TYPE */}
+              <Box mb="1rem">
+                <FormControl>
+                  <FormLabel fontWeight="bold" color="gray.600">Event Type</FormLabel>
+                  <Dropdown
+                    options={eventOptions}
+                    filter={eventFilter}
+                    selected={filterValues.eventType}
+                    defaults={eventData && eventData.eventType}
+                    badgeColor="#CFDCFF"
+                    width="28vw"
+                  />
+                </FormControl>
+              </Box>
+            </Flex>
             </Box>
-          </Box>
-        <Button type="submit">Submit</Button>
+
+            <Heading size="md" color="gray.600">Host Information</Heading>
+            <Box padding="1rem">
+              {/* HOST */}
+              <Box>
+                <FormControl isInvalid={errors && errors.host} width="35vw">
+                  <FormLabel fontWeight="bold" color="gray.600">Host Name</FormLabel>
+                  <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200"/>
+                  <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
+                </FormControl>
+              </Box>
+            </Box>
+
+            <Heading size="md" color="gray.600">Event Status</Heading>
+            <Box padding="1rem">
+              {/* TENTATIVE */}
+              <Box mb="1rem">
+                <FormControl>
+                  <Checkbox {...register('tentative')}>Tentative</Checkbox>
+                </FormControl>
+              </Box>
+            </Box>
+        </Box>
+        <Stack spacing={2} justifyContent="right" direction="row">
+          <Button htype="submit" mt="1rem" mr="1rem" onClick={cancelFunction}>Cancel</Button>
+          <Button colorScheme="blue" type="submit" mt="1rem">Add Event</Button>
+        </Stack>
       </form>
     </Box>
   );
 };
 
-  export default AddEventToPublishedScheduleForm;
+AddEventToPublishedScheduleForm.propTypes = {
+  cancelFunction: PropTypes.func,
+  updateTimeline: PropTypes.func,
+  eventData: PropTypes.object
+};
+
+export default AddEventToPublishedScheduleForm;

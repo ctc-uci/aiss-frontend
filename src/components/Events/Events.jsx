@@ -42,7 +42,7 @@ const Events = ({ eventData, location }) => {
   if (eventData.length > 1) {
     eventDataWithBreaks.push(eventData[eventData.length - 1]);
   }
-  console.log(eventDataWithBreaks);
+  // console.log(eventDataWithBreaks);
   return (
     <Grid gap={3}>
       {eventDataWithBreaks.map(item => (

@@ -5,60 +5,80 @@ import { Badge, Text } from '@chakra-ui/react';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent from '../PlannedEvent';
 import { MINUTES_PER_HOUR } from '../chrono';
-// import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
-// import { NPOBackend } from '../../../utils/auth_utils';
+import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
+import { NPOBackend } from '../../../utils/auth_utils';
+import PropTypes from 'prop-types';
 
-const PlannerTimeline = () => {
+const PlannerTimeline = ({ updateTimelineCount }) => {
   const { plannedEventsContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
-  // const { dayId } = useContext(DayIdContext);
+  const { dayId } = useContext(DayIdContext);
+
+  // useEffect((events) => {
+  //   // if (dayId) {
+  //   //   fetchDayInfo(dayId);
+  //   // }
+
+  //   console.log(events);
+  //   // TODO: receive planned events via props and translate them here
+  //   setPlannedEvents([
+  //     new PlannedEvent(
+  //       'sample-1',
+  //       'Sample Event 1',
+  //       MINUTES_PER_HOUR * 9.5,
+  //       MINUTES_PER_HOUR * 10.5,
+  //       false,
+  //     ),
+  //     new PlannedEvent(
+  //       'sample-2',
+  //       'Sample Event 2',
+  //       MINUTES_PER_HOUR * 11,
+  //       MINUTES_PER_HOUR * 13,
+  //       false,
+  //     ),
+  //     new PlannedEvent(
+  //       'sample-3',
+  //       'Sample Event 3',
+  //       MINUTES_PER_HOUR * 13.5,
+  //       MINUTES_PER_HOUR * 16,
+  //       false,
+  //     ),
+  //   ]);
+
+  //   // Sample Events:
+  //   // sample-1:  9:30 - 10:30
+  //   // sample-2:  11:00 - 1:00
+  //   // sample-3:  13:30 - 16:00
+  // }, [setPlannedEvents]);
+
+  const fetchDayInfo = async (id) => {
+    const psEvents = await NPOBackend.get((`/published-schedule/dayId?dayId=${id}`));
+    return psEvents.data.data;
+  }
+
+  const convertTimeToMinutes = (timeString) => {
+    const [hours, minutes] = timeString.split(":").slice(0,2).map(Number);
+    const totalMinutes = hours*MINUTES_PER_HOUR + minutes;
+    return totalMinutes;
+  }
 
   useEffect(() => {
-    // if (dayId) {
-    //   fetchDayInfo(dayId);
-    // }
-    // TODO: receive planned events via props and translate them here
-    setPlannedEvents([
-      new PlannedEvent(
-        'sample-1',
-        'Sample Event 1',
-        MINUTES_PER_HOUR * 9.5,
-        MINUTES_PER_HOUR * 10.5,
-        false,
-      ),
-      new PlannedEvent(
-        'sample-2',
-        'Sample Event 2',
-        MINUTES_PER_HOUR * 11,
-        MINUTES_PER_HOUR * 13,
-        false,
-      ),
-      new PlannedEvent(
-        'sample-3',
-        'Sample Event 3',
-        MINUTES_PER_HOUR * 13.5,
-        MINUTES_PER_HOUR * 16,
-        false,
-      ),
-    ]);
+    console.log('updating timeline!');
+    updateTimeline();
+  }, [updateTimelineCount]);
 
-    // Sample Events:
-    // sample-1:  9:30 - 10:30
-    // sample-2:  11:00 - 1:00
-    // sample-3:  13:30 - 16:00
-  }, [setPlannedEvents]);
-
-  // const fetchDayInfo = async (id) => {
-  //   const { data } = await NPOBackend.get(`/day/${id}`);
-  //   const dayData = data[0];
-
-  //   console.log(dayData)
-  //   const formattedDate = dayData.eventDate.split('T')[0];
-  //   console.log(formattedDate);
-
-  //   const { psEvents } = await NPOBackend.get((`/published-schedule/date/?date=${formattedDate}`));
-  //   console.log(psEvents)
-  // }
+  const updateTimeline = async () => {
+    const psEvents = await fetchDayInfo(dayId);
+    if (psEvents && psEvents[0].id) {
+      setPlannedEvents(psEvents.map((data) => new PlannedEvent(
+        data.id,
+        data.title,
+        convertTimeToMinutes(data.startTime),
+        convertTimeToMinutes(data.endTime),
+        data.confirmed, // might need to negate this
+      )));
+    }
+  }
 
   // Memoize function call for time labels to increase efficiency between component re-renders
   const timelineBlocks = useMemo(() => {
@@ -110,6 +130,10 @@ const PlannerTimeline = () => {
       </div>
     </div>
   );
+};
+
+PlannerTimeline.propTypes = {
+  updateTimelineCount: PropTypes.number
 };
 
 export default PlannerTimeline;
