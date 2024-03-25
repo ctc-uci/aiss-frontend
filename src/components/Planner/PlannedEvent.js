@@ -7,13 +7,15 @@ export default class PlannedEvent {
   name; // string
   startTime; // number (minutes since midnight - e.g. 60 * 10 = 10AM)
   endTime; // number (minutes since midnight - e.g. 60 * 10 = 10AM)
+  hostName;
   isTentative; // boolean
 
-  constructor(id, name, startTime, endTime, isTentative = false) {
+  constructor(id, name, startTime, endTime, hostName, isTentative = false) {
     this.id = id;
     this.name = name;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.hostName = hostName;
     this.isTentative = isTentative;
   }
 

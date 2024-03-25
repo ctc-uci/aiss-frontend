@@ -63,15 +63,15 @@ const AddEventToPublishedScheduleForm = (props) => {
 
     const { dayId } = useContext(DayIdContext);
 
-    const compareOriginalToCurrentData = (originalData, currData) => {
+    const currentDataHasChanged = (originalData, currData) => {
       for (let key of Object.keys(currData)) {
         if (originalData[key] === undefined || originalData[key] !== currData[key]) {
           console.log('changed: ', key, originalData[key], currData[key]);
-          return false;
+          return true;
         }
       }
       console.log('no changes to catalog data');
-      return true;
+      return false;
     }
 
     const submitData = async (data) => {
@@ -84,7 +84,7 @@ const AddEventToPublishedScheduleForm = (props) => {
 
         toast.closeAll();
 
-        const catalogDataChanged = compareOriginalToCurrentData(eventData, {
+        const catalogDataChanged = currentDataHasChanged(eventData, {
           title,
           host,
           description,
@@ -97,6 +97,7 @@ const AddEventToPublishedScheduleForm = (props) => {
         let catalogEventId = eventData.id;
 
         if (catalogDataChanged || !catalogEventId) {
+          console.log('adding new event to catalog from PS');
           const catalogResponse = await NPOBackend.post(`/catalog`, {
             title,
             host,
@@ -110,7 +111,7 @@ const AddEventToPublishedScheduleForm = (props) => {
           catalogEventId = catalogResponse.data.id;
         }
 
-        console.log(catalogEventId);
+        // console.log(catalogEventId);
 
         //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
 

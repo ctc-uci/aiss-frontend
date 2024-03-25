@@ -1,7 +1,7 @@
 import s from '../PlannerLayout.module.css';
 import { useMemo, useContext, useEffect } from 'react';
 import { generateTimestamps, minutesInFormattedTime } from '../chrono';
-import { Badge, Text } from '@chakra-ui/react';
+import { Badge, Text, Box } from '@chakra-ui/react';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent from '../PlannedEvent';
 import { MINUTES_PER_HOUR } from '../chrono';
@@ -69,13 +69,15 @@ const PlannerTimeline = ({ updateTimelineCount }) => {
 
   const updateTimeline = async () => {
     const psEvents = await fetchDayInfo(dayId);
+    // console.log(psEvents);
     if (psEvents && psEvents[0].id) {
       setPlannedEvents(psEvents.map((data) => new PlannedEvent(
         data.id,
         data.title,
         convertTimeToMinutes(data.startTime),
         convertTimeToMinutes(data.endTime),
-        data.confirmed, // might need to negate this
+        data.host,
+        !data.confirmed,
       )));
     }
   }
@@ -108,22 +110,40 @@ const PlannerTimeline = ({ updateTimelineCount }) => {
       <div className={`${s['timeline-grid']} ${s['gray-scrollbar-vertical']}`}>
         {timelineBlocks}
         {plannedEvents.map(plannedEvent => {
-          const { id, name, startTime, endTime } = plannedEvent;
+          // console.log(plannedEvent);
+          const { id, name, startTime, endTime, hostName, isTentative } = plannedEvent;
           const gridStyles = plannedEvent.calculateGridStyles();
 
           const formattedStartTime = minutesInFormattedTime(startTime);
           const formattedEndTime = minutesInFormattedTime(endTime);
 
+          let border_color = '#2B93D1';
+          let background_color = '#BEE3F8';
+
+          if (isTentative) {
+            border_color = '#F69052';
+            background_color = '#FEF1DC';
+          }
+
           return (
             <div key={id} style={gridStyles} className={s['timeline-event-wrapper']}>
-              <div className={s['timeline-event-container']}>
+              <Box
+                className={s['timeline-event-container']}
+                bg={background_color}
+                borderRadius="7"
+                borderLeftWidth="10px"
+                borderColor={border_color}
+              >
                 <Text fontSize="sm" fontWeight="600">
                   {name}
                 </Text>
                 <Text fontSize="sm">
                   <span>{formattedStartTime}</span> - <span>{formattedEndTime}</span>
                 </Text>
-              </div>
+                <Text fontSize="sm">
+                  {hostName}
+                </Text>
+              </Box>
             </div>
           );
         })}
