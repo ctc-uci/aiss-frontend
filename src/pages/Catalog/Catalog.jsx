@@ -15,7 +15,7 @@ import { AddIcon, SearchIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useCallback } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 import DeleteEventModal from '../../components/Catalog/DeleteEventModal/DeleteEventModal';
-// import AddExistingEventToScheduleModal from '../../components/Catalog/CreateEventForm/AddExistingEventToScheduleModal';
+import CreateEventFormModal from '../../components/Catalog/CreateEventForm/CreateEventFormModal';
 import PaginationFooter from '../../components/Catalog/PaginationFooter/PaginationFooter';
 import CatalogTable from '../../components/Catalog/CatalogTable';
 import SearchFilter from '../../components/Catalog/SearchFilter/SearchFilter';
@@ -36,11 +36,11 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setExistin
   //   onOpen: onEditFormOpen,
   //   onClose: onEditFormClose,
   // } = useDisclosure();
-  // const {
-  //   isOpen: isCreateFormOpen,
-  //   onOpen: onCreateFormOpen,
-  //   onClose: onCreateFormClose,
-  // } = useDisclosure();
+  const {
+    isOpen: isCreateFormOpen,
+    onOpen: onCreateFormOpen,
+    onClose: onCreateFormClose,
+  } = useDisclosure();
 
   const [tableData, setTableData] = useState([]);
   const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
@@ -131,7 +131,7 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setExistin
           w="3rem"
           h="3rem"
           _hover={{ bgColor: 'blue.500' }}
-          onClick={addExistingEventFunc}
+          onClick={addExistingEventFunc ? addExistingEventFunc : onCreateFormOpen}
           icon={<AddIcon />}
         >
           Create
@@ -210,11 +210,11 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setExistin
           )}
         </TableContainer>
 
-        {/* <AddExistingEventToScheduleModal
+        <CreateEventFormModal
           isOpen={isCreateFormOpen}
           onClose={onCreateFormClose}
           setDataShouldRevalidate={setDataShouldRevalidate}
-        /> */}
+        />
         {/* <CreateEventFormModal
           isOpen={isEditFormOpen}
           onClose={onEditFormClose}
