@@ -29,62 +29,79 @@ import {
 import useSearchFilters from '../Catalog/SearchFilter/useSearchFilters';
 import Dropdown from '../Dropdown/Dropdown';
 import PropTypes from 'prop-types';
+import { PlannerContext } from '../Planner/PlannerContext';
+import PlannedEvent, { convertTimeToMinutes } from '../Planner/PlannedEvent';
 
-  const schema = yup.object({
-      startTime: yup.string().required('Start time is required'),
-      endTime: yup.string()
-        .required('End time is required')
-        .test('is-after', 'End time must be after start time', function(endTime) {
-          const startTime = this.parent.startTime;
-          return startTime && endTime && startTime < endTime;
-        }),
-      host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
-      title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
-      description: yup
-        .string()
-        .max(256, 'Description exceeds 256 character limit')
-        .default('')
-        .nullable(),
-      tentative: yup.boolean()
+const schema = yup.object({
+    startTime: yup.string().required('Start time is required'),
+    endTime: yup.string()
+      .required('End time is required')
+      .test('is-after', 'End time must be after start time', function(endTime) {
+        const startTime = this.parent.startTime;
+        return startTime && endTime && startTime < endTime;
+      }),
+    host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
+    title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
+    description: yup
+      .string()
+      .max(256, 'Description exceeds 256 character limit')
+      .default('')
+      .nullable(),
+    tentative: yup.boolean()
+});
+
+const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
+  const { plannedEventsContext } = useContext(PlannerContext);
+  const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+
+  const toast = useToast();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
   });
 
+  const { dayId } = useContext(DayIdContext);
 
-const AddEventToPublishedScheduleForm = (props) => {
-    const { cancelFunction, updateTimeline, eventData } = props;
-    const toast = useToast();
-    const {
-      register,
-      handleSubmit,
-      reset,
-      formState: { errors },
-    } = useForm({
-      resolver: yupResolver(schema),
-    });
-
-    const { dayId } = useContext(DayIdContext);
-
-    const currentDataHasChanged = (originalData, currData) => {
-      for (let key of Object.keys(currData)) {
-        if (originalData[key] === undefined || originalData[key] !== currData[key]) {
-          console.log('changed: ', key, originalData[key], currData[key]);
-          return true;
-        }
+  const currentDataHasChanged = (originalData, currData) => {
+    for (let key of Object.keys(currData)) {
+      if (originalData[key] === undefined || originalData[key] !== currData[key]) {
+        console.log('changed: ', key, originalData[key], currData[key]);
+        return true;
       }
-      console.log('no changes to catalog data');
-      return false;
     }
+    console.log('no changes to catalog data');
+    return false;
+  }
 
-    const submitData = async (data) => {
-      try {
-        const { title, host, description, tentative, startTime, endTime } = data;
-        const season = filterValues.season;
-        const eventType = filterValues.eventType;
-        const year = filterValues.year;
-        const subject = filterValues.subject;
+  const submitData = async (data) => {
+    try {
+      const { title, host, description, tentative, startTime, endTime } = data;
+      const season = filterValues.season;
+      const eventType = filterValues.eventType;
+      const year = filterValues.year;
+      const subject = filterValues.subject;
 
-        toast.closeAll();
+      toast.closeAll();
 
-        const catalogDataChanged = currentDataHasChanged(eventData, {
+      const catalogDataChanged = currentDataHasChanged(eventData, {
+        title,
+        host,
+        description,
+        eventType,
+        subject,
+        year,
+        season
+      });
+
+      let catalogEventId = eventData.id;
+
+      if (catalogDataChanged || !catalogEventId) {
+        console.log('adding new event to catalog from PS');
+        const catalogResponse = await NPOBackend.post(`/catalog`, {
           title,
           host,
           description,
@@ -94,55 +111,49 @@ const AddEventToPublishedScheduleForm = (props) => {
           season
         });
 
-        let catalogEventId = eventData.id;
-
-        if (catalogDataChanged || !catalogEventId) {
-          console.log('adding new event to catalog from PS');
-          const catalogResponse = await NPOBackend.post(`/catalog`, {
-            title,
-            host,
-            description,
-            eventType,
-            subject,
-            year,
-            season
-          });
-
-          catalogEventId = catalogResponse.data.id;
-        }
-
-        // console.log(catalogEventId);
-
-        //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
-
-        // Send a POST request to the appropriate backend route
-        const response2 = await NPOBackend.post('/published-schedule', {
-          eventId: catalogEventId,
-          dayId,
-          confirmed: !tentative,
-          startTime,
-          endTime,
-          cohort: year,
-        });
-        console.log(response2);
-        updateTimeline();
-        reset();
-        toast({
-          title: 'Event submitted!',
-          description: `Event has been submitted. ID: ${catalogEventId}`,
-          status: 'success',
-          variant: 'subtle',
-          position: 'bottom',
-          containerStyle: {
-            mt: '6rem',
-          },
-          duration: 3000,
-          isClosable: true,
-        });
-      } catch (error) {
-        console.log(error);
+        catalogEventId = catalogResponse.data.id;
       }
-    };
+
+      // console.log(catalogEventId);
+
+      //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
+
+      // Send a POST request to the appropriate backend route
+      const publishedScheduleReponse = await NPOBackend.post('/published-schedule', {
+        eventId: catalogEventId,
+        dayId,
+        confirmed: !tentative,
+        startTime,
+        endTime,
+        cohort: year,
+      });
+      console.log(publishedScheduleReponse);
+      const newPlannedEvent = new PlannedEvent(
+        publishedScheduleReponse.id,
+        title,
+        convertTimeToMinutes(startTime),
+        convertTimeToMinutes(endTime),
+        host,
+        tentative
+      );
+      setPlannedEvents([...plannedEvents, newPlannedEvent]);
+      reset();
+      toast({
+        title: 'Event submitted!',
+        description: `Event has been submitted. ID: ${catalogEventId}`,
+        status: 'success',
+        variant: 'subtle',
+        position: 'bottom',
+        containerStyle: {
+          mt: '6rem',
+        },
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const { filters, filterValues } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;

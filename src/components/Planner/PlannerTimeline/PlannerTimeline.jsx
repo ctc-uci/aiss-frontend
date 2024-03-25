@@ -3,13 +3,11 @@ import { useMemo, useContext, useEffect } from 'react';
 import { generateTimestamps, minutesInFormattedTime } from '../chrono';
 import { Badge, Text, Box } from '@chakra-ui/react';
 import { PlannerContext } from '../PlannerContext';
-import PlannedEvent from '../PlannedEvent';
-import { MINUTES_PER_HOUR } from '../chrono';
+import PlannedEvent, { convertTimeToMinutes } from '../PlannedEvent';
 import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
 import { NPOBackend } from '../../../utils/auth_utils';
-import PropTypes from 'prop-types';
 
-const PlannerTimeline = ({ updateTimelineCount }) => {
+const PlannerTimeline = () => {
   const { plannedEventsContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
   const { dayId } = useContext(DayIdContext);
@@ -56,16 +54,10 @@ const PlannerTimeline = ({ updateTimelineCount }) => {
     return psEvents.data.data;
   }
 
-  const convertTimeToMinutes = (timeString) => {
-    const [hours, minutes] = timeString.split(":").slice(0,2).map(Number);
-    const totalMinutes = hours*MINUTES_PER_HOUR + minutes;
-    return totalMinutes;
-  }
-
   useEffect(() => {
-    console.log('updating timeline!');
+    // console.log('updating timeline!');
     updateTimeline();
-  }, [updateTimelineCount]);
+  }, []);
 
   const updateTimeline = async () => {
     const psEvents = await fetchDayInfo(dayId);
@@ -150,10 +142,6 @@ const PlannerTimeline = ({ updateTimelineCount }) => {
       </div>
     </div>
   );
-};
-
-PlannerTimeline.propTypes = {
-  updateTimelineCount: PropTypes.number
 };
 
 export default PlannerTimeline;

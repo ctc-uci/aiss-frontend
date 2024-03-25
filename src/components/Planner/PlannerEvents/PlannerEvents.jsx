@@ -4,9 +4,8 @@ import { Text, Button, Heading, Box } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import AddEventOverlay from './AddEventOverlay';
 import Catalog from '../../../pages/Catalog/Catalog';
-import PropTypes from 'prop-types';
 
-const PlannerEvents = ({ updateTimelineCount, setUpdateTimelineFunc }) => {
+const PlannerEvents = () => {
   const [overlayIsVisible, setOverlayIsVisible] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [existingEventData, setExistingEventData] = useState({});
@@ -23,7 +22,7 @@ const PlannerEvents = ({ updateTimelineCount, setUpdateTimelineFunc }) => {
 
   return (
     <div id={s['planner-events-container']}>
-      {overlayIsVisible && <AddEventOverlay eventData={existingEventData} updateTimelineCount={updateTimelineCount} setUpdateTimelineFunc={setUpdateTimelineFunc} setOverlayIsVisible={openPSEventForm}/>}
+      {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>}
       <div id={s['planner-browse']}>
         {isVisible && (
           <>
@@ -57,9 +56,5 @@ const PlannerEvents = ({ updateTimelineCount, setUpdateTimelineFunc }) => {
   );
 };
 
-PlannerEvents.propTypes = {
-  setUpdateTimelineFunc: PropTypes.func,
-  updateTimelineCount: PropTypes.number
-};
 
 export default PlannerEvents;

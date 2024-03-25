@@ -41,3 +41,11 @@ export default class PlannedEvent {
     };
   }
 }
+
+const convertTimeToMinutes = (timeString) => {
+  const [hours, minutes] = timeString.split(":").slice(0,2).map(Number);
+  const totalMinutes = hours*MINUTES_PER_HOUR + minutes;
+  return totalMinutes;
+}
+
+export { convertTimeToMinutes }
