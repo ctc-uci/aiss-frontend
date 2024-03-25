@@ -17,6 +17,15 @@ const Events = ({ eventData, location }) => {
 
   let maxId = eventData.reduce((maxVal, event) => Math.max(maxVal, event.id), -Infinity)+1;
 
+  eventData.sort((a, b) => {
+    if (a.startTime < b.startTime) {
+      return -1;
+    } else if (a.startTime > b.startTime) {
+      return 1;
+    }
+    return 0;
+  });
+
   const eventDataWithBreaks = [];
   if (eventData.length == 1) {
     eventDataWithBreaks.push(eventData[0]);
