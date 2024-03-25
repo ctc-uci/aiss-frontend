@@ -3,7 +3,7 @@ import { Box, Flex, Text, Grid, Button } from '@chakra-ui/react';
 import { useState } from 'react';
 import { NPOBackend } from '../../utils/auth_utils.js';
 
-const DailyEvent = ({ id, startTime, endTime, eventTitle, location, confirmed }) => {
+const DailyEvent = ({ id, startTime, endTime, eventTitle, confirmed, description }) => {
   // console.log("CONFIRMED:" + confirmed);
 
   const [confirmEvent, setConfirmEvent] = useState(confirmed);
@@ -51,7 +51,7 @@ const DailyEvent = ({ id, startTime, endTime, eventTitle, location, confirmed })
         <Box w="90%">
           <Grid gap={2}>
             <Text fontWeight="bold">{eventTitle}</Text>
-            <Text>{location}</Text>
+            <Text>{description}</Text>
           </Grid>
         </Box>
 
@@ -78,7 +78,7 @@ DailyEvent.propTypes = {
   startTime: PropTypes.string.isRequired,
   endTime: PropTypes.string.isRequired,
   eventTitle: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
+  description: PropTypes.string,
   confirmed: PropTypes.bool.isRequired,
 };
 

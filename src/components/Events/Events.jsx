@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Grid } from '@chakra-ui/react';
 
-const Events = ({ eventData, location }) => {
+const Events = ({ eventData }) => {
 
   const formatDate = (date) => {
     let time = date.split(":");
@@ -42,7 +42,6 @@ const Events = ({ eventData, location }) => {
         startTime: currentEvent.endTime,
         endTime: nextEvent.startTime,
         title: 'Break / Team Time',
-        location: 'N/A',
         confirmed: true,
       });
       maxId++;
@@ -60,7 +59,7 @@ const Events = ({ eventData, location }) => {
           startTime={formatDate(item.startTime)}
           endTime={formatDate(item.endTime)}
           eventTitle={item.title}
-          location={item.location == null ? location : null}
+          description={item.description}
           confirmed={item.confirmed}
         />
       ))}
@@ -70,7 +69,6 @@ const Events = ({ eventData, location }) => {
 
 Events.propTypes = {
   eventData: PropTypes.array.isRequired,
-  location: PropTypes.string.isRequired,
 };
 
 export default Events;

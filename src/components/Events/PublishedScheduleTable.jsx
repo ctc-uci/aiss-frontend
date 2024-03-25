@@ -63,7 +63,7 @@ const PublishedScheduleTable = ({ season }) => {
                   />
                 </Td>
                 <Td style={{ textAlign: 'left' }} width="75%">
-                  <Events eventData={item.data} location={item.day.location} />
+                  <Events eventData={item.data} />
                 </Td>
               </Tr>
             ))}
