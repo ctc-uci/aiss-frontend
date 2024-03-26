@@ -111,10 +111,20 @@ const PlannerTimeline = () => {
 
           let border_color = '#2B93D1';
           let background_color = '#BEE3F8';
+          let border_style = 'none none none solid';
+          const border_width = '2px 2px 2px 10px'
 
           if (isTentative) {
             border_color = '#F69052';
             background_color = '#FEF1DC';
+          }
+
+          if (id == -1 && !isTentative) {
+            border_style = 'dashed dashed dashed solid';
+            background_color = '#eaf8ff';
+          } else if (id == -1 && isTentative) {
+            border_style = 'dashed dashed dashed solid';
+            background_color = '#fffaf0';
           }
 
           return (
@@ -123,8 +133,9 @@ const PlannerTimeline = () => {
                 className={s['timeline-event-container']}
                 bg={background_color}
                 borderRadius="7"
-                borderLeftWidth="10px"
                 borderColor={border_color}
+                borderStyle={border_style}
+                borderWidth={border_width}
               >
                 <Text fontSize="sm" fontWeight="600">
                   {name}

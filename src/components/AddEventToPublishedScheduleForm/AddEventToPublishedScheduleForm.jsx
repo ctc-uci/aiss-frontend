@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
 import * as yup from 'yup';
@@ -53,6 +53,25 @@ const schema = yup.object({
 const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
   const { plannedEventsContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+  const { filters, filterValues } = useSearchFilters();
+  const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
+  const { dayId } = useContext(DayIdContext);
+
+  const [formData, setFormData] = useState({tentative: false});
+
+  useEffect(() => {
+    if (formData.startTime && formData.endTime) {
+      const newPlannedEvent = new PlannedEvent(
+        -1,
+        formData.title,
+        convertTimeToMinutes(formData.startTime),
+        convertTimeToMinutes(formData.endTime),
+        formData.host,
+        formData.tentative ? true : false
+      )
+      setPlannedEvents([...plannedEvents.filter(e => e.id != -1), newPlannedEvent])
+    }
+  }, [formData])
 
   const toast = useToast();
   const {
@@ -64,7 +83,6 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
     resolver: yupResolver(schema),
   });
 
-  const { dayId } = useContext(DayIdContext);
 
   const currentDataHasChanged = (originalData, currData) => {
     for (let key of Object.keys(currData)) {
@@ -136,7 +154,8 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
         host,
         tentative
       );
-      setPlannedEvents([...plannedEvents, newPlannedEvent]);
+      setPlannedEvents([...plannedEvents.filter(e => e.id != -1), newPlannedEvent]);
+      setFormData({tentative: false});
       reset();
       toast({
         title: 'Event submitted!',
@@ -155,9 +174,6 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
     }
   };
 
-  const { filters, filterValues } = useSearchFilters();
-  const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
-
   return (
     <Box p="1rem" borderRadius="5px">
       <form onSubmit={handleSubmit(submitData)}>
@@ -168,7 +184,13 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
             <Box mb="1rem">
               <FormControl isInvalid={errors && errors.title} width="35vw">
                 <FormLabel fontWeight="bold" color="gray.600">Event Name *</FormLabel>
-                <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200" defaultValue={eventData && eventData.title}/>
+                <Input
+                  type="text" {...register('title')}
+                  border="1px solid"
+                  borderColor="gray.200"
+                  defaultValue={eventData && eventData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  />
                 <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
               </FormControl>
             </Box>
@@ -195,6 +217,7 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
                       {...register('startTime')}
                       border="1px solid"
                       borderColor="gray.200"
+                      onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                   />
                   <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
               </FormControl>
@@ -211,6 +234,7 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
                       {...register('endTime')}
                       border="1px solid"
                       borderColor="gray.200"
+                      onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                   />
                   <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
               </FormControl>
@@ -288,7 +312,14 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
               <Box>
                 <FormControl isInvalid={errors && errors.host} width="35vw">
                   <FormLabel fontWeight="bold" color="gray.600">Host Name</FormLabel>
-                  <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200" defaultValue={eventData && eventData.host}/>
+                  <Input
+                    type="text"
+                    {...register('host')}
+                    border="1px solid"
+                    borderColor="gray.200"
+                    defaultValue={eventData && eventData.host}
+                    onChange={(e) => setFormData({ ...formData, host: e.target.value })}
+                  />
                   <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
                 </FormControl>
               </Box>
@@ -299,7 +330,12 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
               {/* TENTATIVE */}
               <Box mb="1rem">
                 <FormControl>
-                  <Checkbox {...register('tentative')}>Tentative</Checkbox>
+                  <Checkbox
+                    {...register('tentative')}
+                    onChange={() => setFormData({ ...formData, tentative: !formData.tentative })}
+                  >
+                    Tentative
+                  </Checkbox>
                 </FormControl>
               </Box>
             </Box>
