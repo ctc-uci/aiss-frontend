@@ -54,6 +54,7 @@ const PublishedScheduleTable = ({ season }) => {
               <Tr key={item.day.id} verticalAlign={'top'}>
                 <Td pr={0}>
                   <EventInfo
+                    dayId={item.day.id}
                     eventDate={getUTCDate(item.day.eventDate).toLocaleDateString('en-US')}
                     day={dayNames[getUTCDate(item.day.eventDate).getDay()]}
                     startTime={formatDate(item.day.startTime)}

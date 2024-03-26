@@ -1,17 +1,15 @@
 import {
-  Button,
   IconButton,
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalFooter,
   ModalBody,
   useDisclosure,
 } from '@chakra-ui/react'
 import { AddIcon } from '@chakra-ui/icons';
-import Planner from '../../pages/Planner/Planner.jsx';
 import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
 import { useState } from 'react';
+import PlannerModal from '../../components/Planner/PlannerModal.jsx';
 
 
 const AddDayModal = () => {
@@ -57,20 +55,7 @@ const AddDayModal = () => {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenPlanner} size={'full'} onClose={onClosePlanner}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalBody>
-            <Planner dayId={dayId}/>
-          </ModalBody>
-
-          <ModalFooter>
-              <Button colorScheme='blue' mr={3} onClick={onClosePlanner}>
-              Close
-              </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <PlannerModal isOpen={isOpenPlanner} onClose={onClosePlanner} dayId={dayId} />
     </>
     );
 };
