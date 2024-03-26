@@ -10,43 +10,6 @@ const PlannerTimeline = () => {
   const { plannedEventsContext, dayId } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
 
-  // useEffect((events) => {
-  //   // if (dayId) {
-  //   //   fetchDayInfo(dayId);
-  //   // }
-
-  //   console.log(events);
-  //   // TODO: receive planned events via props and translate them here
-  //   setPlannedEvents([
-  //     new PlannedEvent(
-  //       'sample-1',
-  //       'Sample Event 1',
-  //       MINUTES_PER_HOUR * 9.5,
-  //       MINUTES_PER_HOUR * 10.5,
-  //       false,
-  //     ),
-  //     new PlannedEvent(
-  //       'sample-2',
-  //       'Sample Event 2',
-  //       MINUTES_PER_HOUR * 11,
-  //       MINUTES_PER_HOUR * 13,
-  //       false,
-  //     ),
-  //     new PlannedEvent(
-  //       'sample-3',
-  //       'Sample Event 3',
-  //       MINUTES_PER_HOUR * 13.5,
-  //       MINUTES_PER_HOUR * 16,
-  //       false,
-  //     ),
-  //   ]);
-
-  //   // Sample Events:
-  //   // sample-1:  9:30 - 10:30
-  //   // sample-2:  11:00 - 1:00
-  //   // sample-3:  13:30 - 16:00
-  // }, [setPlannedEvents]);
-
   const fetchDayInfo = async (id) => {
     const psEvents = await NPOBackend.get((`/published-schedule/dayId?dayId=${id}`));
     return psEvents.data.data;
@@ -141,7 +104,7 @@ const PlannerTimeline = () => {
                 <Text fontSize="sm">
                   <span>{formattedStartTime}</span> - <span>{formattedEndTime}</span>
                 </Text>
-                <Text fontSize="sm">
+                <Text fontSize="xs">
                   {hostName}
                 </Text>
               </Box>

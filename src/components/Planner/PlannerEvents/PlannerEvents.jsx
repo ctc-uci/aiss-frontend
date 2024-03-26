@@ -1,19 +1,19 @@
 import { useState, useEffect, useContext } from 'react';
 import s from '../PlannerLayout.module.css';
-import { Text, Button, Heading, Box } from '@chakra-ui/react';
+import { Text, Button, Heading, Box, Flex } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import AddEventOverlay from './AddEventOverlay';
 import Catalog from '../../../pages/Catalog/Catalog';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { PlannerContext } from '../PlannerContext';
 import { NPOBackend } from '../../../utils/auth_utils';
 
-const PlannerEvents = () => {
-  const [overlayIsVisible, setOverlayIsVisible] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+const PlannerEvents = ({ onClose }) => {
+  const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
-  const { dayId } = useContext(PlannerContext);
+  const { plannedEventsContext, dayId } = useContext(PlannerContext);
+  const plannedEvents = plannedEventsContext[0];
 
   useEffect(() => {
     const getDayData = async () => {
@@ -28,24 +28,35 @@ const PlannerEvents = () => {
       }
     };
     getDayData();
-    console.log(dateHeader);
   }, [dayId]);
 
   const handleCreateNewEvent = () => {
     setExistingEventData({});
-    openPSEventForm();
+    togglePSForm();
   }
 
-  const openPSEventForm = () => {
-    setOverlayIsVisible(!overlayIsVisible);
-    setIsVisible(!isVisible);
+  const togglePSForm = () => {
+    setIsAddingEvent(!isAddingEvent);
   };
 
+  const closeModal = async () => {
+    // delete day if empty
+    if (plannedEvents.length === 0) {
+      try {
+        console.log('deleting day!!')
+        await NPOBackend.delete(`/day/${dayId}`);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    onClose();
+  }
+
   return (
-    <div id={s['planner-events-container']}>
-      {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>}
+    <div id={s['planner-events-container']} className={s['gray-scrollbar-vertical']}>
+      {/* {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>} */}
       <div id={s['planner-browse']}>
-        {isVisible && (
+        {!isAddingEvent ? (
           <>
             <Heading size="md" pb="1rem">{dateHeader}</Heading>
             <Box bgColor="white" p="1rem" borderRadius="5px" mb="1rem">
@@ -67,16 +78,33 @@ const PlannerEvents = () => {
               </Button>
             </Box>
 
-            <Box bgColor="white" p="1rem" borderRadius="5px">
+            <Box bgColor="white" p="1rem" pb={0} borderRadius="5px">
               <Heading size="md" color="gray.800" fontWeight={600}>Add Event From Catalog</Heading>
-              <Catalog onDayPlanner={true} addExistingEventFunc={openPSEventForm} setExistingEventData={setExistingEventData}/>
+              <Catalog onDayPlanner={true} addExistingEventFunc={togglePSForm} setExistingEventData={setExistingEventData}/>
             </Box>
+
+            <Flex flexDir="row-reverse" py="1.5rem">
+              <Button
+              backgroundColor="#2c93d1"
+              _hover={{ bgColor: '#1b6896' }}
+              color="white"
+              isDisabled={!plannedEvents.length}
+              >
+                Finish Day
+              </Button>
+              <Button onClick={closeModal} mr="1rem">Cancel</Button>
+            </Flex>
           </>
+        ) : (
+          <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={togglePSForm}/>
         )}
       </div>
     </div>
   );
 };
 
+PlannerEvents.propTypes = {
+  onClose: PropTypes.func,
+};
 
 export default PlannerEvents;

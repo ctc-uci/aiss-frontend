@@ -61,7 +61,7 @@ const AddDayForm = ({ onClose, onOpen, setDayId }) => {
         });
         const id = response.data['id']
         setDayId(id);
-        console.log(id);
+
         onOpen(id);
       } else {
         toast({

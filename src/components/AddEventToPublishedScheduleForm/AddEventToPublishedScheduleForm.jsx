@@ -175,7 +175,7 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
   };
 
   return (
-    <Box p="1rem" borderRadius="5px">
+    <Box borderRadius="5px">
       <form onSubmit={handleSubmit(submitData)}>
         <Box bgColor="white" borderRadius="5px" p="1rem">
           <Heading size="md" color="gray.600" mb="0.5rem">Event Information</Heading>
@@ -206,11 +206,11 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
               </FormControl>
             </Box>
 
-            <Flex alignItems="flex-end" >
+            <FormLabel fontWeight="bold" color="gray.600">Time</FormLabel>
+            <Flex>
             {/* START TIME? */}
             <Box mb="1rem">
               <FormControl isInvalid={errors && errors.startTime}>
-                  <FormLabel fontWeight="bold" color="gray.600">Time</FormLabel>
                   <Input
                       size="md"
                       type="time"
