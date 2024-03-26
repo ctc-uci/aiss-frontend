@@ -9,6 +9,8 @@ import { NPOBackend } from '../../../utils/auth_utils';
 const PlannerTimeline = () => {
   const { plannedEventsContext, dayId } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+  //const [addedEvents, setAddedEvents] = useState([]);
+  const addedEvents = []
 
   const fetchDayInfo = async (id) => {
     const psEvents = await NPOBackend.get((`/published-schedule/dayId?dayId=${id}`));
@@ -65,7 +67,8 @@ const PlannerTimeline = () => {
         {plannedEvents.map(plannedEvent => {
           // console.log(plannedEvent);
           const { id, name, startTime, endTime, hostName, isTentative } = plannedEvent;
-          const gridStyles = plannedEvent.calculateGridStyles();
+          const gridStyles = plannedEvent.calculateGridStyles(addedEvents);
+          addedEvents.push({startTime, endTime});
 
           const formattedStartTime = minutesInFormattedTime(startTime);
           const formattedEndTime = minutesInFormattedTime(endTime);

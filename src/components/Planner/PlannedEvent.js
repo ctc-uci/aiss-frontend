@@ -19,13 +19,20 @@ export default class PlannedEvent {
     this.isTentative = isTentative;
   }
 
-  calculateGridStyles() {
+  calculateGridStyles(addEvents) {
     const earliestHourInMinutes = PlannedEvent.EARLIEST_HOUR * MINUTES_PER_HOUR;
 
     const gridRowCell = Math.floor((this.startTime - earliestHourInMinutes) / MINUTES_PER_HOUR) + 1;
 
     // TODO: increase column start to 3 if overlapping
-    const gridColumnStart = 2;
+    let gridColumnStart = 2;
+    addEvents.forEach(({startTime, endTime}) => {
+      if (
+        (this.startTime >= startTime && this.startTime <= endTime) ||
+        (this.endTime >= startTime && this.endTime <= endTime)) {
+        gridColumnStart = 3;
+      }
+    })
 
     // Offset from top border: (e.g. 50% from top if start is at 4:30PM)
     const offsetTop = (100 * (this.startTime % MINUTES_PER_HOUR)) / MINUTES_PER_HOUR;

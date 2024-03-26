@@ -2,18 +2,18 @@ import { useState, useEffect, useContext } from 'react';
 import s from '../PlannerLayout.module.css';
 import { Text, Button, Heading, Box, Flex } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import AddEventOverlay from './AddEventOverlay';
 import Catalog from '../../../pages/Catalog/Catalog';
 import PropTypes from 'prop-types';
 import { PlannerContext } from '../PlannerContext';
 import { NPOBackend } from '../../../utils/auth_utils';
+import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
 
 const PlannerEvents = ({ onClose }) => {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
   const { plannedEventsContext, dayId } = useContext(PlannerContext);
-  const plannedEvents = plannedEventsContext[0];
+  const [plannedEvents, setPlannedEvents] = plannedEventsContext;
 
   useEffect(() => {
     const getDayData = async () => {
@@ -96,7 +96,11 @@ const PlannerEvents = ({ onClose }) => {
             </Flex>
           </>
         ) : (
-          <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={togglePSForm}/>
+          <AddEventToPublishedScheduleForm eventData={existingEventData} cancelFunction={() => {
+            setPlannedEvents(plannedEvents.filter(e => e.id != -1));
+            togglePSForm;
+          }}/>
+          // <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={togglePSForm}/>
         )}
       </div>
     </div>
