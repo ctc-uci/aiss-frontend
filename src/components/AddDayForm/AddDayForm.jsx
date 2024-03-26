@@ -16,8 +16,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { NPOBackend } from '../../utils/auth_utils';
-import { useContext } from 'react';
-import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
 
   const schema = yup.object({
     date: yup.date().nullable().transform((curr, orig) => orig === '' ? null : curr).required('Date required'),
@@ -27,9 +25,7 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
       .max(50, 'Details exceeds 50 character limit'),
   });
 
-  const AddDayForm = ({ onClose, onOpen }) => {
-    const { setDayId } = useContext(DayIdContext);
-
+  const AddDayForm = ({ onClose, onOpen, setDayId }) => {
     const toast = useToast();
     const {
       handleSubmit,
@@ -162,6 +158,7 @@ import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
   AddDayForm.propTypes = {
     onClose: PropTypes.func,
     onOpen: PropTypes.func,
+    setDayId: PropTypes.func
   };
   AddDayForm.defaultProps = {
     onClose: () => {},

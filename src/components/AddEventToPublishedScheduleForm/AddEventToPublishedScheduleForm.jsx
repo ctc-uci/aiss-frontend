@@ -18,7 +18,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { useContext, useEffect, useState } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
-import { DayIdContext } from '../../pages/PublishedSchedule/AddDayContext';
 import * as yup from 'yup';
 import {
   seasonOptions,
@@ -51,11 +50,10 @@ const schema = yup.object({
 });
 
 const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
-  const { plannedEventsContext } = useContext(PlannerContext);
+  const { plannedEventsContext, dayId } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
   const { filters, filterValues } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
-  const { dayId } = useContext(DayIdContext);
 
   const [formData, setFormData] = useState({tentative: false});
 
@@ -85,6 +83,8 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
 
 
   const currentDataHasChanged = (originalData, currData) => {
+    console.log('org data', originalData);
+    console.log('currData', currData);
     for (let key of Object.keys(currData)) {
       if (originalData[key] === undefined || originalData[key] !== currData[key]) {
         console.log('changed: ', key, originalData[key], currData[key]);

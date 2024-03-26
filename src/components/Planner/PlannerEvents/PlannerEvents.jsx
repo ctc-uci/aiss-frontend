@@ -5,7 +5,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import AddEventOverlay from './AddEventOverlay';
 import Catalog from '../../../pages/Catalog/Catalog';
 // import PropTypes from 'prop-types';
-import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
+import { PlannerContext } from '../PlannerContext';
 import { NPOBackend } from '../../../utils/auth_utils';
 
 const PlannerEvents = () => {
@@ -13,7 +13,7 @@ const PlannerEvents = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
-  const { dayId } = useContext(DayIdContext);
+  const { dayId } = useContext(PlannerContext);
 
   useEffect(() => {
     const getDayData = async () => {

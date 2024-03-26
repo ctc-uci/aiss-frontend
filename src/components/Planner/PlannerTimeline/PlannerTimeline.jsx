@@ -4,13 +4,11 @@ import { generateTimestamps, minutesInFormattedTime } from '../chrono';
 import { Badge, Text, Box } from '@chakra-ui/react';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent, { convertTimeToMinutes } from '../PlannedEvent';
-import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
 import { NPOBackend } from '../../../utils/auth_utils';
 
 const PlannerTimeline = () => {
-  const { plannedEventsContext } = useContext(PlannerContext);
+  const { plannedEventsContext, dayId } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
-  const { dayId } = useContext(DayIdContext);
 
   // useEffect((events) => {
   //   // if (dayId) {
