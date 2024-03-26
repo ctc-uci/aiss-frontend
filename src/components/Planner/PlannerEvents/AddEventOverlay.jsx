@@ -1,39 +1,15 @@
-import { Text } from '@chakra-ui/react';
 // import s from '../PlannerLayout.module.css';
 import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
-import { NPOBackend } from '../../../utils/auth_utils';
-import { useEffect, useState, useContext } from 'react';
-import { DayIdContext } from '../../../pages/PublishedSchedule/AddDayContext';
+import { useContext } from 'react';
 import { PlannerContext } from '../PlannerContext';
 
 // eslint-disable-next-line react/prop-types
 const AddEventOverlay = ({ setOverlayIsVisible, eventData }) => {
-  const { dayId } = useContext(DayIdContext);
-  const [datePart, setDatePart] = useState('');
-  const [locationPart, setLocationPart] = useState('');
   const { plannedEventsContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
 
-  useEffect(() => {
-    const getDayData = async () => {
-      try {
-        const response = await NPOBackend.get(`/day/${dayId}`);
-        const [locationPart] = response.data[0].location.split('T');
-        setLocationPart(locationPart);
-        const [datePart] = response.data[0].eventDate.split('T');
-        setDatePart(datePart);
-        //console.log(response.data)
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getDayData();
-  }, [dayId]);
   return (
     <div>
-      <Text fontSize="30px" marginBottom="1rem">
-        {datePart} | {locationPart}
-      </Text>
       {/* <div className={s['add-event-container']}> */}
       <div>
         <div>

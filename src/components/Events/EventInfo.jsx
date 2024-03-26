@@ -5,13 +5,13 @@ import { LuPen } from 'react-icons/lu';
 
 const EventInfo = ({ eventDate, day, startTime, endTime, location, notes }) => {
   return (
-    <Box p={10}>
+    <Box p="1rem">
       <Grid gap={7}>
         <Grid gap={2}>
-          <Text fontSize="2xl" fontWeight="bold">
+          <Text fontSize="2xl" fontWeight="bold" color="gray.700">
             {eventDate}
           </Text>
-          <Text>
+          <Text color="gray.700">
             {day} {startTime} - {endTime}
           </Text>
         </Grid>

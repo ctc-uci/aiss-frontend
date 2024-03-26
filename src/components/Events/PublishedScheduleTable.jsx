@@ -41,8 +41,8 @@ const PublishedScheduleTable = ({ season }) => {
 
   return (
     <Box>
-      <TableContainer>
-        <Table variant="simple" borderWidth={1}>
+      <TableContainer borderWidth={1} borderRadius="10px">
+        <Table variant="simple">
           <Thead>
             <Tr>
               <Th>Info</Th>
@@ -52,7 +52,7 @@ const PublishedScheduleTable = ({ season }) => {
           <Tbody>
             {eventsInDay.map(item => (
               <Tr key={item.day.id} verticalAlign={'top'}>
-                <Td>
+                <Td pr={0}>
                   <EventInfo
                     eventDate={getUTCDate(item.day.eventDate).toLocaleDateString('en-US')}
                     day={dayNames[getUTCDate(item.day.eventDate).getDay()]}

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Box, Flex, Text, Grid, Button } from '@chakra-ui/react';
+import { Box, Flex, Text, Grid, Button, Spacer } from '@chakra-ui/react';
 import { useState } from 'react';
 import { NPOBackend } from '../../utils/auth_utils.js';
 
@@ -40,22 +40,19 @@ const DailyEvent = ({ id, startTime, endTime, eventTitle, confirmed, description
       borderColor={border_color}
       boxShadow="md"
     >
-      <Flex minWidth="max-content" alignItems="flex-start" gap="50">
-        {/* <Text>{confirmed}</Text> */}
-        <Box w="35vh">
-          <Text>
-            {startTime} - {endTime}
-          </Text>
-        </Box>
+      <Flex minWidth="max-content" alignItems="flex-start" gap="50" justifyContent="space-between">
+        <Text>
+          {startTime} - {endTime}
+        </Text>
 
-        <Box w="90%">
-          <Grid gap={2}>
-            <Text fontWeight="bold">{eventTitle}</Text>
-            <Text>{description}</Text>
-          </Grid>
-        </Box>
+        <Grid gap={2}>
+          <Text fontWeight="bold">{eventTitle}</Text>
+          <Text maxW="30vw" whiteSpace="pre-wrap">{description}</Text>
+        </Grid>
 
-        {!confirmEvent ? (
+        <Spacer />
+
+        {!confirmEvent && (
           <Box w="15vh" alignItems="top">
             <Grid gap={2}>
               <div></div>
@@ -65,8 +62,6 @@ const DailyEvent = ({ id, startTime, endTime, eventTitle, confirmed, description
               </Button>
             </Grid>
           </Box>
-        ) : (
-          <Box w="10%"></Box>
         )}
       </Flex>
     </Box>
