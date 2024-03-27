@@ -49,13 +49,14 @@ const schema = yup.object({
     tentative: yup.boolean()
 });
 
-const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
-  const { plannedEventsContext, dayId } = useContext(PlannerContext);
+const AddEventToPublishedScheduleForm = ({ closeForm }) => {
+  const { plannedEventsContext, dayId, existingEventDataContext } = useContext(PlannerContext);
+  const [eventData, setEventData] = existingEventDataContext;
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
   const { filters, filterValues } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
-  const [formData, setFormData] = useState({...eventData, tentative: false});
+  const [formData, setFormData] = useState({...eventData});
 
   useEffect(() => {
     if (formData.startTime && formData.endTime && formData.startTime < formData.endTime) {
@@ -84,6 +85,8 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
   });
 
   const handleCancel = () => {
+    setFormData({tentative: false});
+    setEventData({});
     setPlannedEvents(plannedEvents.filter(e => e.id != -1));
     closeForm();
   }
@@ -227,6 +230,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
                       {...register('startTime')}
                       border="1px solid"
                       borderColor="gray.200"
+                      defaultValue={eventData && eventData.startTime}
                       onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                   />
                   <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
@@ -244,6 +248,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
                       {...register('endTime')}
                       border="1px solid"
                       borderColor="gray.200"
+                      defaultValue={eventData && eventData.endTime}
                       onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                   />
                   <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>

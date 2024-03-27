@@ -10,14 +10,17 @@ import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleFo
 import AddDayModal from '../../../pages/PublishedSchedule/AddDayModal';
 
 const PlannerEvents = ({ onClose }) => {
-  const [isAddingEvent, setIsAddingEvent] = useState(false);
-  const [existingEventData, setExistingEventData] = useState({});
+  // const [isAddingEvent, setIsAddingEvent] = useState(false);
+  // const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
   const [dayData, setDayData] = useState({});
   const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
-  const { plannedEventsContext, dayId } = useContext(PlannerContext);
   const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
+
+  const { plannedEventsContext, dayId, showFormContext, existingEventDataContext } = useContext(PlannerContext);
   const plannedEvents = plannedEventsContext[0];
+  const [isAddingEvent, setIsAddingEvent] = showFormContext;
+  const [existingEventData, setExistingEventData] = existingEventDataContext;
 
   const getDayData = async () => {
     try {

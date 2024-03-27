@@ -7,8 +7,10 @@ import PlannedEvent, { convertTimeToMinutes } from '../PlannedEvent';
 import { NPOBackend } from '../../../utils/auth_utils';
 
 const PlannerTimeline = () => {
-  const { plannedEventsContext, dayId } = useContext(PlannerContext);
+  const { plannedEventsContext, dayId, showFormContext, existingEventDataContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+  const [showForm, setShowForm] = showFormContext;
+  const [existingEventData, setExistingEventData] = existingEventDataContext;
   //const [addedEvents, setAddedEvents] = useState([]);
   const addedEvents = []
 
@@ -34,6 +36,20 @@ const PlannerTimeline = () => {
         data.host,
         !data.confirmed,
       )));
+    }
+  }
+
+  const handleEditEvent = async (eventId) => {
+    if (eventId === -1) {
+      return;
+    }
+    try {
+      const { data } = await NPOBackend.get(`/published-schedule/${eventId}`);
+      // console.log(data);
+      setExistingEventData(data[0]);
+      setShowForm(true);
+    } catch (err) {
+
     }
   }
 
@@ -100,6 +116,7 @@ const PlannerTimeline = () => {
                 borderColor={border_color}
                 borderStyle={border_style}
                 borderWidth={border_width}
+                onClick={() => {handleEditEvent(plannedEvent.id)}}
               >
                 <Text fontSize="sm" fontWeight="600">
                   {name}

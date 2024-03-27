@@ -23,7 +23,7 @@ const Dropdown = ({ options, filter, selected, defaults, badgeColor, width }) =>
   useEffect(() => {
     if (defaults && defaults[0] !== '')
       filter.setValue(defaults);
-  }, [])
+  }, [defaults])
 
   return (
     <Menu>
