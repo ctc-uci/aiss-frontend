@@ -25,7 +25,8 @@ const schema = yup.object({
     .max(50, 'Details exceeds 50 character limit'),
 });
 
-const AddDayForm = ({ onClose, onOpen, setDayId }) => {
+const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidate }) => {
+  console.log(dayData);
   const toast = useToast();
   const {
     handleSubmit,
@@ -45,8 +46,15 @@ const AddDayForm = ({ onClose, onOpen, setDayId }) => {
         notes: details,
       };
 
-      const response = await NPOBackend.post('/day/', payload);
-      if (response.status === 201) {
+      let response;
+      if (dayData) {
+        response = await NPOBackend.put(`/day/${dayData.id}`, payload);
+        setShouldDataRevalidate(true);
+      } else {
+        response = await NPOBackend.post('/day/', payload);
+      }
+      console.log(response);
+      if (response.status === 200 || response.status == 201) {
         toast({
           title: 'add day!',
           description: `date: ${date}, description: ${details}, location: ${location}`,
@@ -59,7 +67,7 @@ const AddDayForm = ({ onClose, onOpen, setDayId }) => {
           duration: 3000,
           isClosable: true,
         });
-        const id = response.data['id']
+        const id = dayData ? dayData.id : response.data['id'];
         setDayId(id);
 
         onOpen(id);
@@ -108,6 +116,7 @@ const AddDayForm = ({ onClose, onOpen, setDayId }) => {
                 size="md"
                 type="date"
                 {...register('date')}
+                defaultValue={dayData && dayData.eventDate}
               />
               <FormErrorMessage>{errors.date && errors.date.message}</FormErrorMessage>
             </FormControl>
@@ -117,7 +126,7 @@ const AddDayForm = ({ onClose, onOpen, setDayId }) => {
           <Box mb="15px">
             <FormControl isInvalid={errors && errors.location} >
               <FormLabel fontWeight="bold" color="gray.600">Location *</FormLabel>
-              <Input placeholder='Location' {...register('location')} />
+              <Input placeholder='Location' {...register('location')} defaultValue={dayData && dayData.location}/>
               <FormErrorMessage>{errors.location && errors.location.message}</FormErrorMessage>
             </FormControl>
           </Box>
@@ -127,7 +136,7 @@ const AddDayForm = ({ onClose, onOpen, setDayId }) => {
           <Box mb="15px">
             <FormControl isInvalid={errors && errors.details}>
               <FormLabel fontWeight="bold" color="gray.600">Details</FormLabel>
-              <Textarea placeholder='Details' {...register('details')} />
+              <Textarea placeholder='Details' {...register('details')} defaultValue={dayData && dayData.details}/>
               <FormErrorMessage>
                 {errors.details && errors.details.message}
               </FormErrorMessage>
@@ -158,10 +167,13 @@ const AddDayForm = ({ onClose, onOpen, setDayId }) => {
 AddDayForm.propTypes = {
   onClose: PropTypes.func,
   onOpen: PropTypes.func,
-  setDayId: PropTypes.func
+  setDayId: PropTypes.func,
+  dayData: PropTypes.object,
+  setShouldDataRevalidate: PropTypes.func
 };
 AddDayForm.defaultProps = {
   onClose: () => {},
   onOpen: () => {},
+  dayData: null
 };
 export default AddDayForm;

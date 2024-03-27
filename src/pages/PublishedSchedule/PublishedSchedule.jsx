@@ -93,7 +93,7 @@ const PublishedSchedule = () => {
       ) : (
         <PublishedScheduleTable season={curSeason} />
       )}
-      <AddDayModal />
+      <AddDayModal isEdit={false}/>
     </Box>
   );
 };

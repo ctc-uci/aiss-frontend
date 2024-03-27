@@ -5,12 +5,13 @@ import {
   ModalBody,
   useDisclosure,
 } from '@chakra-ui/react'
+// import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
 import { useState } from 'react';
 import PlannerModal from '../../components/Planner/PlannerModal.jsx';
 import PropTypes from 'prop-types';
 
-const AddDayModal = ({isOpenDay, onCloseDay, setShouldDataRevalidate}) => {
+const AddDayModal = ({ dayData, isOpenDay, onCloseDay, setShouldDataRevalidate}) => {
   const { isOpen: isOpenPlanner, onOpen: onOpenPlanner, onClose: onClosePlanner } = useDisclosure();
   const [dayId, setDayId] = useState(-1);
 
@@ -20,6 +21,9 @@ const AddDayModal = ({isOpenDay, onCloseDay, setShouldDataRevalidate}) => {
   };
 
   const handlePlannerClose = () => {
+    // if (setShouldDataRevalidate) { // currently only being used by PS table
+    //   setShouldDataRevalidate(true);
+    // }
     setShouldDataRevalidate(true);
     onClosePlanner();
   }
@@ -34,17 +38,21 @@ const AddDayModal = ({isOpenDay, onCloseDay, setShouldDataRevalidate}) => {
               onClose={onCloseDay}
               onOpen={handleOpenPlanner}
               setDayId={setDayId}
+              dayData={dayData}
+              setShouldDataRevalidate={setShouldDataRevalidate}
               />
           </ModalBody>
         </ModalContent>
       </Modal>
 
-      <PlannerModal isOpen={isOpenPlanner} onClose={handlePlannerClose} dayId={dayId} />
+      {!dayData && <PlannerModal isOpen={isOpenPlanner} onClose={handlePlannerClose} dayId={dayId} />}
     </>
     );
 };
 
 AddDayModal.propTypes = {
+  isEdit: PropTypes.bool,
+  dayData: PropTypes.object,
   isOpenDay: PropTypes.bool,
   onCloseDay: PropTypes.func,
   setShouldDataRevalidate: PropTypes.func,

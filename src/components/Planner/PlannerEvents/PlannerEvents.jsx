@@ -1,34 +1,51 @@
 import { useState, useEffect, useContext } from 'react';
 import s from '../PlannerLayout.module.css';
-import { Text, Button, Heading, Box, Flex } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { Text, Button, Heading, Box, IconButton, HStack, Flex, useDisclosure } from '@chakra-ui/react';
+import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import Catalog from '../../../pages/Catalog/Catalog';
 import PropTypes from 'prop-types';
 import { PlannerContext } from '../PlannerContext';
 import { NPOBackend } from '../../../utils/auth_utils';
 import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
+import AddDayModal from '../../../pages/PublishedSchedule/AddDayModal';
 
 const PlannerEvents = ({ onClose }) => {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
+  const [dayData, setDayData] = useState({});
+  const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
   const { plannedEventsContext, dayId } = useContext(PlannerContext);
+  const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
   const plannedEvents = plannedEventsContext[0];
 
+  const getDayData = async () => {
+    try {
+      console.log('getDayData');
+      const response = await NPOBackend.get(`/day/${dayId}`);
+      const responseData = response.data[0];
+      const [datePart] = responseData.eventDate.split('T');
+      const dateObj = new Date(responseData.eventDate);
+      console.log(dateObj);
+      setDateHeader(dateObj.toLocaleDateString({ year: 'numeric', month: 'short', day: '2-digit' }));
+      setDayData({id: responseData.id, eventDate: datePart, location: responseData.location, details: responseData.notes});
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const getDayData = async () => {
-      try {
-        const response = await NPOBackend.get(`/day/${dayId}`);
-        // const [locationPart] = response.data[0].location.split('T');
-        // setLocationPart(locationPart);
-        const [datePart] = response.data[0].eventDate.split('T');
-        setDateHeader(datePart);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    console.log('fetch data first time?')
     getDayData();
   }, [dayId]);
+
+  useEffect(() => {
+    if (dataShouldRevalidate) {
+      console.log('reset data');
+      getDayData();
+      setShouldDataRevalidate(false);
+    }
+  }, [dataShouldRevalidate])
 
   const handleCreateNewEvent = () => {
     setExistingEventData({});
@@ -61,7 +78,17 @@ const PlannerEvents = ({ onClose }) => {
         </Box>
 
         <Box hidden={isAddingEvent} h={isAddingEvent && '0px'}>
-          <Heading size="md" pb="1rem">{dateHeader}</Heading>
+            <HStack>
+            <Heading size="md" pb="1rem">{dateHeader}</Heading>
+              <IconButton mb="1rem" icon={<EditIcon />} onClick={onOpenDay}></IconButton>
+              <AddDayModal
+                isOpenDay={isOpenDay}
+                onCloseDay={onCloseDay}
+                isEdit={true}
+                dayData={dayData}
+                setShouldDataRevalidate={setShouldDataRevalidate}
+              />
+            </HStack>
           <Box bgColor="white" p="1rem" borderRadius="5px" mb="1rem">
             <Heading size="md" pb="1rem" color="gray.800" fontWeight={600}>Create New Event</Heading>
             <Button
