@@ -1,11 +1,25 @@
 import PropTypes from 'prop-types';
-import { Box, Text, IconButton, HStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Text, IconButton, HStack, Button, useDisclosure, Modal, ModalHeader, ModalCloseButton, ModalOverlay, ModalContent, ModalBody, ModalFooter } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { LuPen } from 'react-icons/lu';
 import PlannerModal from '../Planner/PlannerModal';
+import { NPOBackend } from '../../utils/auth_utils';
 
-const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes, setShouldDataRevalidate }) => {
+  const { isOpen: isOpenPlanner, onOpen: onOpenPlanner, onClose: onClosePlanner } = useDisclosure();
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+
+  const handlePlannerClose = () => {
+    setShouldDataRevalidate(true);
+    onClosePlanner();
+  }
+
+  const handleDeleteDay = async () => {
+    const res = await NPOBackend.delete(`/day/${dayId}`);
+    if (res.status === 200) {
+      setShouldDataRevalidate(true);
+    }
+  }
 
   return (
     <Box p="1rem">
@@ -22,15 +36,33 @@ const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes 
       <Text whiteSpace="pre-wrap" mb="2rem">{notes ? notes : 'No notes.'}</Text>
 
       <HStack mt="auto">
-        <IconButton bg="white" onClick={onOpen}>
+        <IconButton bg="white" onClick={onOpenPlanner}>
           <LuPen color='#A0AEC0'/>
         </IconButton>
-        <IconButton bg="white">
+        <IconButton bg="white" onClick={onOpenDelete}>
           <DeleteIcon color='#A0AEC0'/>
         </IconButton>
       </HStack>
 
-      <PlannerModal isOpen={isOpen} onClose={onClose} dayId={dayId} />
+      <PlannerModal isOpen={isOpenPlanner} onClose={handlePlannerClose} dayId={dayId} />
+
+      <Modal isOpen={isOpenDelete} onClose={onCloseDelete} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete Day?</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Are you sure? You can&apos;t undo this action afterwards.</Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='gray' mr={3} onClick={onCloseDelete}>
+              Cancel
+            </Button>
+            <Button colorScheme="red" onClick={handleDeleteDay}>Delete</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
 
   );
@@ -44,6 +76,7 @@ EventInfo.propTypes = {
   endTime: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
   notes: PropTypes.string,
+  setShouldDataRevalidate: PropTypes.func,
 };
 
 export default EventInfo;
