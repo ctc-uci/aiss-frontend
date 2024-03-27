@@ -13,7 +13,7 @@ const PlannerEvents = ({ onClose }) => {
   const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
   const { plannedEventsContext, dayId } = useContext(PlannerContext);
-  const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+  const plannedEvents = plannedEventsContext[0];
 
   useEffect(() => {
     const getDayData = async () => {
@@ -56,52 +56,48 @@ const PlannerEvents = ({ onClose }) => {
     <div id={s['planner-events-container']} className={s['gray-scrollbar-vertical']}>
       {/* {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>} */}
       <div id={s['planner-browse']}>
-        {!isAddingEvent ? (
-          <>
-            <Heading size="md" pb="1rem">{dateHeader}</Heading>
-            <Box bgColor="white" p="1rem" borderRadius="5px" mb="1rem">
-              <Heading size="md" pb="1rem" color="gray.800" fontWeight={600}>Create New Event</Heading>
-              <Button
-                onClick={handleCreateNewEvent}
-                className={s['create-event-button']}
-                backgroundColor="#2c93d1"
-                _hover={{ bgColor: '#1b6896' }}
-                padding="1.5rem"
-                justifyContent="space-between"
-                alignItems="center"
-                size="lg"
-              >
-                <Text  color="white">
-                  Add Event
-                </Text>
-                <AddIcon color="white" />
-              </Button>
-            </Box>
+        <Box hidden={!isAddingEvent} h={!isAddingEvent && '0px'}>
+          <AddEventToPublishedScheduleForm eventData={existingEventData} closeForm={togglePSForm}/>
+        </Box>
 
-            <Box bgColor="white" p="1rem" pb={0} borderRadius="5px">
-              <Heading size="md" color="gray.800" fontWeight={600}>Add Event From Catalog</Heading>
-              <Catalog onDayPlanner={true} addExistingEventFunc={togglePSForm} setExistingEventData={setExistingEventData}/>
-            </Box>
-
-            <Flex flexDir="row-reverse" py="1.5rem">
-              <Button
+        <Box hidden={isAddingEvent} h={isAddingEvent && '0px'}>
+          <Heading size="md" pb="1rem">{dateHeader}</Heading>
+          <Box bgColor="white" p="1rem" borderRadius="5px" mb="1rem">
+            <Heading size="md" pb="1rem" color="gray.800" fontWeight={600}>Create New Event</Heading>
+            <Button
+              onClick={handleCreateNewEvent}
+              className={s['create-event-button']}
               backgroundColor="#2c93d1"
               _hover={{ bgColor: '#1b6896' }}
-              color="white"
-              isDisabled={!plannedEvents.length}
-              >
-                Finish Day
-              </Button>
-              <Button onClick={closeModal} mr="1rem">Cancel</Button>
-            </Flex>
-          </>
-        ) : (
-          <AddEventToPublishedScheduleForm eventData={existingEventData} cancelFunction={() => {
-            setPlannedEvents(plannedEvents.filter(e => e.id != -1));
-            togglePSForm;
-          }}/>
-          // <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={togglePSForm}/>
-        )}
+              padding="1.5rem"
+              justifyContent="space-between"
+              alignItems="center"
+              size="lg"
+            >
+              <Text  color="white">
+                Add Event
+              </Text>
+              <AddIcon color="white" />
+            </Button>
+          </Box>
+
+          <Box bgColor="white" p="1rem" pb="0.5rem" borderRadius="5px">
+            <Heading size="md" color="gray.800" fontWeight={600}>Add Event From Catalog</Heading>
+            <Catalog onDayPlanner={true} addExistingEventFunc={togglePSForm} setExistingEventData={setExistingEventData}/>
+          </Box>
+
+          <Flex flexDir="row-reverse" py="1.5rem">
+            <Button
+            backgroundColor="#2c93d1"
+            _hover={{ bgColor: '#1b6896' }}
+            color="white"
+            isDisabled={!plannedEvents.length}
+            >
+              Finish Day
+            </Button>
+            <Button onClick={closeModal} mr="1rem">Cancel</Button>
+          </Flex>
+        </Box>
       </div>
     </div>
   );

@@ -49,16 +49,16 @@ const schema = yup.object({
     tentative: yup.boolean()
 });
 
-const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
+const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
   const { plannedEventsContext, dayId } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
   const { filters, filterValues } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
-  const [formData, setFormData] = useState({tentative: false});
+  const [formData, setFormData] = useState({...eventData, tentative: false});
 
   useEffect(() => {
-    if (formData.startTime && formData.endTime) {
+    if (formData.startTime && formData.endTime && formData.startTime < formData.endTime) {
       const newPlannedEvent = new PlannedEvent(
         -1,
         formData.title,
@@ -67,7 +67,9 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
         formData.host,
         formData.tentative ? true : false
       )
-      setPlannedEvents([...plannedEvents.filter(e => e.id != -1), newPlannedEvent])
+      setPlannedEvents([...plannedEvents.filter(e => e.id != -1), newPlannedEvent]);
+    } else {
+      setPlannedEvents(plannedEvents.filter(e => e.id != -1));
     }
   }, [formData])
 
@@ -81,6 +83,10 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
     resolver: yupResolver(schema),
   });
 
+  const handleCancel = () => {
+    setPlannedEvents(plannedEvents.filter(e => e.id != -1));
+    closeForm();
+  }
 
   const currentDataHasChanged = (originalData, currData) => {
     console.log('org data', originalData);
@@ -155,20 +161,24 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
         tentative
       );
       setPlannedEvents([...plannedEvents.filter(e => e.id != -1), newPlannedEvent]);
+      console.log("new planned events", plannedEvents);
       setFormData({tentative: false});
+
       reset();
       toast({
-        title: 'Event submitted!',
-        description: `Event has been submitted. ID: ${catalogEventId}`,
+        title: 'Success!',
+        description: 'Added event to day.',
         status: 'success',
         variant: 'subtle',
-        position: 'bottom',
+        position: 'top-right',
         containerStyle: {
           mt: '6rem',
         },
         duration: 3000,
         isClosable: true,
       });
+
+      closeForm();
     } catch (error) {
       console.log(error);
     }
@@ -340,8 +350,8 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
               </Box>
             </Box>
         </Box>
-        <Stack spacing={2} justifyContent="right" direction="row">
-          <Button htype="submit" mt="1rem" mr="1rem" onClick={cancelFunction}>Cancel</Button>
+        <Stack spacing={2} justifyContent="right" direction="row" pb="1.5rem" mt="0.5rem">
+          <Button htype="submit" mt="1rem" mr="1rem" onClick={handleCancel}>Cancel</Button>
           <Button colorScheme="blue" type="submit" mt="1rem">Add Event</Button>
         </Stack>
       </form>
@@ -350,7 +360,7 @@ const AddEventToPublishedScheduleForm = ({ cancelFunction, eventData }) => {
 };
 
 AddEventToPublishedScheduleForm.propTypes = {
-  cancelFunction: PropTypes.func,
+  closeForm: PropTypes.func,
   updateTimeline: PropTypes.func,
   eventData: PropTypes.object
 };
