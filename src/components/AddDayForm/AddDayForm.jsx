@@ -26,7 +26,6 @@ const schema = yup.object({
 });
 
 const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidate }) => {
-  console.log(dayData);
   const toast = useToast();
   const {
     handleSubmit,

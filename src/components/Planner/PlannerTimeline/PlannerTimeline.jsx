@@ -1,16 +1,38 @@
 import s from '../PlannerLayout.module.css';
 import { useMemo, useContext, useEffect } from 'react';
 import { generateTimestamps, minutesInFormattedTime } from '../chrono';
-import { Badge, Text, Box } from '@chakra-ui/react';
+import { Badge, Text, Box, IconButton, HStack } from '@chakra-ui/react';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent, { convertTimeToMinutes } from '../PlannedEvent';
 import { NPOBackend } from '../../../utils/auth_utils';
+import PropTypes from 'prop-types';
 
-const PlannerTimeline = () => {
-  const { plannedEventsContext, dayId } = useContext(PlannerContext);
+const PlannerTimeline = ({ setIsEditingEvent }) => {
+  const { plannedEventsContext, dayId, currEventContext, editContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+  // eslint-disable-next-line no-unused-vars
+  const [currEvent, setCurrEvent] = currEventContext; // fix?
+  // eslint-disable-next-line no-unused-vars
+  const [isEdit, setIsEdit] = editContext;
   //const [addedEvents, setAddedEvents] = useState([]);
-  const addedEvents = []
+  const addedEvents = [];
+
+  const fetchEditData = async (id) => {
+    const publishedScheduleReponse = await NPOBackend.get(`/published-schedule/${id}`);
+    const responseData = publishedScheduleReponse.data[0];
+    if (responseData) {
+      setCurrEvent(responseData);
+    }
+  }
+
+  const startEditAndSetCurrEventId = (id) => {
+    console.log('selected', id)
+    setIsEditingEvent(true);
+    setIsEdit(true);
+    // setCurrEvent(id);
+    fetchEditData(id);
+  }
 
   const fetchDayInfo = async (id) => {
     const psEvents = await NPOBackend.get((`/published-schedule/dayId?dayId=${id}`));
@@ -60,6 +82,8 @@ const PlannerTimeline = () => {
     );
   }, []);
 
+  console.log(plannedEvents);
+
   return (
     <div id={s['planner-timeline-container']}>
       <div className={`${s['timeline-grid']} ${s['gray-scrollbar-vertical']}`}>
@@ -101,15 +125,21 @@ const PlannerTimeline = () => {
                 borderStyle={border_style}
                 borderWidth={border_width}
               >
-                <Text fontSize="sm" fontWeight="600">
-                  {name}
-                </Text>
-                <Text fontSize="sm">
-                  <span>{formattedStartTime}</span> - <span>{formattedEndTime}</span>
-                </Text>
-                <Text fontSize="xs">
-                  {hostName}
-                </Text>
+                <HStack>
+                  <Box>
+                    <Text fontSize="sm" fontWeight="600">
+                      {name}
+                    </Text>
+                    <Text fontSize="sm">
+                      <span>{formattedStartTime}</span> - <span>{formattedEndTime}</span>
+                    </Text>
+                    <Text fontSize="xs">
+                      {hostName}
+                    </Text>
+                  </Box>
+                  <IconButton isRound={true} icon={<EditIcon />} onClick={() => startEditAndSetCurrEventId(id)}></IconButton>
+                  <IconButton isRound={true} icon={<DeleteIcon />}></IconButton>
+                </HStack>
               </Box>
             </div>
           );
@@ -119,4 +149,7 @@ const PlannerTimeline = () => {
   );
 };
 
+PlannerTimeline.propTypes = {
+  setIsEditingEvent: PropTypes.func
+}
 export default PlannerTimeline;

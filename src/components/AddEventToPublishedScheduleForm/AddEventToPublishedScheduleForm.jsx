@@ -49,13 +49,39 @@ const schema = yup.object({
     tentative: yup.boolean()
 });
 
-const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
-  const { plannedEventsContext, dayId } = useContext(PlannerContext);
+const AddEventToPublishedScheduleForm = ({ closeForm }) => {
+  const { plannedEventsContext, dayId, editContext, currEventContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+  const [eventData, setCurrEvent] = currEventContext;
+  const [isEdit, setIsEdit] = editContext;
   const { filters, filterValues } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
+  const [checkboxVal, setCheckboxVal] = useState(undefined);
+  const [formData, setFormData] = useState({...eventData});
 
-  const [formData, setFormData] = useState({...eventData, tentative: false});
+  useEffect(() => {
+    console.log('event data changed');
+    if (!eventData) {
+      // console.log('should reset data');
+      setCheckboxVal(false);
+      setFormData({...eventData});
+      setValue('description', '');
+      reset();
+      return;
+    }
+    console.log(eventData && eventData.confirmed !== null && !eventData.confirmed);
+    setValue('title', eventData.title);
+    setFormData({...eventData});
+    if (!isEdit) {
+      setCheckboxVal(false);
+    } else {
+      setCheckboxVal(eventData && eventData.confirmed !== null && !eventData.confirmed);
+    }
+    if (isEdit) {
+      setValue('startTime', eventData.startTime);
+      setValue('endTime', eventData.endTime);
+    }
+  }, [eventData]);
 
   useEffect(() => {
     if (formData.startTime && formData.endTime && formData.startTime < formData.endTime) {
@@ -65,7 +91,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
         convertTimeToMinutes(formData.startTime),
         convertTimeToMinutes(formData.endTime),
         formData.host,
-        formData.tentative ? true : false
+        checkboxVal ? true : false
       )
       setPlannedEvents([...plannedEvents.filter(e => e.id != -1), newPlannedEvent]);
     } else {
@@ -75,6 +101,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
 
   const toast = useToast();
   const {
+    setValue,
     register,
     handleSubmit,
     reset,
@@ -83,8 +110,14 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
     resolver: yupResolver(schema),
   });
 
+  if (!eventData) {
+    setValue('description', '');
+  }
+
   const handleCancel = () => {
     setPlannedEvents(plannedEvents.filter(e => e.id != -1));
+    setCurrEvent(null);
+    setIsEdit(false);
     closeForm();
   }
 
@@ -103,6 +136,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
 
   const submitData = async (data) => {
     try {
+      // eslint-disable-next-line no-unused-vars
       const { title, host, description, tentative, startTime, endTime } = data;
       const season = filterValues.season;
       const eventType = filterValues.eventType;
@@ -121,9 +155,9 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
         season
       });
 
-      let catalogEventId = eventData.id;
+      let catalogEventId = eventData.id; // NOTE: Catalog Id vs PS Id
 
-      if (catalogDataChanged || !catalogEventId) {
+      if (!isEdit && (catalogDataChanged || !catalogEventId)) {
         console.log('adding new event to catalog from PS');
         const catalogResponse = await NPOBackend.post(`/catalog`, {
           title,
@@ -141,30 +175,42 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
       // console.log(catalogEventId);
 
       //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
-
-      // Send a POST request to the appropriate backend route
-      const publishedScheduleReponse = await NPOBackend.post('/published-schedule', {
-        eventId: catalogEventId,
-        dayId,
-        confirmed: !tentative,
-        startTime,
-        endTime,
-        cohort: year,
-      });
+      let publishedScheduleReponse;
+      if (isEdit) {
+        // Send a PUT request
+        publishedScheduleReponse = await NPOBackend.put(`/published-schedule/${eventData.id}`, {
+          confirmed: !checkboxVal,
+          startTime,
+          endTime,
+          cohort: year,
+        });
+      } else {
+        // Send a POST request to the appropriate backend route
+        publishedScheduleReponse = await NPOBackend.post('/published-schedule', {
+          eventId: catalogEventId,
+          dayId,
+          confirmed: !checkboxVal,
+          startTime,
+          endTime,
+          cohort: year,
+        });
+      }
       console.log(publishedScheduleReponse);
+      const timelineEventsWithoutCurrent = plannedEvents.filter(e => (e.id != -1 && e.id != eventData.id));
       const newPlannedEvent = new PlannedEvent(
-        publishedScheduleReponse.id,
+        isEdit ? eventData.id : publishedScheduleReponse.id,
         title,
         convertTimeToMinutes(startTime),
         convertTimeToMinutes(endTime),
         host,
-        tentative
+        checkboxVal
       );
-      setPlannedEvents([...plannedEvents.filter(e => e.id != -1), newPlannedEvent]);
+      setPlannedEvents([...timelineEventsWithoutCurrent, newPlannedEvent]);
       console.log("new planned events", plannedEvents);
       setFormData({tentative: false});
 
       reset();
+      setCurrEvent(null);
       toast({
         title: 'Success!',
         description: 'Added event to day.',
@@ -227,6 +273,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
                       {...register('startTime')}
                       border="1px solid"
                       borderColor="gray.200"
+                      defaultValue={eventData && eventData.startTime}
                       onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                   />
                   <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
@@ -244,6 +291,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
                       {...register('endTime')}
                       border="1px solid"
                       borderColor="gray.200"
+                      defaultValue={eventData && eventData.endTime}
                       onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                   />
                   <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
@@ -342,7 +390,11 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
                 <FormControl>
                   <Checkbox
                     {...register('tentative')}
-                    onChange={() => setFormData({ ...formData, tentative: !formData.tentative })}
+                    isChecked={checkboxVal}
+                    onChange={() => {
+                      setCheckboxVal(!checkboxVal);
+                      setFormData({ ...formData, tentative: checkboxVal });
+                    }}
                   >
                     Tentative
                   </Checkbox>
@@ -360,9 +412,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm, eventData }) => {
 };
 
 AddEventToPublishedScheduleForm.propTypes = {
-  closeForm: PropTypes.func,
-  updateTimeline: PropTypes.func,
-  eventData: PropTypes.object
+  closeForm: PropTypes.func
 };
 
 export default AddEventToPublishedScheduleForm;

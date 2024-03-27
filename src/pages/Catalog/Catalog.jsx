@@ -29,7 +29,7 @@ import {
 } from '../../components/Catalog/SearchFilter/filterOptions';
 import PropTypes from 'prop-types';
 
-export default function Catalog({ onDayPlanner, addExistingEventFunc, setExistingEventData }) {
+export default function Catalog({ onDayPlanner, addExistingEventFunc }) {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   // const {
   //   isOpen: isEditFormOpen,
@@ -193,7 +193,6 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setExistin
             <>
               <CatalogTable
                 tableData={tableData}
-                setExistingEventData={setExistingEventData}
                 // handleEditForm={handleEditForm}
                 handleActionClick={onDayPlanner ? addExistingEventFunc : handleDeleteClick}
                 onDayPlanner={onDayPlanner}
@@ -234,8 +233,7 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setExistin
 
 Catalog.propTypes = {
   onDayPlanner: PropTypes.bool,
-  addExistingEventFunc: PropTypes.func,
-  setExistingEventData: PropTypes.func
+  addExistingEventFunc: PropTypes.func
 };
 
 Catalog.defaultProps = {

@@ -21,9 +21,19 @@ const Dropdown = ({ options, filter, selected, defaults, badgeColor, width }) =>
   }, [selected]);
 
   useEffect(() => {
+    // console.log('inital default');
     if (defaults && defaults[0] !== '')
       filter.setValue(defaults);
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    // console.log('update default', defaults);
+    if (defaults && defaults[0] !== '')
+      filter.setValue(defaults);
+    if (!defaults) {
+      filter.setValue([]);
+    }
+  }, [defaults]);
 
   return (
     <Menu>

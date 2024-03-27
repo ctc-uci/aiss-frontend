@@ -21,9 +21,6 @@ const AddDayModal = ({ dayData, isOpenDay, onCloseDay, setShouldDataRevalidate})
   };
 
   const handlePlannerClose = () => {
-    // if (setShouldDataRevalidate) { // currently only being used by PS table
-    //   setShouldDataRevalidate(true);
-    // }
     setShouldDataRevalidate(true);
     onClosePlanner();
   }
