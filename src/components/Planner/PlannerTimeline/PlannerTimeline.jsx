@@ -13,11 +13,11 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
   const { plannedEventsContext, dayId, currEventContext, editContext } = useContext(PlannerContext);
   const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
-  // eslint-disable-next-line no-unused-vars
-  const [currEvent, setCurrEvent] = currEventContext; // fix?
-  // eslint-disable-next-line no-unused-vars
-  const [isEdit, setIsEdit] = editContext;
+
+  const setCurrEvent = currEventContext[1];
+  const setIsEdit = editContext[1];
   const [eventHover, setEventHover] = useState(-1);
+  const [deleteItemId, setDeleteItemId] = useState(-1);
   //const [addedEvents, setAddedEvents] = useState([]);
 
   const addedEvents = [];
@@ -145,26 +145,31 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
                     </Text>
                   </Box>
                   {id == eventHover &&
-                    <Box>
+                    <Box position="absolute" top="0.5rem" right="0.5rem" zIndex={1}>
                       <IconButton
-                        size='sm'
                         isRound={true}
                         icon={<EditIcon />}
                         onClick={() => startEditAndSetCurrEventId(id)}
+                        size="sm"
                       />
-                      <IconButton size='sm' ml='0.5rem' isRound={true} icon={<DeleteIcon />} onClick={() => {
-                        console.log(id);
-                        onRemoveOpen();
-                      }} />
+                      <IconButton
+                        ml='0.5rem' isRound={true}
+                        icon={<DeleteIcon />}
+                        onClick={() => {
+                          setDeleteItemId(id);
+                          onRemoveOpen();
+                        }}
+                        size="sm"
+                      />
                       {/* <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={id}/> */}
                     </Box>
                   }
-                  <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={id}/>
                 </HStack>
               </Box>
             </div>
           );
         })}
+        <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={deleteItemId}/>
       </div>
     </div>
   );
