@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Grid } from '@chakra-ui/react';
 
-const Events = ({ eventData, location }) => {
+const Events = ({ eventData }) => {
 
   const formatDate = (date) => {
     let time = date.split(":");
@@ -16,6 +16,15 @@ const Events = ({ eventData, location }) => {
   }
 
   let maxId = eventData.reduce((maxVal, event) => Math.max(maxVal, event.id), -Infinity)+1;
+
+  eventData.sort((a, b) => {
+    if (a.startTime < b.startTime) {
+      return -1;
+    } else if (a.startTime > b.startTime) {
+      return 1;
+    }
+    return 0;
+  });
 
   const eventDataWithBreaks = [];
   if (eventData.length == 1) {
@@ -33,7 +42,6 @@ const Events = ({ eventData, location }) => {
         startTime: currentEvent.endTime,
         endTime: nextEvent.startTime,
         title: 'Break / Team Time',
-        location: 'N/A',
         confirmed: true,
       });
       maxId++;
@@ -42,16 +50,17 @@ const Events = ({ eventData, location }) => {
   if (eventData.length > 1) {
     eventDataWithBreaks.push(eventData[eventData.length - 1]);
   }
-  console.log(eventDataWithBreaks);
+  // console.log(eventDataWithBreaks);
   return (
     <Grid gap={3}>
       {eventDataWithBreaks.map(item => (
         <DailyEvent
           key={item.id}
+          id={item.id}
           startTime={formatDate(item.startTime)}
           endTime={formatDate(item.endTime)}
           eventTitle={item.title}
-          location={item.location == null ? location : null}
+          description={item.description}
           confirmed={item.confirmed}
         />
       ))}
@@ -61,7 +70,6 @@ const Events = ({ eventData, location }) => {
 
 Events.propTypes = {
   eventData: PropTypes.array.isRequired,
-  location: PropTypes.string.isRequired,
 };
 
 export default Events;

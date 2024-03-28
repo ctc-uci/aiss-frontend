@@ -15,7 +15,6 @@ import PublishedSchedule from './pages/PublishedSchedule/PublishedSchedule';
 import Playground from './pages/Playground/Playground';
 import Planner from './pages/Planner/Planner';
 import Navbar from './components/Navbar/Navbar';
-import NotificationSandbox from './pages/NotificationSandbox/NotificationSandbox';
 import Accounts from './pages/Accounts/Accounts';
 import { AuthContextProvider, useAuthContext } from './common/AuthContext';
 
@@ -58,13 +57,6 @@ const App = () => {
               <Route exact path="/awaitConfirmation" element={<AwaitConfirmation redirectPath="/" />} />
               <Route
                 exact
-                path="/notification-sandbox"
-                element={
-                  <NotificationSandbox />
-                }
-              />
-              <Route
-                exact
                 path="/catalog"
                 element={
                   <ProtectedRoute
@@ -99,7 +91,7 @@ const App = () => {
                     redirectPath="/login"
                     roles={[ADMIN_ROLE]}
                   />
-                } />  
+                } />
             </Route>
           </Routes>
         </Router>

@@ -7,13 +7,18 @@ const PlannerContext = createContext(undefined);
  */
 
 // eslint-disable-next-line react/prop-types
-function PlannerContextProvider({ children }) {
+function PlannerContextProvider({ children, dayId }) {
   const [plannedEvents, setPlannedEvents] = useState([]); // PlannedEvent[]
+  const [isEdit, setIsEdit] = useState(false);
+  const [currEvent, setCurrEvent] = useState({});
 
   return (
     <PlannerContext.Provider
       value={{
         plannedEventsContext: [plannedEvents, setPlannedEvents],
+        dayId,
+        editContext: [isEdit, setIsEdit],
+        currEventContext: [currEvent, setCurrEvent]
       }}
     >
       {children}

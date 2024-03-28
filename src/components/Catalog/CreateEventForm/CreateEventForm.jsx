@@ -124,7 +124,7 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
         <Box padding="12px">
           {/* TITLE */}
           <Box mb="15px">
-            <FormControl isInvalid={errors && errors.title} width="30vw">
+            <FormControl isInvalid={errors && errors.title} width="35vw">
               <FormLabel fontWeight="bold" color="gray.600">Title *</FormLabel>
               <Input type="text" {...register('title')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
@@ -133,7 +133,7 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
 
           {/* DESCRIPTION */}
           <Box mb="15px">
-            <FormControl isInvalid={errors && errors.description} width="30vw">
+            <FormControl isInvalid={errors && errors.description} width="35vw">
               <FormLabel fontWeight="bold" color="gray.600">Description</FormLabel>
               <Textarea {...register('description')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>
@@ -207,7 +207,7 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
         <Box padding="12px">
           {/* HOST */}
           <Box>
-            <FormControl isInvalid={errors && errors.host} width="30vw">
+            <FormControl isInvalid={errors && errors.host} width="35vw">
               <FormLabel fontWeight="bold" color="gray.600">Host</FormLabel>
               <Input type="text" {...register('host')} border="1px solid" borderColor="gray.200"/>
               <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
@@ -246,10 +246,12 @@ CreateEventForm.propTypes = {
   setDataShouldRevalidate: PropTypes.func,
   closeModal: PropTypes.func,
 };
+//   dayId: PropTypes.number,
+
 
 CreateEventForm.defaultProps = {
   eventData: undefined,
-  setModified: undefined,
+  setDataShouldRevalidate: undefined,
   closeModal: () => {},
 };
 

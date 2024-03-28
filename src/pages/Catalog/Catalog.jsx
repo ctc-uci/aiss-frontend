@@ -27,8 +27,10 @@ import {
   subjectOptions,
   eventOptions,
 } from '../../components/Catalog/SearchFilter/filterOptions';
+import PropTypes from 'prop-types';
+import s from '../../components/Planner/PlannerLayout.module.css';
 
-export default function Catalog() {
+export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEvent }) {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   // const {
   //   isOpen: isEditFormOpen,
@@ -45,7 +47,6 @@ export default function Catalog() {
   const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [deleteItemId, setDeleteItemId] = useState(-1);
-  // const [editData, setEditData] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
   const { filters, clearFilters, filterValues } = useSearchFilters();
@@ -86,13 +87,17 @@ export default function Catalog() {
       ),
     };
 
-    const { data } = await NPOBackend.get('/catalog', {
-      params: params,
-    });
-    const { count, events: tableData } = data;
+    try {
+      const { data } = await NPOBackend.get('/catalog', {
+        params: params,
+      });
+      const { count, events: tableData } = data;
 
-    setTableData(tableData);
-    setTotalRowCount(Number(count[0].count));
+      setTableData(tableData);
+      setTotalRowCount(Number(count[0].count));
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }, [searchTerm, pageSize, currentPage, filterValues]);
 
   // Fetch data on component mount and pagination update
@@ -115,26 +120,27 @@ export default function Catalog() {
 
   return (
     <Container maxW="none" m="0" p="0">
-      <IconButton
-        bgColor="blue.700"
-        color="gray.50"
-        borderRadius="10rem"
-        position="fixed"
-        bottom="2rem"
-        right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
-        fontSize="0.75rem"
-        w="3rem"
-        h="3rem"
-        _hover={{ bgColor: 'blue.500' }}
-        onClick={onCreateFormOpen}
-        icon={<AddIcon />}
-      >
-        Create
-      </IconButton>
-
-      <Box pt="1rem" w="100%" px={{ base: '1rem', lg: '4rem' }} maxW="1440px" mx="auto">
+      { !onDayPlanner &&
+        <IconButton
+          bgColor="blue.700"
+          color="gray.50"
+          borderRadius="10rem"
+          position="fixed"
+          bottom="2rem"
+          right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
+          fontSize="0.75rem"
+          w="3rem"
+          h="3rem"
+          _hover={{ bgColor: 'blue.500' }}
+          onClick={addExistingEventFunc ? addExistingEventFunc : onCreateFormOpen}
+          icon={<AddIcon />}
+        >
+          Create
+        </IconButton>
+      }
+      <Box pt={!onDayPlanner && "1rem"} w="100%" px={!onDayPlanner && { base: '1rem', lg: '4rem' }} maxW="1440px" mx="auto">
         <Text as="h1" fontSize="xx-large" fontWeight="bold">
-          Event Catalog
+          {!onDayPlanner && 'Event Catalog'}
         </Text>
         <Flex gap="4" mt="4">
           <InputGroup size="sm" maxW="sm">
@@ -157,7 +163,7 @@ export default function Catalog() {
               onChange={handleSearch}
             />
           </InputGroup>
-          <Flex gap="3" justifyContent="flex-end" w="100%">
+          <Flex gap="3" justifyContent="flex-end" w="100%" zIndex={2}>
             <SearchFilter name="Season" options={seasonOptions} filter={seasonFilter} />
             <SearchFilter name="Cohort" options={yearOptions} filter={yearFilter} />
             <SearchFilter name="Topic" options={subjectOptions} filter={subjectFilter} />
@@ -183,20 +189,29 @@ export default function Catalog() {
           overflow="hidden"
           borderWidth="1px"
           borderRadius="12px"
+          maxH={onDayPlanner && '50vh'}
+          overflowY="auto"
+          className={s['gray-scrollbar-vertical']}
         >
-          <CatalogTable
-            tableData={tableData}
-            // handleEditForm={handleEditForm}
-            handleDeleteClick={handleDeleteClick}
-          />
-          <PaginationFooter
-            pagesCount={pagesCount}
-            totalRowCount={totalRowCount}
-            setPageSize={setPageSize}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            rangeString={`${offset + 1} - ${offset + tableData.length}`}
-          />
+          {tableData && (
+            <>
+              <CatalogTable
+                tableData={tableData}
+                // handleEditForm={handleEditForm}
+                handleActionClick={onDayPlanner ? addExistingEventFunc : handleDeleteClick}
+                onDayPlanner={onDayPlanner}
+                setCurrEvent={setCurrEvent}
+              />
+              <PaginationFooter
+                pagesCount={pagesCount}
+                totalRowCount={totalRowCount}
+                setPageSize={setPageSize}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                rangeString={`${offset + 1} - ${offset + tableData.length}`}
+              />
+            </>
+          )}
         </TableContainer>
 
         <CreateEventFormModal
@@ -220,3 +235,13 @@ export default function Catalog() {
     </Container>
   );
 }
+
+Catalog.propTypes = {
+  onDayPlanner: PropTypes.bool,
+  addExistingEventFunc: PropTypes.func,
+  setCurrEvent: PropTypes.func,
+};
+
+Catalog.defaultProps = {
+  onDayPlanner: false
+};
