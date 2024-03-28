@@ -125,7 +125,6 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
               <Box
                 className={s['timeline-event-container']}
                 bg={background_color}
-                borderRadius="7"
                 borderColor={border_color}
                 borderStyle={border_style}
                 borderWidth={border_width}
@@ -134,13 +133,13 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
               >
                 <HStack justifyContent='space-between'>
                   <Box>
-                    <Text fontSize="0.9vw" fontWeight="750">
+                    <Text fontSize="sm" fontWeight="600">
                       {name}
                     </Text>
-                    <Text fontSize="0.8vw">
+                    <Text fontSize="sm">
                       <span>{formattedStartTime}</span> - <span>{formattedEndTime}</span>
                     </Text>
-                    <Text fontSize="0.7vw">
+                    <Text fontSize="xs">
                       {hostName}
                     </Text>
                   </Box>
