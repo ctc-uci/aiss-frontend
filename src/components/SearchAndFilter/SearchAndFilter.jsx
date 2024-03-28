@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 const subjectsOptions = ['life skills', 'science', 'technology', 'engineering', 'math', 'college readiness'];
 const eventOptions = ['guest speaker', 'study-trip', 'workshop', 'other'];
 const yearOptions = ['junior', 'senior', 'both'];
-const seasonOptions = ['fall', 'spring', 'summer', 'winter'];
+const seasonOptions = ['fall', 'spring', 'summer'];
 
 const SearchAndFilter = ({ onSearch, onChange }) => {
   return (
@@ -44,8 +44,8 @@ const SearchAndFilter = ({ onSearch, onChange }) => {
 };
 
 SearchAndFilter.propTypes = {
-    onSearch: PropTypes.func.isRequired, 
-    onChange: PropTypes.func.isRequired, 
+    onSearch: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
   };
 
   export default SearchAndFilter;

@@ -20,14 +20,12 @@ const PublishedSchedule = () => {
     let year = today.getFullYear();
     let season;
 
-    if (month >= 3 && month <= 5) {
+    if (month >= 1 && month <= 5) {
       season = 'Spring';
-    } else if (month >= 9 && month <= 11) {
+    } else if (month >= 9 && month <= 12) {
       season = 'Fall';
     } else if (month >= 6 && month <= 8) {
       season = 'Summer';
-    } else {
-      season = 'Winter';
     }
     return season + ' ' + year.toString();
   };
@@ -38,12 +36,7 @@ const PublishedSchedule = () => {
 
       setSelectedSeason(currentUser.type === USER_ROLE ? data[0] : ''); // We assume the current season is the first one in the list
 
-      const index = data.indexOf(curSeason);
-      if (index !== -1) {
-        data.splice(index, 1);
-      }
-
-      const seasonOrder = ['Summer', 'Fall', 'Winter', 'Spring'];
+      const seasonOrder = ['Fall', 'Summer', 'Spring'];
       data.sort((a, b) => {
         // Compare years first
         if (a.split(' ')[1] !== b.split(' ')[1]) {
@@ -76,15 +69,16 @@ const PublishedSchedule = () => {
       <Select
         mb="3vh"
         variant="unstyled"
-        placeholder={curSeason}
+        placeholder={allSeasons.indexOf(curSeason) === -1 && curSeason}
         textColor="transparent"
-        onChange={() => setSelectedSeason(event.target.value)}
+        onChange={(e) => setSelectedSeason(e.target.value)}
         width="23%"
       >
-        { currentUser.type === ADMIN_ROLE ?
+        { currentUser.type === ADMIN_ROLE &&
           allSeasons.map(item => (
-            <option key={item} value={item}>{item}</option>
-          )) : null }
+            <option key={item} value={item} selected={item === curSeason}>{item}</option>
+          ))
+        }
       </Select>
 
       {/* tables for each season */}
