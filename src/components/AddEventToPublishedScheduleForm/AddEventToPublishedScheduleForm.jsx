@@ -61,7 +61,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
   useEffect(() => {
     // console.log('event data changed');
-    if (!eventData) {
+    if (Object.keys(eventData).length === 0) {
       // console.log('should reset data');
       setCheckboxVal(false);
       setFormData({...eventData});
@@ -136,7 +136,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
     } else {
       setPlannedEvents(plannedEvents.filter(e => e.id != -1));
     }
-    setCurrEvent(null);
+    setCurrEvent({});
     setIsEdit(false);
     closeForm();
   }
@@ -235,7 +235,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
       setFormData({tentative: false});
 
       reset();
-      setCurrEvent(null);
+      setCurrEvent({});
       toast({
         title: 'Success!',
         description: 'Added event to day.',

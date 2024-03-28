@@ -50,7 +50,7 @@ const PlannerEvents = ({ onClose, isEditingEvent, setIsEditingEvent }) => {
   }, [dataShouldRevalidate])
 
   const handleCreateNewEvent = () => {
-    setCurrEvent(null);
+    setCurrEvent({});
     togglePSForm();
   }
 
