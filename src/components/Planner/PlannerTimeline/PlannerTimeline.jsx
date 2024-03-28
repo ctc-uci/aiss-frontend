@@ -134,24 +134,25 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
               >
                 <HStack justifyContent='space-between'>
                   <Box>
-                    <Text fontSize="sm" fontWeight="600">
+                    <Text fontSize="0.9vw" fontWeight="750">
                       {name}
                     </Text>
-                    <Text fontSize="sm">
+                    <Text fontSize="0.8vw">
                       <span>{formattedStartTime}</span> - <span>{formattedEndTime}</span>
                     </Text>
-                    <Text fontSize="xs">
+                    <Text fontSize="0.7vw">
                       {hostName}
                     </Text>
                   </Box>
                   {id == eventHover &&
                     <Box>
                       <IconButton
+                        size='sm'
                         isRound={true}
                         icon={<EditIcon />}
                         onClick={() => startEditAndSetCurrEventId(id)}
                       />
-                      <IconButton ml='0.5rem' isRound={true} icon={<DeleteIcon />} onClick={() => {
+                      <IconButton size='sm' ml='0.5rem' isRound={true} icon={<DeleteIcon />} onClick={() => {
                         console.log(id);
                         onRemoveOpen();
                       }} />

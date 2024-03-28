@@ -43,6 +43,7 @@ export default class PlannedEvent {
       gridColumn: `${gridColumnStart}/-1`,
       top: `${offsetTop}%`,
       height: `${cellHeight}%`,
+      overflow: 'hidden'
     };
   }
 }
