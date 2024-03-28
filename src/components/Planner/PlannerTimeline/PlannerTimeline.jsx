@@ -151,10 +151,14 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
                         icon={<EditIcon />}
                         onClick={() => startEditAndSetCurrEventId(id)}
                       />
-                      <IconButton ml='0.5rem' isRound={true} icon={<DeleteIcon />} onClick={onRemoveOpen} />
-                      <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={id}/>
-                      </Box>
+                      <IconButton ml='0.5rem' isRound={true} icon={<DeleteIcon />} onClick={() => {
+                        console.log(id);
+                        onRemoveOpen();
+                      }} />
+                      {/* <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={id}/> */}
+                    </Box>
                   }
+                  <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={id}/>
                 </HStack>
               </Box>
             </div>

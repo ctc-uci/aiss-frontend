@@ -69,7 +69,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
       reset();
       return;
     }
-    console.log(eventData && eventData.confirmed !== null && !eventData.confirmed);
+    // console.log(eventData && eventData.confirmed !== null && !eventData.confirmed);
     setValue('title', eventData.title);
     setFormData({...eventData});
     if (!isEdit) {
@@ -429,7 +429,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
         </Box>
         <Stack spacing={2} justifyContent="right" direction="row" pb="1.5rem" mt="0.5rem">
           <Button htype="submit" mt="1rem" mr="1rem" onClick={handleCancel}>Cancel</Button>
-          <Button colorScheme="blue" type="submit" mt="1rem">Add Event</Button>
+          <Button colorScheme="blue" type="submit" mt="1rem">{isEdit ? 'Save' : 'Add Event'}</Button>
         </Stack>
       </form>
     </Box>

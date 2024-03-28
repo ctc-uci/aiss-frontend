@@ -33,7 +33,7 @@ const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId }) => {
   // console.log(deleteItemId);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Remove Event?</ModalHeader>
@@ -41,7 +41,7 @@ const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId }) => {
         <ModalBody>Are you sure? You can&apos;t undo this action afterwards.</ModalBody>
         <ModalFooter>
           <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={() => handleConfirmDelete(deleteItemId)} colorScheme='red'>Remove</Button>
+          <Button ml='1rem' onClick={() => handleConfirmDelete(deleteItemId)} colorScheme='red'>Remove</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

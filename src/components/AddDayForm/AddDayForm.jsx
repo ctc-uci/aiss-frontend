@@ -155,7 +155,7 @@ const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidat
             color="white"
             _hover={{ bgColor: '#1b6896' }}
           >
-            + Add To Schedule
+            {!dayData ? '+ Add To Schedule' : 'Save Changes'}
           </Button>
         </Flex>
       </form>
