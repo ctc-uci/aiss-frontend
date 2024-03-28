@@ -1,12 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import { Flex, HStack, Link, Text, Image } from '@chakra-ui/react';
+import { Flex, Link, Text, Image, useDisclosure, IconButton, Spacer } from '@chakra-ui/react';
 import { BellIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 
 import Logout from '../Authentication/Logout';
+import NotificationsDrawer from '../../pages/NotificationDrawer/NotificationDrawer';
 
 const Navbar = ({ hasLoaded, isAdmin }) => {
   // console.log(hasLoaded, isAdmin);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const buttonRef = React.useRef();
+
   const makeNavTabs = (page, path) => {
     const selectedTab = location.pathname == path;
     return (
@@ -40,52 +44,37 @@ const Navbar = ({ hasLoaded, isAdmin }) => {
     return (
       <Flex
         style={{ backgroundColor: '#243268', padding: '0 100px 0 100px' }}
-        justify={'space-between'}
         width={'100%'}
         align="center"
         position={'sticky'}
         as={'nav'}
       >
-        <HStack>
-          <Flex align={'center'}>
-            <Image src="src/Logo.svg" marginRight={'48px'}></Image>
-            {makeNavTabs('Schedule', '/publishedSchedule')}
-            {makeNavTabs('Catalog', '/catalog')}
-            {makeNavTabs('Accounts', '/accounts')}
-          </Flex>
-        </HStack>
-        <Flex alignSelf={'right'} marginLeft={'auto'}>
-          <BellIcon
-            color="white"
-            alignSelf={'right'}
-            width={'24px'}
-            height={'24px'}
-            marginRight={'48px'}
-          />
-          <Logout alignSelf={'right'} />
-        </Flex>
+        <Image src="src/Logo.svg" marginRight={'48px'}></Image>
+        {makeNavTabs('Schedule', '/publishedSchedule')}
+        {makeNavTabs('Catalog', '/catalog')}
+        {makeNavTabs('Accounts', '/accounts')}
+
+        <Spacer />
+        <IconButton onClick={onOpen} colorScheme="none" color="white" icon={<BellIcon/>} mr={5}/>
+        <Logout alignSelf={'right'} />
+
+        <NotificationsDrawer isOpen={isOpen} onClose={onClose} />
       </Flex>
     )
   }
-  return (      
+  return (
     <Flex
       style={{ backgroundColor: '#243268', padding: '0 100px 0 100px' }}
-      justify={'space-between'}
       width={'100%'}
       align="center"
       position={'sticky'}
       as={'nav'}
     >
-      <HStack>
-        <Flex align={'center'}>
-          <Image src="../../../aiss-logo.png" marginRight={'48px'}></Image>
-          {makeNavTabs('Schedule', '/publishedSchedule')}
-        </Flex>
-      </HStack>
-      <Flex alignSelf={'right'} marginLeft={'auto'}>
-        <Logout alignSelf={'right'} />
-      </Flex>
+      <Image src="src/Logo.svg" marginRight={'48px'}></Image>
+      {makeNavTabs('Schedule', '/publishedSchedule')}
 
+      <Spacer />
+      <Logout alignSelf={'right'} />
     </Flex>
   );
 };

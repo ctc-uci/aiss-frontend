@@ -6,8 +6,14 @@ import { useEffect, useState } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box, IconButton, useDisclosure } from '@chakra-ui/react';
 import AddDayModal from '../../pages/PublishedSchedule/AddDayModal.jsx'
 import { AddIcon } from '@chakra-ui/icons';
+import { useAuthContext } from '../../common/AuthContext.jsx';
+import AUTH_ROLES from '../../utils/auth_config.js';
+const { ADMIN_ROLE } = AUTH_ROLES.AUTH_ROLES;
+
 
 const PublishedScheduleTable = ({ season }) => {
+  const {currentUser} = useAuthContext();
+
   const [eventsInDay, setEventsInDay] = useState([]);
   const seasonType = season.split(' ')[0];
   const seasonYear = season.split(' ')[1];
@@ -51,22 +57,24 @@ const PublishedScheduleTable = ({ season }) => {
 
   return (
     <Box>
-      <IconButton
-        bgColor="blue.700"
-        color="gray.50"
-        borderRadius="10rem"
-        position="fixed"
-        bottom="2rem"
-        right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
-        fontSize="0.75rem"
-        w="3rem"
-        h="3rem"
-        _hover={{ bgColor: 'blue.500' }}
-        onClick={onOpenDay}
-        icon={<AddIcon />}
-      >
-        Create
-      </IconButton>
+      {currentUser.type === ADMIN_ROLE &&
+        <IconButton
+          bgColor="blue.700"
+          color="gray.50"
+          borderRadius="10rem"
+          position="fixed"
+          bottom="2rem"
+          right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
+          fontSize="0.75rem"
+          w="3rem"
+          h="3rem"
+          _hover={{ bgColor: 'blue.500' }}
+          onClick={onOpenDay}
+          icon={<AddIcon />}
+        >
+          Create
+        </IconButton>
+      }
 
       <AddDayModal isOpenDay={isOpenDay} onCloseDay={onCloseDay} setShouldDataRevalidate={setShouldDataRevalidate}/>
 

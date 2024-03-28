@@ -27,7 +27,7 @@ export default class PlannedEvent {
     // TODO: increase column start to 3 if overlapping
     let gridColumnStart = 2;
     addEvents.forEach(({startTime, endTime}) => {
-      if (this.startTime <= endTime && this.endTime >= startTime) {
+      if (this.startTime < endTime && this.endTime > startTime) {
           gridColumnStart = 3;
       }
     })

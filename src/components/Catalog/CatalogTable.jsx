@@ -1,16 +1,14 @@
 import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody, Box, Text } from '@chakra-ui/react';
 import { /*EditIcon,*/ DeleteIcon } from '@chakra-ui/icons';  // add 'EditIcon' to reinstate edit button.
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { useContext } from 'react';
 import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
-import { PlannerContext } from '../Planner/PlannerContext';
 
-const CatalogTable = ({ tableData, handleActionClick, onDayPlanner }) => {
+const CatalogTable = ({ tableData, handleActionClick, onDayPlanner, setCurrEvent }) => {
 
-  const { currEventContext } = useContext(PlannerContext);
-  // eslint-disable-next-line no-unused-vars
-  const [eventData, setCurrEvent] = currEventContext;
+  // const { currEventContext } = useContext(PlannerContext);
+  // // eslint-disable-next-line no-unused-vars
+  // const [eventData, setCurrEvent] = currEventContext;
 
   const setDataAndOpenPSForm = (eventData) => {
     setCurrEvent(eventData);
@@ -168,7 +166,8 @@ const CatalogTable = ({ tableData, handleActionClick, onDayPlanner }) => {
 CatalogTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.any),
   handleActionClick: PropTypes.func.isRequired,
-  onDayPlanner: PropTypes.bool
+  onDayPlanner: PropTypes.bool,
+  setCurrEvent: PropTypes.func,
 };
 
 CatalogTable.defaultProps = {
