@@ -193,7 +193,7 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEve
           overflowY="auto"
           className={s['gray-scrollbar-vertical']}
         >
-          {tableData && tableData.length > 0 && (
+          {tableData && (
             <>
               <CatalogTable
                 tableData={tableData}

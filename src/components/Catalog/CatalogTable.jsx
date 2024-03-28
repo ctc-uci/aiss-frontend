@@ -5,11 +5,6 @@ import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
 
 const CatalogTable = ({ tableData, handleActionClick, onDayPlanner, setCurrEvent }) => {
-
-  // const { currEventContext } = useContext(PlannerContext);
-  // // eslint-disable-next-line no-unused-vars
-  // const [eventData, setCurrEvent] = currEventContext;
-
   const setDataAndOpenPSForm = (eventData) => {
     setCurrEvent(eventData);
     handleActionClick();
