@@ -60,7 +60,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
   const [formData, setFormData] = useState({...eventData});
 
   useEffect(() => {
-    console.log('event data changed');
+    // console.log('event data changed');
     if (!eventData) {
       // console.log('should reset data');
       setCheckboxVal(false);
@@ -81,10 +81,14 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
       setValue('startTime', eventData.startTime);
       setValue('endTime', eventData.endTime);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventData]);
 
   useEffect(() => {
     if (formData.startTime && formData.endTime && formData.startTime < formData.endTime) {
+      if (isEdit) {
+        // setPlannedEvents([...plannedEvents.filter(e => e.id != -1 && e.id != eventData.id)]);
+      }
       const newPlannedEvent = new PlannedEvent(
         -1,
         formData.title,
@@ -93,10 +97,11 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
         formData.host,
         checkboxVal ? true : false
       )
-      setPlannedEvents([...plannedEvents.filter(e => e.id != -1), newPlannedEvent]);
+      setPlannedEvents([...plannedEvents.filter(e => e.id != -1 && e.id != eventData.id), newPlannedEvent]);
     } else {
       setPlannedEvents(plannedEvents.filter(e => e.id != -1));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData])
 
   const toast = useToast();
@@ -115,7 +120,22 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
   }
 
   const handleCancel = () => {
-    setPlannedEvents(plannedEvents.filter(e => e.id != -1));
+    if (isEdit) {
+      // let reAddedEvent = plannedEvents.filter(e => e.id == -1)[0];
+      // reAddedEvent.id = eventData.id;
+      const reAddedEvent = new PlannedEvent(
+        eventData.id,
+        eventData.title,
+        convertTimeToMinutes(eventData.startTime),
+        convertTimeToMinutes(eventData.endTime),
+        eventData.host,
+        !eventData.confirmed
+      )
+      console.log(reAddedEvent);
+      setPlannedEvents([...plannedEvents.filter(e => e.id != -1), reAddedEvent]);
+    } else {
+      setPlannedEvents(plannedEvents.filter(e => e.id != -1));
+    }
     setCurrEvent(null);
     setIsEdit(false);
     closeForm();
@@ -126,7 +146,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
     console.log('currData', currData);
     for (let key of Object.keys(currData)) {
       if (originalData[key] === undefined || originalData[key] !== currData[key]) {
-        console.log('changed: ', key, originalData[key], currData[key]);
+        console.log('changed key:', key, 'original:', originalData[key], 'current', currData[key]);
         return true;
       }
     }
@@ -136,6 +156,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
   const submitData = async (data) => {
     try {
+      console.log(data);
       // eslint-disable-next-line no-unused-vars
       const { title, host, description, tentative, startTime, endTime } = data;
       const season = filterValues.season;
@@ -156,6 +177,8 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
       });
 
       let catalogEventId = eventData.id; // NOTE: Catalog Id vs PS Id
+
+      let plannedEventId;
 
       if (!isEdit && (catalogDataChanged || !catalogEventId)) {
         console.log('adding new event to catalog from PS');
@@ -184,6 +207,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
           endTime,
           cohort: year,
         });
+        plannedEventId = eventData.id;
       } else {
         // Send a POST request to the appropriate backend route
         publishedScheduleReponse = await NPOBackend.post('/published-schedule', {
@@ -194,11 +218,12 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
           endTime,
           cohort: year,
         });
+        plannedEventId = publishedScheduleReponse.data.id;
       }
-      console.log(publishedScheduleReponse);
+      console.log(plannedEventId, eventData.id);
       const timelineEventsWithoutCurrent = plannedEvents.filter(e => (e.id != -1 && e.id != eventData.id));
       const newPlannedEvent = new PlannedEvent(
-        isEdit ? eventData.id : publishedScheduleReponse.id,
+        plannedEventId,
         title,
         convertTimeToMinutes(startTime),
         convertTimeToMinutes(endTime),
@@ -263,40 +288,40 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
             </Box>
 
             <FormLabel fontWeight="bold" color="gray.600">Time</FormLabel>
-            <Flex>
-            {/* START TIME? */}
-            <Box mb="1rem">
-              <FormControl isInvalid={errors && errors.startTime}>
-                  <Input
-                      size="md"
-                      type="time"
-                      {...register('startTime')}
-                      border="1px solid"
-                      borderColor="gray.200"
-                      defaultValue={eventData && eventData.startTime}
-                      onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                  />
-                  <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
-              </FormControl>
-            </Box>
+            <Flex justifyContent='left'>
+              {/* START TIME? */}
+              <Box mb="1rem">
+                <FormControl isInvalid={errors && errors.startTime}>
+                    <Input
+                        size="md"
+                        type="time"
+                        {...register('startTime')}
+                        border="1px solid"
+                        borderColor="gray.200"
+                        defaultValue={eventData && eventData.startTime}
+                        onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                    />
+                    <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
+                </FormControl>
+              </Box>
 
-            <Text pb="1.5rem" color="gray.600" mx="1rem">&mdash;</Text>
+              <Text pb="1.5rem" color="gray.600" mx="1rem">&mdash;</Text>
 
-            {/* END TIME? */}
-            <Box mb="1rem">
-              <FormControl isInvalid={errors && errors.endTime}>
-                  <Input
-                      size="md"
-                      type="time"
-                      {...register('endTime')}
-                      border="1px solid"
-                      borderColor="gray.200"
-                      defaultValue={eventData && eventData.endTime}
-                      onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                  />
-                  <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
-              </FormControl>
-            </Box>
+              {/* END TIME? */}
+              <Box mb="1rem">
+                <FormControl isInvalid={errors && errors.endTime}>
+                    <Input
+                        size="md"
+                        type="time"
+                        {...register('endTime')}
+                        border="1px solid"
+                        borderColor="gray.200"
+                        defaultValue={eventData && eventData.endTime}
+                        onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                    />
+                    <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
+                </FormControl>
+              </Box>
             </Flex>
 
             <Flex justifyContent="space-between">

@@ -1,21 +1,25 @@
 import s from '../PlannerLayout.module.css';
-import { useMemo, useContext, useEffect } from 'react';
+import { useMemo, useContext, useEffect, useState } from 'react';
 import { generateTimestamps, minutesInFormattedTime } from '../chrono';
-import { Badge, Text, Box, IconButton, HStack } from '@chakra-ui/react';
+import { Badge, Text, Box, IconButton, HStack, useDisclosure } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent, { convertTimeToMinutes } from '../PlannedEvent';
 import { NPOBackend } from '../../../utils/auth_utils';
 import PropTypes from 'prop-types';
+import RemoveTimelineEventModal from '../RemoveTimelineEventModal';
 
 const PlannerTimeline = ({ setIsEditingEvent }) => {
   const { plannedEventsContext, dayId, currEventContext, editContext } = useContext(PlannerContext);
+  const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
   // eslint-disable-next-line no-unused-vars
   const [currEvent, setCurrEvent] = currEventContext; // fix?
   // eslint-disable-next-line no-unused-vars
   const [isEdit, setIsEdit] = editContext;
+  const [eventHover, setEventHover] = useState(-1);
   //const [addedEvents, setAddedEvents] = useState([]);
+
   const addedEvents = [];
 
   const fetchEditData = async (id) => {
@@ -42,6 +46,7 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
   useEffect(() => {
     // console.log('updating timeline!');
     updateTimeline();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateTimeline = async () => {
@@ -82,7 +87,7 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
     );
   }, []);
 
-  console.log(plannedEvents);
+  // console.log(plannedEvents);
 
   return (
     <div id={s['planner-timeline-container']}>
@@ -124,8 +129,10 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
                 borderColor={border_color}
                 borderStyle={border_style}
                 borderWidth={border_width}
+                onMouseEnter={() => setEventHover(id)}
+                onMouseLeave={() => setEventHover(-1)}
               >
-                <HStack>
+                <HStack justifyContent='space-between'>
                   <Box>
                     <Text fontSize="sm" fontWeight="600">
                       {name}
@@ -137,8 +144,17 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
                       {hostName}
                     </Text>
                   </Box>
-                  <IconButton isRound={true} icon={<EditIcon />} onClick={() => startEditAndSetCurrEventId(id)}></IconButton>
-                  <IconButton isRound={true} icon={<DeleteIcon />}></IconButton>
+                  {id == eventHover &&
+                    <Box>
+                      <IconButton
+                        isRound={true}
+                        icon={<EditIcon />}
+                        onClick={() => startEditAndSetCurrEventId(id)}
+                      />
+                      <IconButton ml='0.5rem' isRound={true} icon={<DeleteIcon />} onClick={onRemoveOpen} />
+                      <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={id}/>
+                      </Box>
+                  }
                 </HStack>
               </Box>
             </div>

@@ -10,7 +10,7 @@ const CatalogTable = ({ tableData, handleActionClick, onDayPlanner }) => {
 
   const { currEventContext } = useContext(PlannerContext);
   // eslint-disable-next-line no-unused-vars
-  const [eventData, setCurrEvent] = currEventContext;
+  const setCurrEvent = currEventContext[1];
 
   const setDataAndOpenPSForm = (eventData) => {
     setCurrEvent(eventData);
