@@ -6,7 +6,6 @@ import { useAuthContext } from '../../common/AuthContext.jsx';
 import { useEffect, useState } from 'react';
 const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 import { Box, Select, Text } from '@chakra-ui/react';
-import AddDayModal from './AddDayModal.jsx';
 
 const PublishedSchedule = () => {
   // get data from database
@@ -87,7 +86,6 @@ const PublishedSchedule = () => {
       ) : (
         <PublishedScheduleTable season={curSeason} />
       )}
-      <AddDayModal isEdit={false}/>
     </Box>
   );
 };
