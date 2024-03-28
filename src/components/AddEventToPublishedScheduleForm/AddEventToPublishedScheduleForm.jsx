@@ -71,6 +71,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
     }
     // console.log(eventData && eventData.confirmed !== null && !eventData.confirmed);
     setValue('title', eventData.title);
+    setValue('host', eventData.host);
     setFormData({...eventData});
     if (!isEdit) {
       setCheckboxVal(false);
