@@ -6,10 +6,10 @@ import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent, { convertTimeToMinutes } from '../PlannedEvent';
 import { NPOBackend } from '../../../utils/auth_utils';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import RemoveTimelineEventModal from '../RemoveTimelineEventModal';
 
-const PlannerTimeline = ({ setIsEditingEvent }) => {
+const PlannerTimeline = () => {
   const { plannedEventsContext, dayId, currEventContext, editContext } = useContext(PlannerContext);
   const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
@@ -32,9 +32,7 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
 
   const startEditAndSetCurrEventId = (id) => {
     console.log('selected', id)
-    setIsEditingEvent(true);
     setIsEdit(true);
-    // setCurrEvent(id);
     fetchEditData(id);
   }
 
@@ -174,7 +172,4 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
   );
 };
 
-PlannerTimeline.propTypes = {
-  setIsEditingEvent: PropTypes.func
-}
 export default PlannerTimeline;

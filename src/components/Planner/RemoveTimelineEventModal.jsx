@@ -8,6 +8,7 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalFooter,
+  useToast
 } from '@chakra-ui/react';
 import { NPOBackend } from '../../utils/auth_utils';
 import { useContext } from 'react';
@@ -18,11 +19,25 @@ const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId }) => {
   const { plannedEventsContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
 
+  const toast = useToast();
+
   const handleConfirmDelete = async idToDelete => {
     try {
       console.log('id to delete:', idToDelete);
+      toast.closeAll();
       await NPOBackend.delete(`/published-schedule/${idToDelete}`);
       setPlannedEvents(plannedEvents.filter(e => (e.id != -1 && e.id != idToDelete)));
+      toast({
+        title: 'Event Removed',
+        status: 'success',
+        variant: 'subtle',
+        position: 'top-right',
+        containerStyle: {
+          mt: '6rem',
+        },
+        duration: 3000,
+        isClosable: true,
+      });
       // setDataShouldRevalidate(true);
       onClose();
     } catch (error) {

@@ -9,14 +9,15 @@ import { NPOBackend } from '../../../utils/auth_utils';
 import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
 import AddDayModal from '../../../pages/PublishedSchedule/AddDayModal';
 
-const PlannerEvents = ({ onClose, isEditingEvent, setIsEditingEvent }) => {
+const PlannerEvents = ({ onClose }) => {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   // const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
   const [dayData, setDayData] = useState({});
   const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
 
-  const { plannedEventsContext, dayId, currEventContext } = useContext(PlannerContext);
+  const { plannedEventsContext, dayId, editContext, currEventContext } = useContext(PlannerContext);
+  const [isEdit, setIsEdit] = editContext;
   const setCurrEvent = currEventContext[1]; // fix?
   const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
   const plannedEvents = plannedEventsContext[0];
@@ -55,8 +56,8 @@ const PlannerEvents = ({ onClose, isEditingEvent, setIsEditingEvent }) => {
   }
 
   const togglePSForm = () => {
-    if (isEditingEvent) {
-      setIsEditingEvent(false);
+    if (isEdit) {
+      setIsEdit(false);
       return;
     }
     setIsAddingEvent(!isAddingEvent);
@@ -79,11 +80,11 @@ const PlannerEvents = ({ onClose, isEditingEvent, setIsEditingEvent }) => {
     <div id={s['planner-events-container']} className={s['gray-scrollbar-vertical']}>
       {/* {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>} */}
       <div id={s['planner-browse']}>
-        <Box hidden={!(isAddingEvent || isEditingEvent)} h={!(isAddingEvent || isEditingEvent) && '0px'}>
+        <Box hidden={!(isAddingEvent || isEdit)} h={!(isAddingEvent || isEdit) && '0px'}>
           <AddEventToPublishedScheduleForm closeForm={togglePSForm}/>
         </Box>
 
-        <Box hidden={isAddingEvent || isEditingEvent} h={(isAddingEvent || isEditingEvent) && '0px'}>
+        <Box hidden={isAddingEvent || isEdit} h={(isAddingEvent || isEdit) && '0px'}>
             <HStack>
             <Heading size="md" pb="1rem">{dateHeader}</Heading>
               <IconButton mb="1rem" icon={<EditIcon />} onClick={onOpenDay}></IconButton>
@@ -139,8 +140,6 @@ const PlannerEvents = ({ onClose, isEditingEvent, setIsEditingEvent }) => {
 
 PlannerEvents.propTypes = {
   onClose: PropTypes.func,
-  isEditingEvent: PropTypes.bool,
-  setIsEditingEvent: PropTypes.func
 };
 
 export default PlannerEvents;

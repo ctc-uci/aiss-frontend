@@ -104,7 +104,7 @@ const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidat
 
   return (
     <Box p="20px">
-      <Heading size="lg" textAlign="center" mb="8px" color="#2D3748">Add New Day</Heading>
+      <Heading size="lg" textAlign="center" mb="8px" color="#2D3748">{!dayData ? 'Add New Day' : 'Edit Day Details'}</Heading>
       <form onSubmit={handleSubmit(data => submitData(data))}>
         <Box mb="4vh">
           {/* DATE */}

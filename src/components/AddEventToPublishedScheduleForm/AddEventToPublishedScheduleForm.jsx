@@ -65,13 +65,14 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
       // console.log('should reset data');
       setCheckboxVal(false);
       setFormData({...eventData});
-      setValue('description', '');
       reset();
+      setValue('description', '');
       return;
     }
     // console.log(eventData && eventData.confirmed !== null && !eventData.confirmed);
     setValue('title', eventData.title);
     setValue('host', eventData.host);
+    setValue('description', eventData.description);
     setFormData({...eventData});
     if (!isEdit) {
       setCheckboxVal(false);
@@ -87,9 +88,9 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
   useEffect(() => {
     if (formData.startTime && formData.endTime && formData.startTime < formData.endTime) {
-      if (isEdit) {
-        // setPlannedEvents([...plannedEvents.filter(e => e.id != -1 && e.id != eventData.id)]);
-      }
+      // if (isEdit) {
+      //   // setPlannedEvents([...plannedEvents.filter(e => e.id != -1 && e.id != eventData.id)]);
+      // }
       const newPlannedEvent = new PlannedEvent(
         -1,
         formData.title,
@@ -195,6 +196,10 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
         catalogEventId = catalogResponse.data.id;
       }
+      // if (isEdit) {
+      //   // send PUT or POST request to Catalog?
+      //   const catalogResponse = await NPOBackend.put(`/catalog/`); // ID
+      // }
 
       // console.log(catalogEventId);
 
@@ -221,7 +226,8 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
         });
         plannedEventId = publishedScheduleReponse.data.id;
       }
-      console.log(plannedEventId, eventData.id);
+      // console.log(plannedEventId, eventData.id);
+      // console.log()
       const timelineEventsWithoutCurrent = plannedEvents.filter(e => (e.id != -1 && e.id != eventData.id));
       const newPlannedEvent = new PlannedEvent(
         plannedEventId,
@@ -237,18 +243,34 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
       reset();
       setCurrEvent({});
-      toast({
-        title: 'Success!',
-        description: 'Added event to day.',
-        status: 'success',
-        variant: 'subtle',
-        position: 'top-right',
-        containerStyle: {
-          mt: '6rem',
-        },
-        duration: 3000,
-        isClosable: true,
-      });
+      console.log(isEdit);
+      if (isEdit) {
+        toast({
+          title: 'Saved!',
+          description: 'Changes to event were saved.',
+          status: 'success',
+          variant: 'subtle',
+          position: 'top-right',
+          containerStyle: {
+            mt: '6rem',
+          },
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: 'Success!',
+          description: 'Added event to day.',
+          status: 'success',
+          variant: 'subtle',
+          position: 'top-right',
+          containerStyle: {
+            mt: '6rem',
+          },
+          duration: 3000,
+          isClosable: true,
+        });
+      }
 
       closeForm();
     } catch (error) {
