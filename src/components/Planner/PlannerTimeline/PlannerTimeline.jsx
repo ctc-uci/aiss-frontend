@@ -16,7 +16,7 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
 
   const setCurrEvent = currEventContext[1];
   const setIsEdit = editContext[1];
-  const [eventHover, setEventHover] = useState(-1);
+  const [eventHover, setEventHover] = useState(-2);
   const [deleteItemId, setDeleteItemId] = useState(-1);
   //const [addedEvents, setAddedEvents] = useState([]);
 
@@ -129,7 +129,7 @@ const PlannerTimeline = ({ setIsEditingEvent }) => {
                 borderStyle={border_style}
                 borderWidth={border_width}
                 onMouseEnter={() => setEventHover(id)}
-                onMouseLeave={() => setEventHover(-1)}
+                onMouseLeave={() => setEventHover(-2)}
               >
                 <HStack justifyContent='space-between'>
                   <Box>

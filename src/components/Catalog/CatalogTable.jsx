@@ -1,4 +1,4 @@
-import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody, Box, Text } from '@chakra-ui/react';
+import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody, Text } from '@chakra-ui/react';
 import { /*EditIcon,*/ DeleteIcon } from '@chakra-ui/icons';  // add 'EditIcon' to reinstate edit button.
 import { IoIosAddCircleOutline } from "react-icons/io";
 import s from './Catalog.module.css';
@@ -16,7 +16,6 @@ const CatalogTable = ({ tableData, handleActionClick, onDayPlanner, setCurrEvent
   }
 
   return (
-    <Box maxH={onDayPlanner && '50vh'} overflowY="auto">
     <Table
       variant="simple"
       className={s['catalog-table']}
@@ -159,7 +158,6 @@ const CatalogTable = ({ tableData, handleActionClick, onDayPlanner, setCurrEvent
         ))}
       </Tbody>
     </Table>
-    </Box>
   );
 };
 

@@ -28,6 +28,7 @@ import {
   eventOptions,
 } from '../../components/Catalog/SearchFilter/filterOptions';
 import PropTypes from 'prop-types';
+import s from '../../components/Planner/PlannerLayout.module.css';
 
 export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEvent }) {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
@@ -188,6 +189,9 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEve
           overflow="hidden"
           borderWidth="1px"
           borderRadius="12px"
+          maxH={onDayPlanner && '50vh'}
+          overflowY="auto"
+          className={s['gray-scrollbar-vertical']}
         >
           {tableData && tableData.length > 0 && (
             <>
