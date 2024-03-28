@@ -29,7 +29,7 @@ import {
 } from '../../components/Catalog/SearchFilter/filterOptions';
 import PropTypes from 'prop-types';
 
-export default function Catalog({ onDayPlanner, addExistingEventFunc }) {
+export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEvent }) {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   // const {
   //   isOpen: isEditFormOpen,
@@ -162,7 +162,7 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc }) {
               onChange={handleSearch}
             />
           </InputGroup>
-          <Flex gap="3" justifyContent="flex-end" w="100%">
+          <Flex gap="3" justifyContent="flex-end" w="100%" zIndex={2}>
             <SearchFilter name="Season" options={seasonOptions} filter={seasonFilter} />
             <SearchFilter name="Cohort" options={yearOptions} filter={yearFilter} />
             <SearchFilter name="Topic" options={subjectOptions} filter={subjectFilter} />
@@ -196,6 +196,7 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc }) {
                 // handleEditForm={handleEditForm}
                 handleActionClick={onDayPlanner ? addExistingEventFunc : handleDeleteClick}
                 onDayPlanner={onDayPlanner}
+                setCurrEvent={setCurrEvent}
               />
               <PaginationFooter
                 pagesCount={pagesCount}
@@ -233,7 +234,8 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc }) {
 
 Catalog.propTypes = {
   onDayPlanner: PropTypes.bool,
-  addExistingEventFunc: PropTypes.func
+  addExistingEventFunc: PropTypes.func,
+  setCurrEvent: PropTypes.func,
 };
 
 Catalog.defaultProps = {

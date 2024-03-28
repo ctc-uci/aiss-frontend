@@ -15,9 +15,9 @@ const PlannerEvents = ({ onClose, isEditingEvent, setIsEditingEvent }) => {
   const [dateHeader, setDateHeader] = useState('');
   const [dayData, setDayData] = useState({});
   const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
+
   const { plannedEventsContext, dayId, currEventContext } = useContext(PlannerContext);
-  // eslint-disable-next-line no-unused-vars
-  const [currEvent, setCurrEvent] = currEventContext; // fix?
+  const setCurrEvent = currEventContext[1]; // fix?
   const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
   const plannedEvents = plannedEventsContext[0];
 
@@ -116,7 +116,7 @@ const PlannerEvents = ({ onClose, isEditingEvent, setIsEditingEvent }) => {
 
           <Box bgColor="white" p="1rem" pb="0.5rem" borderRadius="5px">
             <Heading size="md" color="gray.800" fontWeight={600}>Add Event From Catalog</Heading>
-            <Catalog onDayPlanner={true} addExistingEventFunc={togglePSForm}/>
+            <Catalog onDayPlanner={true} addExistingEventFunc={togglePSForm} setCurrEvent={setCurrEvent} />
           </Box>
 
           <Flex flexDir="row-reverse" py="1.5rem">
@@ -125,6 +125,7 @@ const PlannerEvents = ({ onClose, isEditingEvent, setIsEditingEvent }) => {
             _hover={{ bgColor: '#1b6896' }}
             color="white"
             isDisabled={!plannedEvents.length}
+            onClick={closeModal}
             >
               Finish Day
             </Button>
