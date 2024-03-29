@@ -54,28 +54,16 @@ const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidat
       }
 
       if (response.status === 200 || response.status == 201) {
-        // toast({
-        //   title: 'add day!',
-        //   description: `date: ${date}, description: ${details}, location: ${location}`,
-        //   status: 'success',
-        //   variant: 'subtle',
-        //   position: 'bottom',
-        //   containerStyle: {
-        //   mt: '6rem',
-        //   },
-        //   duration: 3000,
-        //   isClosable: true,
-        // });
         const id = dayData ? dayData.id : response.data['id'];
         setDayId(id);
         onOpen(id);
       } else {
         toast({
-          title: 'Error Adding Day',
-          description: `date: ${date}, description: ${details}, location: ${location}`,
+          title: 'This date already exists in the schedule.',
+          description: `${date}`,
           status: 'error',
           variant: 'subtle',
-          position: 'bottom',
+          position: 'top-right',
           containerStyle: {
           mt: '6rem',
           },
