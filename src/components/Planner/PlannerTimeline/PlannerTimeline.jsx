@@ -14,8 +14,8 @@ const PlannerTimeline = () => {
   const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
 
-  const setCurrEvent = currEventContext[1];
-  const setIsEdit = editContext[1];
+  const [eventData, setCurrEvent] = currEventContext;
+  const [isEdit, setIsEdit] = editContext;
   const [eventHover, setEventHover] = useState(-2);
   const [deleteItemId, setDeleteItemId] = useState(-1);
   //const [addedEvents, setAddedEvents] = useState([]);
@@ -31,7 +31,19 @@ const PlannerTimeline = () => {
   }
 
   const startEditAndSetCurrEventId = (id) => {
-    console.log('selected', id)
+    // console.log('selected', id);
+    if (isEdit) {
+      // add back the original state of the currently edited event
+      const reAddedEvent = new PlannedEvent(
+        eventData.id,
+        eventData.title,
+        convertTimeToMinutes(eventData.startTime),
+        convertTimeToMinutes(eventData.endTime),
+        eventData.host,
+        !eventData.confirmed
+      )
+      setPlannedEvents([...plannedEvents.filter(e => e.id != -1), reAddedEvent]);
+    }
     setIsEdit(true);
     fetchEditData(id);
   }
