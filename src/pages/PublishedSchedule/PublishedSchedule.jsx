@@ -38,7 +38,7 @@ const PublishedSchedule = () => {
         data.unshift(curSeason);
       }
 
-      setSelectedSeason(currentUser.type === USER_ROLE ? curSeason : ''); // We assume the current season is the first one in the list
+      setSelectedSeason(currentUser.type === USER_ROLE ? curSeason : data[0]); // We assume the current season is the first one in the list
 
       const seasonOrder = ['Fall', 'Summer', 'Spring'];
       data.sort((a, b) => {
@@ -72,7 +72,7 @@ const PublishedSchedule = () => {
         mb="3vh"
         variant="unstyled"
         placeholder={allSeasons.indexOf(curSeason) === -1 && curSeason}
-        value={curSeason}
+        value={selectedSeason}
         textColor="transparent"
         onChange={(e) => setSelectedSeason(e.target.value)}
         width="23%"
