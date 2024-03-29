@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { NPOBackend } from '../../utils/auth_utils.js';
 
 const DailyEvent = ({ id, startTime, endTime, eventTitle, confirmed, description }) => {
-  // console.log("CONFIRMED:" + confirmed);
-
   const [confirmEvent, setConfirmEvent] = useState(confirmed);
 
   let border_color = '#2B93D1';

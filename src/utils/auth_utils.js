@@ -32,7 +32,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-console.log({auth});
 
 // TEMP: Make sure to remove
 const NPOBackend = axios.create({
@@ -194,7 +193,7 @@ const logInWithEmailAndPassword = async (email, password, redirectPath, navigate
   //if approved status is false, tell user to wait for approval
   if (!user.data[0].approved) {
     throw new Error('Your account is currently under review. Please wait for approval.');
-  } 
+  }
 
   cookies.set(cookieKeys.ROLE, user.data[0].type, cookieConfig);
   cookies.set(cookieKeys.APPROVED, user.data[0].approved, cookieConfig);

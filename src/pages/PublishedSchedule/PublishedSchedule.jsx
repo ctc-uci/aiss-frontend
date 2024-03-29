@@ -29,11 +29,16 @@ const PublishedSchedule = () => {
     return season + ' ' + year.toString();
   };
 
+  const curSeason = getTodaySeason();
+
   useEffect(() => {
     const renderTable = async () => {
       const { data } = await NPOBackend.get('/published-schedule/all-seasons');
+      if (data.indexOf(curSeason) == -1) {
+        data.unshift(curSeason);
+      }
 
-      setSelectedSeason(currentUser.type === USER_ROLE ? data[0] : ''); // We assume the current season is the first one in the list
+      setSelectedSeason(currentUser.type === USER_ROLE ? curSeason : ''); // We assume the current season is the first one in the list
 
       const seasonOrder = ['Fall', 'Summer', 'Spring'];
       data.sort((a, b) => {
@@ -51,8 +56,6 @@ const PublishedSchedule = () => {
     renderTable();
   }, [currentUser]);
 
-  const curSeason = getTodaySeason();
-
   //update chakra table container accordingly
   return (
     <Box pt={10} pb={10} pl={100} pr={100}>
@@ -69,13 +72,14 @@ const PublishedSchedule = () => {
         mb="3vh"
         variant="unstyled"
         placeholder={allSeasons.indexOf(curSeason) === -1 && curSeason}
+        value={curSeason}
         textColor="transparent"
         onChange={(e) => setSelectedSeason(e.target.value)}
         width="23%"
       >
         { currentUser.type === ADMIN_ROLE &&
           allSeasons.map(item => (
-            <option key={item} value={item} selected={item === curSeason}>{item}</option>
+            <option key={item} value={item}>{item}</option>
           ))
         }
       </Select>

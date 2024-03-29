@@ -32,8 +32,6 @@ const PaginationFooter = ({ setData, table, searchTerm, selectedFilters, isModif
         const { data } = await NPOBackend.get('/catalog', {
           params: params
         });
-        const { count, events: tableData } = data;
-        console.log(count, tableData)
 
         setData(data); // data on the page
         setDataCount(data.length); // total number of data across all pages

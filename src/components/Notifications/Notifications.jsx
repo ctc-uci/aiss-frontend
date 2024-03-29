@@ -22,9 +22,7 @@ const Notifications = () => {
 
   const approveAccount = async id => {
     try {
-      console.log('Approving', id);
       await NPOBackend.put(`/users/approve/${id}`);
-      console.log('Approved', id);
     } catch (e) {
       console.log(e);
     }
@@ -32,9 +30,7 @@ const Notifications = () => {
 
   const declineAccount = async id => {
     try {
-      console.log('Declining', id);
       await NPOBackend.delete(`/users/${id}`);
-      console.log('Declined', id);
     } catch (e) {
       console.log(e);
     }

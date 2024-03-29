@@ -52,23 +52,22 @@ const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidat
       } else {
         response = await NPOBackend.post('/day/', payload);
       }
-      console.log(response);
+
       if (response.status === 200 || response.status == 201) {
-        toast({
-          title: 'add day!',
-          description: `date: ${date}, description: ${details}, location: ${location}`,
-          status: 'success',
-          variant: 'subtle',
-          position: 'bottom',
-          containerStyle: {
-          mt: '6rem',
-          },
-          duration: 3000,
-          isClosable: true,
-        });
+        // toast({
+        //   title: 'add day!',
+        //   description: `date: ${date}, description: ${details}, location: ${location}`,
+        //   status: 'success',
+        //   variant: 'subtle',
+        //   position: 'bottom',
+        //   containerStyle: {
+        //   mt: '6rem',
+        //   },
+        //   duration: 3000,
+        //   isClosable: true,
+        // });
         const id = dayData ? dayData.id : response.data['id'];
         setDayId(id);
-
         onOpen(id);
       } else {
         toast({

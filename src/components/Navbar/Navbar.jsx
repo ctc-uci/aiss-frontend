@@ -7,9 +7,7 @@ import Logout from '../Authentication/Logout';
 import NotificationsDrawer from '../../pages/NotificationDrawer/NotificationDrawer';
 
 const Navbar = ({ hasLoaded, isAdmin }) => {
-  // console.log(hasLoaded, isAdmin);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const buttonRef = React.useRef();
 
   const makeNavTabs = (page, path) => {
     const selectedTab = location.pathname == path;
