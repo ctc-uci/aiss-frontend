@@ -53,14 +53,14 @@ const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidat
         response = await NPOBackend.post('/day/', payload);
       }
 
-      if (response.status === 200 || response.status == 201) {
+      if (response.status === 200 || (response.status == 201 && response.data.status === 'Success')) {
         const id = dayData ? dayData.id : response.data['id'];
         setDayId(id);
         onOpen(id);
-      } else {
+      } else if (response.status == 201 && response.data.status === 'Failed') {
         toast({
           title: 'This date already exists in the schedule.',
-          description: `${date}`,
+          description: `${date.toLocaleDateString()}`,
           status: 'error',
           variant: 'subtle',
           position: 'top-right',
@@ -74,18 +74,6 @@ const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidat
 
     } catch (error) {
       console.log(error);
-      toast({
-        title: 'Error Adding Day',
-        description: error.response ? error.response.data.message : 'An error occurred',
-        status: 'error',
-        variant: 'subtle',
-        position: 'bottom',
-        containerStyle: {
-        mt: '6rem',
-        },
-        duration: 3000,
-        isClosable: true,
-      });
     }
   }
 
