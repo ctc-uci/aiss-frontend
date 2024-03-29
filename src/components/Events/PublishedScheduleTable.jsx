@@ -2,25 +2,41 @@ import { NPOBackend } from '../../utils/auth_utils.js';
 import Events from './Events.jsx';
 import EventInfo from './EventInfo.jsx';
 import PropTypes from 'prop-types';
-
 import { useEffect, useState } from 'react';
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box, IconButton, useDisclosure } from '@chakra-ui/react';
+import AddDayModal from '../../pages/PublishedSchedule/AddDayModal.jsx'
+import { AddIcon } from '@chakra-ui/icons';
+import { useAuthContext } from '../../common/AuthContext.jsx';
+import AUTH_ROLES from '../../utils/auth_config.js';
+const { ADMIN_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box } from '@chakra-ui/react';
 
 const PublishedScheduleTable = ({ season }) => {
+  const {currentUser} = useAuthContext();
+
   const [eventsInDay, setEventsInDay] = useState([]);
   const seasonType = season.split(' ')[0];
   const seasonYear = season.split(' ')[1];
+  const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
+  const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
+
+  const renderTable = async () => {
+    const { data } = await NPOBackend.get(
+      `/published-schedule/season?season=${seasonType}&year=${seasonYear}`,
+    );
+    setEventsInDay(data);
+  };
 
   useEffect(() => {
-    const renderTable = async () => {
-      const { data } = await NPOBackend.get(
-        `/published-schedule/season?season=${seasonType}&year=${seasonYear}`,
-      );
-      setEventsInDay(data);
-    };
     renderTable();
   }, [seasonType, seasonYear]);
+
+  useEffect(() => {
+    if (dataShouldRevalidate) {
+      renderTable();
+      setShouldDataRevalidate(false);
+    }
+  }, [dataShouldRevalidate])
 
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -41,8 +57,29 @@ const PublishedScheduleTable = ({ season }) => {
 
   return (
     <Box>
-      <TableContainer>
-        <Table variant="simple" borderWidth={1}>
+      {currentUser.type === ADMIN_ROLE &&
+        <IconButton
+          bgColor="blue.700"
+          color="gray.50"
+          borderRadius="10rem"
+          position="fixed"
+          bottom="2rem"
+          right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
+          fontSize="0.75rem"
+          w="3rem"
+          h="3rem"
+          _hover={{ bgColor: 'blue.500' }}
+          onClick={onOpenDay}
+          icon={<AddIcon />}
+        >
+          Create
+        </IconButton>
+      }
+
+      <AddDayModal isOpenDay={isOpenDay} onCloseDay={onCloseDay} setShouldDataRevalidate={setShouldDataRevalidate}/>
+
+      <TableContainer borderWidth={1} borderRadius="10px">
+        <Table variant="simple">
           <Thead>
             <Tr>
               <Th>Info</Th>
@@ -52,18 +89,20 @@ const PublishedScheduleTable = ({ season }) => {
           <Tbody>
             {eventsInDay.map(item => (
               <Tr key={item.day.id} verticalAlign={'top'}>
-                <Td>
+                <Td pr={0}>
                   <EventInfo
+                    dayId={item.day.id}
                     eventDate={getUTCDate(item.day.eventDate).toLocaleDateString('en-US')}
                     day={dayNames[getUTCDate(item.day.eventDate).getDay()]}
                     startTime={formatDate(item.day.startTime)}
                     endTime={formatDate(item.day.endTime)}
                     location={item.day.location}
                     notes={item.day.notes}
+                    setShouldDataRevalidate={setShouldDataRevalidate}
                   />
                 </Td>
                 <Td style={{ textAlign: 'left' }} width="75%">
-                  <Events eventData={item.data} location={item.day.location} />
+                  <Events eventData={item.data} />
                 </Td>
               </Tr>
             ))}

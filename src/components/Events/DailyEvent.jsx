@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
-import { Box, Flex, Text, Grid, Button } from '@chakra-ui/react';
+import { Box, Flex, Text, Grid, Button, Spacer } from '@chakra-ui/react';
 import { useState } from 'react';
 import { NPOBackend } from '../../utils/auth_utils.js';
 
-const DailyEvent = ({ id, startTime, endTime, eventTitle, location, confirmed }) => {
-  // console.log("CONFIRMED:" + confirmed);
-
+const DailyEvent = ({ id, startTime, endTime, eventTitle, confirmed, description }) => {
   const [confirmEvent, setConfirmEvent] = useState(confirmed);
 
   let border_color = '#2B93D1';
@@ -40,22 +38,19 @@ const DailyEvent = ({ id, startTime, endTime, eventTitle, location, confirmed })
       borderColor={border_color}
       boxShadow="md"
     >
-      <Flex minWidth="max-content" alignItems="flex-start" gap="50">
-        {/* <Text>{confirmed}</Text> */}
-        <Box w="35vh">
-          <Text>
-            {startTime} - {endTime}
-          </Text>
-        </Box>
+      <Flex minWidth="max-content" alignItems="flex-start" gap="50" justifyContent="space-between">
+        <Text>
+          {startTime} - {endTime}
+        </Text>
 
-        <Box w="90%">
-          <Grid gap={2}>
-            <Text fontWeight="bold">{eventTitle}</Text>
-            <Text>{location}</Text>
-          </Grid>
-        </Box>
+        <Grid gap={2}>
+          <Text fontWeight="bold">{eventTitle}</Text>
+          <Text maxW="30vw" whiteSpace="pre-wrap">{description}</Text>
+        </Grid>
 
-        {!confirmEvent ? (
+        <Spacer />
+
+        {!confirmEvent && (
           <Box w="15vh" alignItems="top">
             <Grid gap={2}>
               <div></div>
@@ -65,8 +60,6 @@ const DailyEvent = ({ id, startTime, endTime, eventTitle, location, confirmed })
               </Button>
             </Grid>
           </Box>
-        ) : (
-          <Box w="10%"></Box>
         )}
       </Flex>
     </Box>
@@ -78,7 +71,7 @@ DailyEvent.propTypes = {
   startTime: PropTypes.string.isRequired,
   endTime: PropTypes.string.isRequired,
   eventTitle: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
+  description: PropTypes.string,
   confirmed: PropTypes.bool.isRequired,
 };
 

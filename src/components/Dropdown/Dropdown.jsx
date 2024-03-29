@@ -12,7 +12,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { FilterCheckbox } from '../Catalog/SearchFilter/SearchFilter';
 import { useState, useEffect } from 'react';
 
-const Dropdown = ({ options, filter, selected, defaults, badgeColor }) => {
+const Dropdown = ({ options, filter, selected, defaults, badgeColor, width }) => {
   const { getCheckboxProps } = filter;
   const [selectedOptions, setSelectedOptions] = useState([]);
 
@@ -21,9 +21,19 @@ const Dropdown = ({ options, filter, selected, defaults, badgeColor }) => {
   }, [selected]);
 
   useEffect(() => {
+    // console.log('inital default');
     if (defaults && defaults[0] !== '')
       filter.setValue(defaults);
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    // console.log('update default', defaults);
+    if (defaults && defaults[0] !== '')
+      filter.setValue(defaults);
+    if (!defaults) {
+      filter.setValue([]);
+    }
+  }, [defaults]);
 
   return (
     <Menu>
@@ -44,7 +54,7 @@ const Dropdown = ({ options, filter, selected, defaults, badgeColor }) => {
         size="auto"
         p="0.5rem"
         borderColor="gray.200"
-        width="35vw"
+        width={width ? width : '35vw'}
         bgColor="white"
         _hover={{ bgColor: 'white' }}
         _active={{ bgColor: 'white' }}
@@ -87,6 +97,7 @@ Dropdown.propTypes = {
   selected: PropTypes.array,
   defaults: PropTypes.array,
   badgeColor: PropTypes.string,
+  width: PropTypes.string,
   options: PropTypes.arrayOf(
     PropTypes.shape({
       value: PropTypes.string,

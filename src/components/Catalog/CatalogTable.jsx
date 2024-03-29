@@ -1,12 +1,24 @@
 import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody, Text } from '@chakra-ui/react';
 import { /*EditIcon,*/ DeleteIcon } from '@chakra-ui/icons';  // add 'EditIcon' to reinstate edit button.
+import { IoIosAddCircleOutline } from "react-icons/io";
 import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
 
-const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
+const CatalogTable = ({ tableData, handleActionClick, onDayPlanner, setCurrEvent }) => {
+  const setDataAndOpenPSForm = (eventData) => {
+    setCurrEvent(eventData);
+    handleActionClick();
+  }
+
   return (
-    <Table variant="simple" className={s['catalog-table']} borderWidth="0" width="100%" px="1rem">
-      <Thead>
+    <Table
+      variant="simple"
+      className={s['catalog-table']}
+      borderWidth="0"
+      width="100%"
+      px="1rem"
+    >
+      <Thead style={onDayPlanner ? { position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 } : {}}>
         <Tr>
           <Th textAlign="left">Event</Th>
           <Th textAlign="left">Host</Th>
@@ -84,16 +96,47 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
                 ))}
               </Container>
             </Td>
-            <Td>
-              {/* <IconButton
-                color="gray.400"
-                backgroundColor="transparent"
-                p="0.5rem"
-                h="fit-content"
-                w="fit-content"
-                icon={<EditIcon />}
-                onClick={() =>
-                  handleEditForm({
+            { !onDayPlanner ?
+              <Td>
+                {/* <IconButton
+                  color="gray.400"
+                  backgroundColor="transparent"
+                  p="0.5rem"
+                  h="fit-content"
+                  w="fit-content"
+                  icon={<EditIcon />}
+                  onClick={() =>
+                    handleEditForm({
+                      id,
+                      title,
+                      host,
+                      year,
+                      eventType,
+                      subject,
+                      description,
+                    })
+                  }
+                /> */}
+                <IconButton
+                  color="gray.400"
+                  backgroundColor="transparent"
+                  p="0.5rem"
+                  h="fit-content"
+                  w="fit-content"
+                  icon={<DeleteIcon />}
+                  onClick={() => handleActionClick(id)}
+                />
+              </Td>
+            :
+              <Td>
+                <IconButton
+                  color="gray.400"
+                  backgroundColor="transparent"
+                  p="0.5rem"
+                  h="fit-content"
+                  w="fit-content"
+                  icon={<IoIosAddCircleOutline />}
+                  onClick={() => setDataAndOpenPSForm({
                     id,
                     title,
                     host,
@@ -102,19 +145,10 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
                     subject,
                     description,
                     season
-                  })
-                }
-              /> */}
-              <IconButton
-                color="gray.400"
-                backgroundColor="transparent"
-                p="0.5rem"
-                h="fit-content"
-                w="fit-content"
-                icon={<DeleteIcon />}
-                onClick={() => handleDeleteClick(id)}
-              />
-            </Td>
+                  })}
+                />
+              </Td>
+            }
           </Tr>
         ))}
       </Tbody>
@@ -124,8 +158,13 @@ const CatalogTable = ({ tableData, /*handleEditForm,*/ handleDeleteClick }) => {
 
 CatalogTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.any),
-  // handleEditForm: PropTypes.func.isRequired,
-  handleDeleteClick: PropTypes.func.isRequired,
+  handleActionClick: PropTypes.func.isRequired,
+  onDayPlanner: PropTypes.bool,
+  setCurrEvent: PropTypes.func,
+};
+
+CatalogTable.defaultProps = {
+  onDayPlanner: false
 };
 
 export default CatalogTable;

@@ -38,7 +38,8 @@
 
 /* PLANNER TIMELINE */
 #planner-timeline-container {
-  background-color: var(--chakra-colors-blackAlpha-200);
+  margin-left: 1rem;
+  background-color: white;
   width: clamp(250px, 30%, 600px);
 }
 
@@ -65,17 +66,22 @@
 .timeline-event-container {
   background-color: var(--chakra-colors-gray-300);
   height: 100%;
-  border-radius: 6px;
+  border-radius: 7px;
   padding: 0.25rem 0.5rem;
+  position: absolute;
+  width: 100%;
+  overflow: hidden;
 }
 
 /* PLANNER EVENTS */
 #planner-events-container {
   padding: 2rem;
-  padding-right: max(5%, 2rem);
+  /* padding-right: max(5%, 2rem); */
   flex-grow: 1;
-  background-color: #f2f2f2;
+  background-color: #edf2f7;
   position: relative;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
 #planner-browse {

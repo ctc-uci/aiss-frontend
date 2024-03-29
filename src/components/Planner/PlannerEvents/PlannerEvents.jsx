@@ -1,157 +1,145 @@
+import { useState, useEffect, useContext } from 'react';
 import s from '../PlannerLayout.module.css';
-import {
-  TableContainer,
-  Table,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Text,
-  Button,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Stack,
-  Select,
-} from '@chakra-ui/react';
-import { Search2Icon, AddIcon } from '@chakra-ui/icons';
-import { useState } from 'react';
-import AddEventOverlay from './AddEventOverlay';
+import { Text, Button, Heading, Box, IconButton, HStack, Flex, useDisclosure } from '@chakra-ui/react';
+import { AddIcon, EditIcon } from '@chakra-ui/icons';
+import Catalog from '../../../pages/Catalog/Catalog';
+import PropTypes from 'prop-types';
+import { PlannerContext } from '../PlannerContext';
+import { NPOBackend } from '../../../utils/auth_utils';
+import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
+import AddDayModal from '../../../pages/PublishedSchedule/AddDayModal';
 
-const PlannerEvents = () => {
-  const [overlayIsVisible, setOverlayIsVisible] = useState(false);
+const PlannerEvents = ({ onClose }) => {
+  const [isAddingEvent, setIsAddingEvent] = useState(false);
+  // const [existingEventData, setExistingEventData] = useState({});
+  const [dateHeader, setDateHeader] = useState('');
+  const [dayData, setDayData] = useState({});
+  const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
+
+  const { plannedEventsContext, dayId, editContext, currEventContext } = useContext(PlannerContext);
+  const [isEdit, setIsEdit] = editContext;
+  const setCurrEvent = currEventContext[1]; // fix?
+  const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
+  const plannedEvents = plannedEventsContext[0];
+
+  const getDayData = async () => {
+    try {
+      // console.log('getDayData');
+      const response = await NPOBackend.get(`/day/${dayId}`);
+      const responseData = response.data[0];
+      const [datePart] = responseData.eventDate.split('T');
+      const dateObj = new Date(responseData.eventDate);
+      // console.log(dateObj);
+      setDateHeader(dateObj.toLocaleDateString({ year: 'numeric', month: 'short', day: '2-digit' }));
+      setDayData({id: responseData.id, eventDate: datePart, location: responseData.location, details: responseData.notes});
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    // console.log('fetch data first time?')
+    getDayData();
+  }, [dayId]);
+
+  useEffect(() => {
+    if (dataShouldRevalidate) {
+      // console.log('reset data');
+      getDayData();
+      setShouldDataRevalidate(false);
+    }
+  }, [dataShouldRevalidate])
+
+  const handleCreateNewEvent = () => {
+    setCurrEvent({});
+    togglePSForm();
+  }
+
+  const togglePSForm = () => {
+    if (isEdit) {
+      setIsEdit(false);
+      return;
+    }
+    setIsAddingEvent(!isAddingEvent);
+  };
+
+  const closeModal = async () => {
+    // delete day if empty
+    if (plannedEvents.length === 0) {
+      try {
+        console.log('deleting day!!')
+        await NPOBackend.delete(`/day/${dayId}`);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    onClose();
+  }
 
   return (
-    <div id={s['planner-events-container']}>
-      {overlayIsVisible && <AddEventOverlay setOverlayIsVisible={setOverlayIsVisible} />}
+    <div id={s['planner-events-container']} className={s['gray-scrollbar-vertical']}>
+      {/* {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>} */}
       <div id={s['planner-browse']}>
-        <Text fontSize="1.875rem" marginBottom="1rem">
-          Add Event to Day
-        </Text>
-        <Button
-          onClick={() => {
-            setOverlayIsVisible(true);
-          }}
-          className={s['create-event-button']}
-          backgroundColor="blackAlpha.500"
-          _hover={{
-            backgroundColor: 'blackAlpha.400',
-          }}
-          padding="1.5rem"
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom="1rem"
-        >
-          <Text fontSize="1.125rem" color="white">
-            Create New Event
-          </Text>
-          <AddIcon color="white" />
-        </Button>
-        <hr className={s['header-divider']} />
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom="1rem"
-        >
-          <InputGroup alignItems="center">
-            <InputLeftElement pointerEvents="none">
-              <Search2Icon color="#9e9e9e" />
-            </InputLeftElement>
-            <Input
-              size="md"
-              placeholder="Search for a catalog event"
-              id="catalogsearch"
-              background="blackAlpha.100"
-            />
-          </InputGroup>
-          <Stack direction="row" width="100%">
-            <Select
-              color="blackAlpha.600"
-              backgroundColor="blackAlpha.400"
-              size="sm"
-              placeholder="Season"
-              borderRadius="4px"
+        <Box hidden={!(isAddingEvent || isEdit)} h={!(isAddingEvent || isEdit) && '0px'}>
+          <AddEventToPublishedScheduleForm closeForm={togglePSForm}/>
+        </Box>
+
+        <Box hidden={isAddingEvent || isEdit} h={(isAddingEvent || isEdit) && '0px'}>
+            <HStack>
+            <Heading size="md" pb="1rem">{dateHeader}</Heading>
+              <IconButton mb="1rem" icon={<EditIcon />} onClick={onOpenDay}></IconButton>
+              <AddDayModal
+                isOpenDay={isOpenDay}
+                onCloseDay={onCloseDay}
+                isEdit={true}
+                dayData={dayData}
+                setShouldDataRevalidate={setShouldDataRevalidate}
+              />
+            </HStack>
+          <Box bgColor="white" p="1rem" borderRadius="5px" mb="1rem">
+            <Heading size="md" pb="1rem" color="gray.800" fontWeight={600}>Create New Event</Heading>
+            <Button
+              onClick={handleCreateNewEvent}
+              className={s['create-event-button']}
+              backgroundColor="#2c93d1"
+              _hover={{ bgColor: '#1b6896' }}
+              padding="1.5rem"
+              justifyContent="space-between"
+              alignItems="center"
+              size="lg"
             >
-              <option>Winter</option>
-              <option>Fall</option>
-            </Select>
-            <Select
-              color="blackAlpha.600"
-              backgroundColor="blackAlpha.400"
-              size="sm"
-              placeholder="Year"
-              borderRadius="4px"
+              <Text  color="white">
+                Add Event
+              </Text>
+              <AddIcon color="white" />
+            </Button>
+          </Box>
+
+          <Box bgColor="white" p="1rem" pb="0.5rem" borderRadius="5px">
+            <Heading size="md" color="gray.800" fontWeight={600}>Add Event From Catalog</Heading>
+            <Catalog onDayPlanner={true} addExistingEventFunc={togglePSForm} setCurrEvent={setCurrEvent} />
+          </Box>
+
+          <Flex flexDir="row-reverse" py="1.5rem">
+            <Button
+            backgroundColor="#2c93d1"
+            _hover={{ bgColor: '#1b6896' }}
+            color="white"
+            isDisabled={!plannedEvents.length}
+            onClick={closeModal}
             >
-              <option>Junior</option>
-              <option>Senior</option>
-            </Select>
-            <Select
-              color="blackAlpha.600"
-              backgroundColor="blackAlpha.400"
-              size="sm"
-              placeholder="Category"
-              borderRadius="4px"
-            >
-              <option>Speaker</option>
-              <option>Study Trip</option>
-            </Select>
-            <Select
-              color="blackAlpha.600"
-              backgroundColor="blackAlpha.400"
-              size="sm"
-              placeholder="Type"
-              borderRadius="4px"
-            >
-              <option>Technology</option>
-              <option>Other</option>
-            </Select>
-          </Stack>
-        </Stack>
-        <TableContainer
-          className={s['planner-table-container']}
-          backgroundColor="white"
-          color="white"
-          marginBottom="2rem"
-          borderRadius="8px"
-        >
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th color="gray.600">EVENT</Th>
-                <Th color="gray.600">HOST</Th>
-                <Th color="gray.600">TAGS</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {/* TODO: insert mapping of catalog/pub sched events here, table entry component yet to be made */}
-            </Tbody>
-          </Table>
-        </TableContainer>
-        <Stack spacing={2} justifyContent="right" direction="row">
-          <Button
-            paddingX="1.5rem"
-            size="sm"
-            borderRadius="full"
-            backgroundColor="blackAlpha.400"
-            _hover={{ backgroundColor: 'blackAlpha.300' }}
-          >
-            Cancel
-          </Button>
-          <Button
-            paddingX="1.5rem"
-            size="sm"
-            borderRadius="full"
-            backgroundColor="blackAlpha.400"
-            _hover={{ backgroundColor: 'blackAlpha.300' }}
-            isDisabled
-          >
-            Finish Event
-          </Button>
-        </Stack>
+              Finish Day
+            </Button>
+            <Button onClick={closeModal} mr="1rem">Cancel</Button>
+          </Flex>
+        </Box>
       </div>
     </div>
   );
+};
+
+PlannerEvents.propTypes = {
+  onClose: PropTypes.func,
 };
 
 export default PlannerEvents;

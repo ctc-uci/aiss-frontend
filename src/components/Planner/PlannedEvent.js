@@ -7,23 +7,30 @@ export default class PlannedEvent {
   name; // string
   startTime; // number (minutes since midnight - e.g. 60 * 10 = 10AM)
   endTime; // number (minutes since midnight - e.g. 60 * 10 = 10AM)
+  hostName;
   isTentative; // boolean
 
-  constructor(id, name, startTime, endTime, isTentative = false) {
+  constructor(id, name, startTime, endTime, hostName, isTentative = false) {
     this.id = id;
     this.name = name;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.hostName = hostName;
     this.isTentative = isTentative;
   }
 
-  calculateGridStyles() {
+  calculateGridStyles(addEvents) {
     const earliestHourInMinutes = PlannedEvent.EARLIEST_HOUR * MINUTES_PER_HOUR;
 
     const gridRowCell = Math.floor((this.startTime - earliestHourInMinutes) / MINUTES_PER_HOUR) + 1;
 
     // TODO: increase column start to 3 if overlapping
-    const gridColumnStart = 2;
+    let gridColumnStart = 2;
+    addEvents.forEach(({startTime, endTime}) => {
+      if (this.startTime < endTime && this.endTime > startTime) {
+          gridColumnStart = 3;
+      }
+    })
 
     // Offset from top border: (e.g. 50% from top if start is at 4:30PM)
     const offsetTop = (100 * (this.startTime % MINUTES_PER_HOUR)) / MINUTES_PER_HOUR;
@@ -39,3 +46,11 @@ export default class PlannedEvent {
     };
   }
 }
+
+const convertTimeToMinutes = (timeString) => {
+  const [hours, minutes] = timeString.split(":").slice(0,2).map(Number);
+  const totalMinutes = hours*MINUTES_PER_HOUR + minutes;
+  return totalMinutes;
+}
+
+export { convertTimeToMinutes }

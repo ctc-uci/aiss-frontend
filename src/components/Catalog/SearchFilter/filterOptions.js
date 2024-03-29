@@ -2,7 +2,6 @@ const seasonOptions = [
   { value: 'fall', name: 'Fall' },
   { value: 'spring', name: 'Spring' },
   { value: 'summer', name: 'Summer' },
-  { value: 'winter', name: 'Winter' },
 ];
 const yearOptions = [
   { value: 'junior', name: 'Junior' },
