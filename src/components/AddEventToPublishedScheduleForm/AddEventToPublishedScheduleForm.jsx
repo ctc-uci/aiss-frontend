@@ -60,20 +60,18 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
   const [formData, setFormData] = useState({...eventData});
 
   useEffect(() => {
-    // console.log('event data changed');
     if (Object.keys(eventData).length === 0) {
-      // console.log('should reset data');
       setCheckboxVal(false);
-      setFormData({...eventData});
+      setFormData({});
       reset();
       setValue('description', '');
       return;
     }
-    // console.log(eventData && eventData.confirmed !== null && !eventData.confirmed);
+
     setValue('title', eventData.title);
     setValue('host', eventData.host);
     setValue('description', eventData.description);
-    setFormData({...eventData});
+    setFormData(eventData);
     if (!isEdit) {
       setCheckboxVal(false);
     } else {
@@ -117,10 +115,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
     resolver: yupResolver(schema),
   });
 
-  if (!eventData) {
-    setValue('description', '');
-  }
-
   const handleCancel = () => {
     if (isEdit) {
       // let reAddedEvent = plannedEvents.filter(e => e.id == -1)[0];
@@ -133,7 +127,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
         eventData.host,
         !eventData.confirmed
       )
-      console.log(reAddedEvent);
       setPlannedEvents([...plannedEvents.filter(e => e.id != -1), reAddedEvent]);
     } else {
       setPlannedEvents(plannedEvents.filter(e => e.id != -1));
@@ -143,32 +136,51 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
     closeForm();
   }
 
-  const currentDataHasChanged = (originalData, currData) => {
-    console.log('org data', originalData);
-    console.log('currData', currData);
+  const currentCatalogDataHasChanged = (originalData, currData) => {
+    // keys: title,host,description,eventType,subject,year,season
     for (let key of Object.keys(currData)) {
       if (originalData[key] === undefined || originalData[key] !== currData[key]) {
-        console.log('changed key:', key, 'original:', originalData[key], 'current', currData[key]);
         return true;
       }
     }
-    console.log('no changes to catalog data');
     return false;
+  }
+
+  const displayToast = () => {
+    let toastTitle = 'Success!';
+    let toastDescription = 'Added event to day.';
+    if (isEdit) {
+      toastTitle = 'Saved!';
+      toastDescription = 'Changes to event were saved.';
+    }
+
+    toast({
+      title: toastTitle,
+      description: toastDescription,
+      status: 'success',
+      variant: 'subtle',
+      position: 'top-right',
+      containerStyle: {
+        mt: '6rem',
+      },
+      duration: 3000,
+      isClosable: true,
+    });
   }
 
   const submitData = async (data) => {
     try {
-      console.log(data);
       // eslint-disable-next-line no-unused-vars
       const { title, host, description, tentative, startTime, endTime } = data;
       const season = filterValues.season;
       const eventType = filterValues.eventType;
       const year = filterValues.year;
       const subject = filterValues.subject;
+      console.log('submmitted data', data, season, eventType, year, subject);
 
       toast.closeAll();
 
-      const catalogDataChanged = currentDataHasChanged(eventData, {
+      const catalogDataChanged = currentCatalogDataHasChanged(eventData, {
         title,
         host,
         description,
@@ -178,12 +190,13 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
         season
       });
 
-      let catalogEventId = eventData.id; // NOTE: Catalog Id vs PS Id
+      let catalogEventId = eventData.id;
+      if(isEdit) {
+        catalogEventId = eventData.eventId;
+      }
 
-      let plannedEventId;
-
+      // not editing timeline event AND (changed catalog data OR is completely new event)
       if (!isEdit && (catalogDataChanged || !catalogEventId)) {
-        console.log('adding new event to catalog from PS');
         const catalogResponse = await NPOBackend.post(`/catalog`, {
           title,
           host,
@@ -196,18 +209,19 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
         catalogEventId = catalogResponse.data.id;
       }
-      // if (isEdit) {
-      //   // send PUT or POST request to Catalog?
-      //   const catalogResponse = await NPOBackend.put(`/catalog/`); // ID
-      // }
 
-      // console.log(catalogEventId);
-
-      //const dayInfo = await NPOBackend.get(`/day/${dayId}`);
       let publishedScheduleReponse;
+      let plannedEventId;
       if (isEdit) {
+        if (catalogDataChanged) {
+          const updateCatalog = await NPOBackend.put(`/catalog/${catalogEventId}`, {
+            title, host, description, eventType, subject, year, season
+          });
+          catalogEventId = updateCatalog.data[0].id;
+        }
         // Send a PUT request
         publishedScheduleReponse = await NPOBackend.put(`/published-schedule/${eventData.id}`, {
+          eventId: catalogEventId,
           confirmed: !checkboxVal,
           startTime,
           endTime,
@@ -226,8 +240,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
         });
         plannedEventId = publishedScheduleReponse.data.id;
       }
-      // console.log(plannedEventId, eventData.id);
-      // console.log()
       const timelineEventsWithoutCurrent = plannedEvents.filter(e => (e.id != -1 && e.id != eventData.id));
       const newPlannedEvent = new PlannedEvent(
         plannedEventId,
@@ -238,40 +250,12 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
         checkboxVal
       );
       setPlannedEvents([...timelineEventsWithoutCurrent, newPlannedEvent]);
-      console.log("new planned events", plannedEvents);
       setFormData({tentative: false});
 
       reset();
       setCurrEvent({});
-      console.log(isEdit);
-      if (isEdit) {
-        toast({
-          title: 'Saved!',
-          description: 'Changes to event were saved.',
-          status: 'success',
-          variant: 'subtle',
-          position: 'top-right',
-          containerStyle: {
-            mt: '6rem',
-          },
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Success!',
-          description: 'Added event to day.',
-          status: 'success',
-          variant: 'subtle',
-          position: 'top-right',
-          containerStyle: {
-            mt: '6rem',
-          },
-          duration: 3000,
-          isClosable: true,
-        });
-      }
 
+      displayToast();
       closeForm();
     } catch (error) {
       console.log(error);
@@ -292,7 +276,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
                   type="text" {...register('title')}
                   border="1px solid"
                   borderColor="gray.200"
-                  defaultValue={eventData && eventData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   />
                 <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
@@ -303,7 +286,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
             <Box mb="1rem">
               <FormControl isInvalid={errors && errors.description} width="35vw">
                 <FormLabel fontWeight="bold" color="gray.600">Event Description</FormLabel>
-                <Textarea {...register('description')} border="1px solid" borderColor="gray.200" defaultValue={eventData && eventData.description}/>
+                <Textarea {...register('description')} border="1px solid" borderColor="gray.200"/>
                 <FormErrorMessage>
                   {errors.description && errors.description.message}
                 </FormErrorMessage>
@@ -321,7 +304,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
                         {...register('startTime')}
                         border="1px solid"
                         borderColor="gray.200"
-                        defaultValue={eventData && eventData.startTime}
                         onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                     />
                     <FormErrorMessage>{errors.startTime && errors.startTime.message}</FormErrorMessage>
@@ -339,7 +321,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
                         {...register('endTime')}
                         border="1px solid"
                         borderColor="gray.200"
-                        defaultValue={eventData && eventData.endTime}
                         onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                     />
                     <FormErrorMessage>{errors.endTime && errors.endTime.message}</FormErrorMessage>
@@ -423,7 +404,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
                     {...register('host')}
                     border="1px solid"
                     borderColor="gray.200"
-                    defaultValue={eventData && eventData.host}
                     onChange={(e) => setFormData({ ...formData, host: e.target.value })}
                   />
                   <FormErrorMessage>{errors.host && errors.host.message}</FormErrorMessage>
