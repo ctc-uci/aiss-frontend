@@ -76,6 +76,7 @@ const PublishedSchedule = () => {
         textColor="transparent"
         onChange={(e) => setSelectedSeason(e.target.value)}
         width="23%"
+        visibility={currentUser.type == USER_ROLE ? 'hidden' : 'visible'}
       >
         { currentUser.type === ADMIN_ROLE &&
           allSeasons.map(item => (
