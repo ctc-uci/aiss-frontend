@@ -79,7 +79,9 @@ const PublishedSchedule = () => {
       >
         { currentUser.type === ADMIN_ROLE &&
           allSeasons.map(item => (
-            <option key={item} value={item}>{item}</option>
+            <option key={item} value={item} className={navigator.userAgent.includes('Windows') ? 'Windows-PSOption' : 'Unix-PSOption'}>
+              {item}
+            </option>
           ))
         }
       </Select>
