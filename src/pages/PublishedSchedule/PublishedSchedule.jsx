@@ -4,7 +4,7 @@ import AUTH_ROLES from '../../utils/auth_config.js';
 import { useAuthContext } from '../../common/AuthContext.jsx';
 
 import { useEffect, useState } from 'react';
-const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
+const { ADMIN_ROLE } = AUTH_ROLES.AUTH_ROLES;
 import { Box, Select, Text } from '@chakra-ui/react';
 
 const PublishedSchedule = () => {
@@ -38,7 +38,7 @@ const PublishedSchedule = () => {
         data.unshift(curSeason);
       }
 
-      setSelectedSeason(currentUser.type === USER_ROLE ? curSeason : data[0]); // We assume the current season is the first one in the list
+      setSelectedSeason(curSeason);
 
       const seasonOrder = ['Fall', 'Summer', 'Spring'];
       data.sort((a, b) => {
@@ -54,7 +54,7 @@ const PublishedSchedule = () => {
 
     };
     renderTable();
-  }, [currentUser]);
+  }, [currentUser, curSeason]);
 
   //update chakra table container accordingly
   return (
