@@ -66,7 +66,7 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
             {/* No accordion for 1 account notification */}
             <Text pb="4">
               <Text color="blue.600" as="b" display="inline">
-                {accounts?.[0]?.email}{' '}
+              {accounts?.[0]?.firstName}({accounts?.[0]?.email}){' '}
               </Text>
               <Text as="span" display="inline" whiteSpace="wrap">
                 is requesting account approval...
@@ -89,7 +89,7 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
             {/* Accordion for >1 account notification in block */}
             <Text pb="4">
               <Text as="b" color="blue.600">
-                {accounts?.[0]?.email} and {accounts?.length - 1} other
+                {accounts?.[0]?.firstName} and {accounts?.length - 1} other
                 {accounts?.length - 1 > 1 && 's'}{' '}
               </Text>
               <Text as="span" display="inline" whiteSpace="wrap">
@@ -122,11 +122,14 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
                 </Container>
                 <AccordionPanel whiteSpace="wrap" paddingLeft="3.25rem">
                   <Grid templateColumns="1fr auto" gap={6}>
-                    {accounts?.map(({ id, email, approveCallback, declineCallback }) => (
+                    {accounts?.map(({ id, fristName, email, approveCallback, declineCallback }) => (
                       <React.Fragment key={id}>
                         <GridItem>
-                          <Text color="blue.600" decoration="underline">
-                            {email}
+                          <Text as="b" color="blue.600" decoration="underline">
+                            {fristName}{' '}
+                          </Text>
+                          <Text as="span" color="blue.600" decoration="underline">
+                            ({email})
                           </Text>
                         </GridItem>
                         <GridItem>
