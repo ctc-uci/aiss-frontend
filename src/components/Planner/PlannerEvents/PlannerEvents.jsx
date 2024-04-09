@@ -128,9 +128,8 @@ const PlannerEvents = ({ onClose }) => {
             isDisabled={!plannedEvents.length}
             onClick={closeModal}
             >
-              Finish Day
+              Save and Exit
             </Button>
-            <Button onClick={closeModal} mr="1rem">Cancel</Button>
           </Flex>
         </Box>
       </div>
