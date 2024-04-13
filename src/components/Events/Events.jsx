@@ -36,7 +36,26 @@ const Events = ({ eventData }) => {
     eventDataWithBreaks.push(currentEvent);
     const currEnd = currentEvent.endTime.split(':').slice(0,2).join(":");
     const nextStart = nextEvent.startTime.split(':').slice(0,2).join(":");
-    if (currEnd < nextStart) {
+    // console.log("curr end", currEnd);
+    // console.log("next start", nextStart);
+    // console.log("start time", currentEvent.endTime);
+    // console.log("end time", nextEvent.startTime);
+    const endHour = currEnd.split(':')[0]
+    const endMin = currEnd.split(':')[1]
+    const convertTimeToMin = (hour, min) => { 
+      return parseInt(hour) * 60 + parseInt(min); 
+    };
+    const startHour = nextStart.split(':')[0]
+    const startMin = nextStart.split(':')[1]
+    console.log("end hour", endHour);
+    console.log("end min", endMin);
+    console.log("start hour", startHour);
+    console.log("start min", startMin);
+    console.log("end time in min: ", convertTimeToMin(endHour, endMin));
+    console.log("start time in min: ", convertTimeToMin(startHour, startMin))
+    const timeDiff = convertTimeToMin(startHour, startMin) - convertTimeToMin(endHour, endMin);
+    if (currEnd < nextStart && timeDiff >= 5) {
+      console.log("break");
       eventDataWithBreaks.push({
         id: maxId,
         startTime: currentEvent.endTime,
