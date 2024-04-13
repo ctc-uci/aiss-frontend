@@ -2,9 +2,13 @@ import PropTypes from 'prop-types';
 import { Box, Flex, Text, Grid, Button, Spacer } from '@chakra-ui/react';
 import { useState } from 'react';
 import { NPOBackend } from '../../utils/auth_utils.js';
+import AUTH_ROLES from '../../utils/auth_config.js';
+import { useAuthContext } from '../../common/AuthContext.jsx';
+const { USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 const DailyEvent = ({ id, startTime, endTime, eventTitle, confirmed, description }) => {
   const [confirmEvent, setConfirmEvent] = useState(confirmed);
+  const {currentUser} = useAuthContext();
 
   let border_color = '#2B93D1';
   let background_color = '#F7FAFC';
@@ -55,7 +59,7 @@ const DailyEvent = ({ id, startTime, endTime, eventTitle, confirmed, description
             <Grid gap={2}>
               <div></div>
               <div></div>
-              <Button bg="#FBD38D" textColor="#2D3748" size="sm" onClick={handleConfirm}>
+              <Button bg="#FBD38D" textColor="#2D3748" size="sm" onClick={handleConfirm} visibility={currentUser.type == USER_ROLE ? 'hidden' : 'visible'}>
                 Confirm
               </Button>
             </Grid>
