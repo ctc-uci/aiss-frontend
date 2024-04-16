@@ -26,12 +26,12 @@ const DeleteEventModal = ({ isOpen, onClose, deleteItemId, setDataShouldRevalida
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Confirm Delete</ModalHeader>
+        <ModalHeader>Remove Event?</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>Are you sure you want to delete this row?</ModalBody>
+        <ModalBody>Are you sure you want to delete this event? You cannot undo this action afterward.</ModalBody>
         <ModalFooter>
-          <Button onClick={() => handleConfirmDelete(deleteItemId)}>Delete</Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose} mr={2}>Cancel</Button>
+          <Button onClick={() => handleConfirmDelete(deleteItemId)} colorScheme='red'>Delete</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
