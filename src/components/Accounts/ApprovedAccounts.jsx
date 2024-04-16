@@ -5,18 +5,26 @@ import { CloseIcon } from '@chakra-ui/icons'
 import DeleteAccountModal from './DeleteAccountModal.jsx';
 import PropTypes from 'prop-types';
 
-const ApprovedAccounts = ( {accountType} ) => {
+const ApprovedAccounts = ( {accountType, searchQuery} ) => {
     const [approvedAccounts, setApprovedAccounts] = useState([]);
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
     const [deleteItemId, setDeleteItemId] = useState("");
 
     useEffect(() => {
         const renderTable = async () => {
-            const { data } = await NPOBackend.get('/users/approved-accounts');
-            setApprovedAccounts(data);
+            if (searchQuery) {
+                const { data } = await NPOBackend.get(`/users/approved-accounts`, {
+                    params: {keyword: searchQuery}
+                });
+                setApprovedAccounts(data);
+            }
+            else {
+                const { data } = await NPOBackend.get('/users/approved-accounts');
+                setApprovedAccounts(data);
+            }
         };
         renderTable();
-    }, [approvedAccounts])
+    }, [searchQuery])
 
     const handleDeleteClick = id => {
         setDeleteItemId(id);
@@ -62,6 +70,7 @@ const ApprovedAccounts = ( {accountType} ) => {
 
 ApprovedAccounts.propTypes = {
     accountType: PropTypes.string.isRequired,
+    searchQuery: PropTypes.string
 };
 
 export default ApprovedAccounts;
