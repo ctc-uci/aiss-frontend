@@ -76,10 +76,13 @@ const PublishedSchedule = () => {
         textColor="transparent"
         onChange={(e) => setSelectedSeason(e.target.value)}
         width="23%"
+        visibility={currentUser.type == USER_ROLE ? 'hidden' : 'visible'}
       >
         { currentUser.type === ADMIN_ROLE &&
           allSeasons.map(item => (
-            <option key={item} value={item}>{item}</option>
+            <option key={item} value={item} className={navigator.userAgent.includes('Windows') ? 'Windows-PSOption' : 'Unix-PSOption'}>
+              {item}
+            </option>
           ))
         }
       </Select>
