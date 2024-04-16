@@ -53,10 +53,10 @@ const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes,
       <Text whiteSpace="pre-wrap" mb="2rem">{notes ? notes : 'No notes.'}</Text>
 
       <HStack mt="auto">
-        <IconButton bg="white" onClick={onOpenPlanner} visibility={currentUser.type == USER_ROLE ? 'hidden' : 'visible'}>
+        <IconButton bg="white" onClick={onOpenPlanner} visibility={currentUser.type === USER_ROLE ? 'hidden' : 'visible'}>
           <LuPen color='#A0AEC0'/>
         </IconButton>
-        <IconButton bg="white" onClick={onOpenDelete} visibility={currentUser.type == USER_ROLE ? 'hidden' : 'visible'}>
+        <IconButton bg="white" onClick={onOpenDelete} visibility={currentUser.type === USER_ROLE ? 'hidden' : 'visible'}>
           <DeleteIcon color='#A0AEC0'/>
         </IconButton>
       </HStack>
