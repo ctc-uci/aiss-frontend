@@ -6,7 +6,6 @@ const seasonOptions = [
 const yearOptions = [
   { value: 'junior', name: 'Junior' },
   { value: 'senior', name: 'Senior' },
-  { value: 'both', name: 'Both' },
 ];
 const subjectOptions = [
   { value: 'life skills', name: 'Life Skills' },
