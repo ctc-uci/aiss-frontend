@@ -1,4 +1,4 @@
-import { Table, Tbody, Tr, Td, TableContainer } from '@chakra-ui/react';
+import { Table, Tbody, Tr, Td, TableContainer, useToast } from '@chakra-ui/react';
 import { useEffect, useState, useMemo } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 import { AccountNotificationBlock, EventNotificationBlock } from './NotificationElement';
@@ -18,23 +18,103 @@ const getDateFromISOString = isoString => {
 
 const Notifications = () => {
   const [notificationList, setNotificationList] = useState([]);
+  const [approveAfterTimer, setApproveAfterTimer] = useState(false);
+  const [idToRemove, setidToRemove] = useState(undefined);
+  let timeoutId = undefined;
+  const toast = useToast();
+  // console.log('rerender: timeoutId', timeoutId);
+
+  const undoChanges = () => {
+    console.log('undoing changes now !!!');
+    // console.log("the timerid i'm clearing: ", timeoutId);
+    // console.log("current pending changes: ", pendingChanges);
+    clearTimeout(timeoutId);
+    timeoutId = undefined;
+    // clearTimeout(23);
+    // setPendingChanges({});
+  };
+
+  // useEffect(() => {
+  //   console.log('timeoutId changed?');
+  //   return () => {
+  //     clearTimeout(timeoutId);
+  //   };
+  // }, [timeoutId]);
+
+  // useEffect(() => { setTimeoutId(timeoutId);}, [timeoutId])
+
   const today = useMemo(() => new Date(), []);
 
   const approveAccount = async id => {
-    try {
-      await NPOBackend.put(`/users/approve/${id}`);
-    } catch (e) {
-      console.log(e);
-    }
+    console.log('about to approve: ' + id);
+    // console.log('timeoutId inside function', timeoutId);
+
+    // Start timer
+    const timeId = setTimeout(async () => {
+      console.log('update db approve');
+      // console.log("timeoutid: ", timeoutId);
+      // console.log("pending changes: ", pendingChanges);
+      try {
+        await NPOBackend.put(`/users/approve/${id}`);
+      } catch (e) {
+        console.log(e);
+      }
+      toast({
+        title: `Approved.`,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+      // removeNotificationEntry(notificationBlock.key);
+    // removeEntry(notificationBlock.key);
+      setidToRemove(id);
+      console.log('setApproveAfterTimer called');
+      setApproveAfterTimer(true);
+    }, 5000); // 5 second delay
+    timeoutId = timeId;
   };
 
   const declineAccount = async id => {
-    try {
-      await NPOBackend.delete(`/users/${id}`);
-    } catch (e) {
-      console.log(e);
-    }
+    console.log('about to decline: ' + id);
+    // const newPendingChanges = { accId: id, decline: true };
+    // setPendingChanges(newPendingChanges);
+
+    // Start timer
+    const timeId = setTimeout(() => {
+      console.log('update db decline');
+      console.log('timeoutid: ', timeoutId);
+      // console.log("pending changes: ", pendingChanges);
+      // try {
+      //   await NPOBackend.delete(`/users/${id}`);
+      // } catch (e) {
+      //   console.log(e);
+      // }
+      // setPendingChanges({});
+    }, 5000); // 5 second delay
+    console.log(timeId);
+
+    // try {
+    //   await NPOBackend.delete(`/users/${id}`);
+    // } catch (e) {
+    //   console.log(e);
+    // }
   };
+
+  // const approveAccount = async id => {
+  //   try {
+  //     await NPOBackend.put(`/users/approve/${id}`);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  // const declineAccount = async id => {
+  //   try {
+  //     await NPOBackend.delete(`/users/${id}`);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   const removeNotificationEntry = key => {
     setNotificationList(notificationBlocks =>
@@ -75,6 +155,7 @@ const Notifications = () => {
           async () => {
             await declineAccount(id);
           },
+          undoChanges,
         );
         accountsMap.set(formattedDateString, notificationBlock);
       });
@@ -125,6 +206,9 @@ const Notifications = () => {
                       notificationBlock={notificationBlock}
                       today={today}
                       removeEntry={removeNotificationEntry}
+                      approveAfterTimer={approveAfterTimer}
+                      idToRemove={idToRemove}
+                      setApproveAfterTimer={setApproveAfterTimer}
                     />
                   )}
                   {notificationType === 'event' && (

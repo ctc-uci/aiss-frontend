@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { AccountNotificationBlock } from './NotificationElement';
 import {
@@ -13,10 +13,18 @@ import {
   Grid,
   GridItem,
   Text,
+  Link,
   useToast,
 } from '@chakra-ui/react';
 
-const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
+const AccountNotification = ({
+  notificationBlock,
+  today,
+  // removeEntry, add back in after we fix bugs
+  approveAfterTimer,
+  idToRemove,
+  setApproveAfterTimer,
+}) => {
   const toast = useToast();
   const [accounts, setAccounts] = useState(notificationBlock.getNotificationData().accounts);
   const [disableChildrenButtons, setDisableChildrenButtons] = useState(false);
@@ -26,37 +34,94 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   const acceptAll = async accounts => {
+    console.log('calling accept all function');
+    // setApproveClicked(true);
+    // accounts.map(account => {
+    //   console.log('calling account approve callback now');
+    //   console.log(account);
+    //   account.approveCallback();
+    // });
     await Promise.all(
       accounts.map(async account => {
         await account.approveCallback();
       }),
     );
 
-    toast({
-      title: `Approved ${accounts?.length} accounts.`,
-      status: 'success',
-      duration: 9000,
-      isClosable: true,
-    });
+    // toast({
+    //   title: `Approved ${accounts?.length} accounts.`,
+    //   status: 'success',
+    //   duration: 9000,
+    //   isClosable: true,
+    // });
 
-    removeEntry(notificationBlock.key);
+    // removeEntry(notificationBlock.key);
+    // console.log('will remove entry here');
   };
 
   const declineAll = async accounts => {
-    await Promise.all(
-      accounts.map(async account => {
-        await account.declineCallback();
-      }),
-    );
-
-    toast({
-      title: `Declined ${accounts?.length} accounts.`,
-      status: 'info',
-      duration: 9000,
-      isClosable: true,
+    console.log('calling decline all function');
+    // setApproveClicked(true);
+    accounts.map(account => {
+      console.log('calling account decline callback now');
+      console.log(account);
+      account.declineCallback();
     });
-    removeEntry(notificationBlock.key);
+    // await Promise.all(
+    //   accounts.map(async account => {
+    //     await account.declineCallback();
+    //   }),
+    // );
+
+    // toast({
+    //   title: `Declined ${accounts?.length} accounts.`,
+    //   status: 'info',
+    //   duration: 9000,
+    //   isClosable: true,
+    // });
+    // removeEntry(notificationBlock.key);
+    console.log('will remove entry here');
   };
+
+  const undoAll = async accounts => {
+    console.log('calling undo all function');
+    // setApproveClicked(true);
+    accounts.map(account => {
+      console.log('calling account undo callback now');
+      console.log(account);
+      account.undoCallback();
+    });
+    // await Promise.all(
+    //   accounts.map(async account => {
+    //     await account.declineCallback();
+    //   }),
+    // );
+
+    // toast({
+    //   title: `Declined ${accounts?.length} accounts.`,
+    //   status: 'info',
+    //   duration: 9000,
+    //   isClosable: true,
+    // });
+    // removeEntry(notificationBlock.key);
+    console.log('done undoall function');
+  };
+
+  // this is really buggy
+  useEffect(() => {
+    console.log('checking value of approveAfterTimer', approveAfterTimer);
+    if (approveAfterTimer) {
+      console.log('waited 5 seconds, finish approval and remove from notifications');
+      toast({
+        title: `Approved.`,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+      console.log('idToRemove', idToRemove);
+      setAccounts(accounts => accounts.filter(account => account.id !== idToRemove));
+      setApproveAfterTimer(false);
+    }
+  }, [approveAfterTimer]);
 
   return (
     <Container p="0" m="0" maxWidth="none" display="flex" flexDirection="column">
@@ -80,6 +145,10 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
               }}
               declineCallback={() => {
                 declineAll(accounts);
+              }}
+              undoCallback={() => {
+                console.log('but undo function here');
+                undoAll(accounts);
               }}
               pl="3.25rem"
             />
@@ -118,11 +187,16 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
                       setDisableChildrenButtons(true);
                       declineAll(accounts);
                     }}
+                    undoCallback={() => {
+                      setDisableChildrenButtons(false);
+                      console.log('but undo function here');
+                      undoAll(accounts);
+                    }}
                   />
                 </Container>
                 <AccordionPanel whiteSpace="wrap" paddingLeft="3.25rem">
                   <Grid templateColumns="1fr auto" gap={6}>
-                    {accounts?.map(({ id, email, approveCallback, declineCallback }) => (
+                    {accounts?.map(({ id, email, approveCallback, declineCallback, undoCallback }) => (
                       <React.Fragment key={id}>
                         <GridItem>
                           <Text color="blue.600" decoration="underline">
@@ -135,15 +209,20 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
                             declineText="Decline"
                             acceptCallback={async () => {
                               await approveCallback();
-                              toast({
-                                title: `Approved ${email}.`,
-                                status: 'success',
-                                duration: 9000,
-                                isClosable: true,
-                              });
-                              setAccounts(accounts =>
-                                accounts.filter(account => account.id !== id),
-                              );
+                              console.log('check approveAfterTimer');
+
+                              // if (approveAfterTimer) {
+                              //   // toast({
+                              //   //   title: `Approved ${email}.`,
+                              //   //   status: 'success',
+                              //   //   duration: 9000,
+                              //   //   isClosable: true,
+                              //   // });
+                              //   // setAccounts(accounts =>
+                              //   //   accounts.filter(account => account.id !== id),
+                              //   // );
+                              //   console.log('useEffect instead lol');
+                              // }
                             }}
                             declineCallback={async () => {
                               await declineCallback();
@@ -156,6 +235,10 @@ const AccountNotification = ({ notificationBlock, today, removeEntry }) => {
                               setAccounts(accounts =>
                                 accounts.filter(account => account.id !== id),
                               );
+                            }}
+                            undoCallback={() => {
+                              console.log('but undo function here');
+                              undoCallback();
                             }}
                             disableChildrenButtons={disableChildrenButtons}
                           />
@@ -185,6 +268,9 @@ AccountNotification.propTypes = {
   notificationBlock: PropTypes.instanceOf(AccountNotificationBlock),
   today: PropTypes.instanceOf(Date),
   removeEntry: PropTypes.func,
+  approveAfterTimer: PropTypes.bool,
+  idToRemove: PropTypes.string,
+  setApproveAfterTimer: PropTypes.func,
 };
 
 const AccountButtonGroup = ({
@@ -192,47 +278,134 @@ const AccountButtonGroup = ({
   acceptCallback,
   declineText,
   declineCallback,
+  undoCallback,
   disableChildrenButtons,
   ...chakraProps
 }) => {
   const [acceptState, setAcceptState] = useState(undefined);
   const [declineState, setDeclineState] = useState(undefined);
+  const [approveClick, setApproveClicked] = useState(false);
+  const [declineClick, setDeclineClicked] = useState(false);
 
   return (
-    <ButtonGroup gap="2" {...chakraProps}>
-      <Button
-        onClick={() => {
-          setAcceptState('loading');
-          setDeclineState('disabled');
-          acceptCallback();
-        }}
-        backgroundColor="blue.500"
-        color="white"
-        fontSize="sm"
-        h="6"
-        fontWeight="normal"
-        isLoading={acceptState === 'loading'}
-        isDisabled={acceptState === 'disabled' || disableChildrenButtons === true}
-      >
-        {acceptText}
-      </Button>
-      <Button
-        onClick={() => {
-          setDeclineState('loading');
-          setAcceptState('disabled');
-          declineCallback();
-        }}
-        backgroundColor="gray.200"
-        color="black"
-        fontSize="sm"
-        h="6"
-        fontWeight="normal"
-        isLoading={declineState === 'loading'}
-        isDisabled={declineState === 'disabled' || disableChildrenButtons === true}
-      >
-        {declineText}
-      </Button>
-    </ButtonGroup>
+    <>
+      {!approveClick && !declineClick ? (
+        <ButtonGroup gap="2" {...chakraProps}>
+          <Button
+            onClick={() => {
+              setAcceptState('loading');
+              setDeclineState('disabled');
+              setApproveClicked(true);
+              acceptCallback();
+            }}
+            backgroundColor="blue.500"
+            color="white"
+            fontSize="sm"
+            h="6"
+            fontWeight="normal"
+            isLoading={acceptState === 'loading'}
+            isDisabled={acceptState === 'disabled' || disableChildrenButtons === true}
+          >
+            {acceptText}
+          </Button>
+          <Button
+            onClick={() => {
+              setDeclineState('loading');
+              setAcceptState('disabled');
+              setDeclineClicked(true);
+              declineCallback();
+            }}
+            backgroundColor="gray.200"
+            color="black"
+            fontSize="sm"
+            h="6"
+            fontWeight="normal"
+            isLoading={declineState === 'loading'}
+            isDisabled={declineState === 'disabled' || disableChildrenButtons === true}
+          >
+            {declineText}
+          </Button>
+        </ButtonGroup>
+      ) : (
+        <>
+          {approveClick ? (
+            <div>
+              <ButtonGroup gap="2" {...chakraProps}>
+                <Text>Accepted</Text>
+                <Link
+                  color="blue.600"
+                  decoration="underline"
+                  onClick={() => {
+                    console.log('trying to undo');
+                    setAcceptState(undefined);
+                    setDeclineState(undefined);
+                    setApproveClicked(false);
+                    undoCallback();
+                  }}
+                >
+                  Undo
+                </Link>
+              </ButtonGroup>
+            </div>
+          ) : (
+            <div>
+              <ButtonGroup gap="2" {...chakraProps}>
+                <Text>Declined</Text>
+                <Link
+                  color="blue.600"
+                  decoration="underline"
+                  onClick={() => {
+                    console.log('trying to undo');
+                    setAcceptState(undefined);
+                    setDeclineState(undefined);
+                    setDeclineClicked(false);
+                    undoCallback();
+                  }}
+                >
+                  Undo
+                </Link>
+              </ButtonGroup>
+            </div>
+          )}
+        </>
+      )}
+    </>
+    // <ButtonGroup gap="2" {...chakraProps}>
+    //   <Button
+    //     onClick={() => {
+    //       setAcceptState('loading');
+    //       setDeclineState('disabled');
+    //       // console.log("calling accept callback");
+    //       setApproveClicked(true);
+    //       acceptCallback();
+    //     }}
+    //     backgroundColor="blue.500"
+    //     color="white"
+    //     fontSize="sm"
+    //     h="6"
+    //     fontWeight="normal"
+    //     isLoading={acceptState === 'loading'}
+    //     isDisabled={acceptState === 'disabled' || disableChildrenButtons === true}
+    //   >
+    //     {acceptText}
+    //   </Button>
+    //   <Button
+    //     onClick={() => {
+    //       setDeclineState('loading');
+    //       setAcceptState('disabled');
+    //       declineCallback();
+    //     }}
+    //     backgroundColor="gray.200"
+    //     color="black"
+    //     fontSize="sm"
+    //     h="6"
+    //     fontWeight="normal"
+    //     isLoading={declineState === 'loading'}
+    //     isDisabled={declineState === 'disabled' || disableChildrenButtons === true}
+    //   >
+    //     {declineText}
+    //   </Button>
+    // </ButtonGroup>
   );
 };
 AccountButtonGroup.propTypes = {
@@ -240,6 +413,7 @@ AccountButtonGroup.propTypes = {
   acceptCallback: PropTypes.func,
   declineText: PropTypes.string,
   declineCallback: PropTypes.func,
+  undoCallback: PropTypes.func,
   disableChildrenButtons: PropTypes.bool,
   chakraProps: PropTypes.any,
 };
