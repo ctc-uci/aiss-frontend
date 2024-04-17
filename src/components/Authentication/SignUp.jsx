@@ -6,7 +6,7 @@ import emailtemplate from '../EmailTemplates/emailtemplate';
 import { Box, Heading, Text, FormControl, Button, Center, Link, Input, Alert, AlertDescription } from '@chakra-ui/react';
 import AUTH_ROLES from '../../utils/auth_config';
 
-const { USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
+const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 const SignUp = () => {
   const [firstName, setFirstName] = useState();
@@ -45,7 +45,7 @@ const SignUp = () => {
       }
 
       // register email and password
-      await registerWithEmailAndPassword(email, password, USER_ROLE, navigate, '/awaitConfirmation', firstName, lastName);
+      await registerWithEmailAndPassword(email, password, userType, navigate, '/awaitConfirmation', firstName, lastName);
 
       // send email to Debbie 
       const subject = "placeholder";
@@ -86,7 +86,7 @@ const SignUp = () => {
                 }}
               >
                 <Button
-                  onClick={() => setUserType("admin")}
+                  onClick={() => setUserType(ADMIN_ROLE)}
                   type="submit"
                   style={{
                     borderRadius: '30px',
@@ -104,7 +104,7 @@ const SignUp = () => {
                 </Button>
 
                 <Button
-                  onClick={() => setUserType("student")}
+                  onClick={() => setUserType(USER_ROLE)}
                   type="submit"
                   style={{
                     borderRadius: '30px',
