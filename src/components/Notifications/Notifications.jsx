@@ -26,14 +26,11 @@ const Notifications = () => {
   const today = useMemo(() => new Date(), []);
 
   const undoChanges = () => {
-    console.log('undoing changes now !!!');
     clearTimeout(timeoutId);
     timeoutId = undefined;
   };
 
   const approveAccount = async id => {
-    console.log('about to approve: ' + id);
-
     // Start timer
     const timeId = setTimeout(async () => {
       try {
@@ -41,17 +38,13 @@ const Notifications = () => {
       } catch (e) {
         console.log(e);
       }
-      console.log("done approving account!");
       setidToRemove(id);
-      console.log('setApproveAfterTimer called');
       setApproveAfterTimer(true);
     }, 5000); // 5 second delay
     timeoutId = timeId;
   };
 
   const declineAccount = async id => {
-    console.log('about to decline: ' + id);
-
     // Start timer
     const timeId = setTimeout(async () => {
       try {
@@ -59,29 +52,11 @@ const Notifications = () => {
       } catch (e) {
         console.log(e);
       }
-      console.log("done decline account!");
       setidToRemove(id);
-      console.log('setDeclineAfterTimer called');
       setDeclineAfterTimer(true);
     }, 5000); // 5 second delay
     timeoutId = timeId;
   };
-
-  // const approveAccount = async id => {
-  //   try {
-  //     await NPOBackend.put(`/users/approve/${id}`);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
-  // const declineAccount = async id => {
-  //   try {
-  //     await NPOBackend.delete(`/users/${id}`);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
 
   const removeNotificationEntry = key => {
     setNotificationList(notificationBlocks =>
