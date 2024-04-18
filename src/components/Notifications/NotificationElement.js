@@ -30,12 +30,13 @@ class AccountNotificationBlock extends NotificationBlock {
     this.pendingAccounts = [];
   }
 
-  addPendingAccount(id, email, approveCallback, declineCallback) {
+  addPendingAccount(id, email, approveCallback, declineCallback, undoCallback) {
     this.pendingAccounts.push({
       id: id,
       email: email,
       approveCallback: approveCallback,
       declineCallback: declineCallback,
+      undoCallback: undoCallback,
     });
   }
 
