@@ -75,7 +75,7 @@ const Notifications = () => {
       // Map MM-DD-YY string to AccountNotificationBlock
       const accountsMap = new Map();
 
-      pendingAccounts.forEach(({ approvedOn, email, id }) => {
+      pendingAccounts.forEach(({ approvedOn, email, id, firstName }) => {
         const { dateObject, formattedDateString } = getDateFromISOString(approvedOn);
         let notificationBlock;
 
@@ -90,6 +90,7 @@ const Notifications = () => {
 
         notificationBlock.addPendingAccount(
           id,
+          firstName,
           email,
           async () => {
             await approveAccount(id);
