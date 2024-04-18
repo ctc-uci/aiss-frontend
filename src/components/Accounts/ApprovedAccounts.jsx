@@ -1,6 +1,6 @@
 import { NPOBackend } from '../../utils/auth_utils.js';
 import { useEffect, useState } from 'react';
-import { Box, Table, Thead, Tbody, Tr, Th, Td, TableContainer, Button, Checkbox, useDisclosure } from '@chakra-ui/react'
+import { Box, Table, Thead, Tbody, Tr, Th, Td, TableContainer, Button, Checkbox, useDisclosure, HStack } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
 import DeleteAccountModal from './DeleteAccountModal.jsx';
 import PropTypes from 'prop-types';
@@ -79,9 +79,10 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
                             </Th>
                             <Th>Name</Th>
                             <Th>Email</Th>
-                            <Th>Deactivate
+                            <HStack>
+                                <Th>Deactivate</Th>
                                 <Button onClick={() => { handleDeleteClick(checkedAccountIds) }} size='sm' variant='outline'><CloseIcon w={3} h={3} color='gray'/></Button>
-                            </Th>
+                            </HStack>
                         </Tr>
                     </Thead>
                     <Tbody>

@@ -5,7 +5,8 @@ import { SearchIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 
 const Accounts = () => {
-    const [keyword, setKeyword] = useState("");
+    const [pendingKeyword, setPendingKeyword] = useState("");
+    const [approvedKeyword, setApprovedKeyword] = useState("");
     return (
         <Box>
             <Tabs>
@@ -16,8 +17,18 @@ const Accounts = () => {
 
                 <TabPanels>
                     <TabPanel>
-                        <Heading>Pending Accounts</Heading>
-                        <PendingAccounts accountType="admin" />
+                        <HStack spacing='80vh'>
+                            <Box><Heading>Pending Accounts</Heading></Box>
+                            <Box>
+                                <InputGroup>
+                                    <InputLeftElement pointerEvents='none'>
+                                        <SearchIcon color='gray.300' />
+                                    </InputLeftElement>
+                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setPendingKeyword(e.target.value)}/>
+                                </InputGroup>
+                            </Box>
+                        </HStack>
+                        <PendingAccounts accountType="admin" searchQuery={pendingKeyword} />
                         <HStack spacing='110vh'>
                             <Box><Heading>Accounts</Heading></Box>
                             <Box>
@@ -25,11 +36,11 @@ const Accounts = () => {
                                     <InputLeftElement pointerEvents='none'>
                                         <SearchIcon color='gray.300' />
                                     </InputLeftElement>
-                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setKeyword(e.target.value)}/>
+                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setApprovedKeyword(e.target.value)}/>
                                 </InputGroup>
                             </Box>
                         </HStack>
-                        <ApprovedAccounts accountType="admin" searchQuery={keyword} />
+                        <ApprovedAccounts accountType="admin" searchQuery={approvedKeyword} />
                     </TabPanel>
                     <TabPanel>
                         <Heading>Pending Accounts</Heading>
