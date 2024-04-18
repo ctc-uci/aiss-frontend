@@ -116,7 +116,7 @@ const AccountNotification = ({
             {/* No accordion for 1 account notification */}
             <Text pb="4">
               <Text color="blue.600" as="b" display="inline">
-              {accounts?.[0]?.firstName}({accounts?.[0]?.email}){' '}
+              {accounts?.[0]?.firstName} ({accounts?.[0]?.email}){' '}
               </Text>
               <Text as="span" display="inline" whiteSpace="wrap">
                 is requesting account approval...
