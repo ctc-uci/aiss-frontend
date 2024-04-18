@@ -2,10 +2,9 @@ import { NPOBackend } from '../../utils/auth_utils.js';
 import PublishedScheduleTable from '../../components/Events/PublishedScheduleTable.jsx';
 import AUTH_ROLES from '../../utils/auth_config.js';
 import { useAuthContext } from '../../common/AuthContext.jsx';
-
 import { useEffect, useState } from 'react';
-const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 import { Box, Select, Text } from '@chakra-ui/react';
+const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 const PublishedSchedule = () => {
   // get data from database
@@ -38,7 +37,7 @@ const PublishedSchedule = () => {
         data.unshift(curSeason);
       }
 
-      setSelectedSeason(currentUser.type === USER_ROLE ? curSeason : data[0]); // We assume the current season is the first one in the list
+      setSelectedSeason(curSeason);
 
       const seasonOrder = ['Fall', 'Summer', 'Spring'];
       data.sort((a, b) => {
@@ -54,7 +53,7 @@ const PublishedSchedule = () => {
 
     };
     renderTable();
-  }, [currentUser]);
+  }, [currentUser, curSeason]);
 
   //update chakra table container accordingly
   return (
@@ -76,10 +75,13 @@ const PublishedSchedule = () => {
         textColor="transparent"
         onChange={(e) => setSelectedSeason(e.target.value)}
         width="23%"
+        visibility={currentUser.type === USER_ROLE ? 'hidden' : 'visible'}
       >
         { currentUser.type === ADMIN_ROLE &&
           allSeasons.map(item => (
-            <option key={item} value={item}>{item}</option>
+            <option key={item} value={item} className={navigator.userAgent.includes('Windows') ? 'Windows-PSOption' : 'Unix-PSOption'}>
+              {item}
+            </option>
           ))
         }
       </Select>
