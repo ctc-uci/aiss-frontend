@@ -4,11 +4,15 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { LuPen } from 'react-icons/lu';
 import PlannerModal from '../Planner/PlannerModal';
 import { NPOBackend } from '../../utils/auth_utils';
+import AUTH_ROLES from '../../utils/auth_config.js';
+import { useAuthContext } from '../../common/AuthContext.jsx';
+const { USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes, setShouldDataRevalidate }) => {
   const { isOpen: isOpenPlanner, onOpen: onOpenPlanner, onClose: onClosePlanner } = useDisclosure();
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const toast = useToast();
+  const {currentUser} = useAuthContext();
 
   const handlePlannerClose = () => {
     setShouldDataRevalidate(true);
@@ -49,10 +53,10 @@ const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes,
       <Text whiteSpace="pre-wrap" mb="2rem">{notes ? notes : 'No notes.'}</Text>
 
       <HStack mt="auto">
-        <IconButton bg="white" onClick={onOpenPlanner}>
+        <IconButton bg="white" onClick={onOpenPlanner} visibility={currentUser.type === USER_ROLE ? 'hidden' : 'visible'}>
           <LuPen color='#A0AEC0'/>
         </IconButton>
-        <IconButton bg="white" onClick={onOpenDelete}>
+        <IconButton bg="white" onClick={onOpenDelete} visibility={currentUser.type === USER_ROLE ? 'hidden' : 'visible'}>
           <DeleteIcon color='#A0AEC0'/>
         </IconButton>
       </HStack>
