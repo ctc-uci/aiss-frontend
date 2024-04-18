@@ -1,4 +1,4 @@
-import { Table, Tbody, Tr, Td, TableContainer, useToast } from '@chakra-ui/react';
+import { Table, Tbody, Tr, Td, TableContainer } from '@chakra-ui/react';
 import { useEffect, useState, useMemo } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 import { AccountNotificationBlock, EventNotificationBlock } from './NotificationElement';
@@ -19,54 +19,29 @@ const getDateFromISOString = isoString => {
 const Notifications = () => {
   const [notificationList, setNotificationList] = useState([]);
   const [approveAfterTimer, setApproveAfterTimer] = useState(false);
+  const [declineAfterTimer, setDeclineAfterTimer] = useState(false);
   const [idToRemove, setidToRemove] = useState(undefined);
   let timeoutId = undefined;
-  const toast = useToast();
-  // console.log('rerender: timeoutId', timeoutId);
-
-  const undoChanges = () => {
-    console.log('undoing changes now !!!');
-    // console.log("the timerid i'm clearing: ", timeoutId);
-    // console.log("current pending changes: ", pendingChanges);
-    clearTimeout(timeoutId);
-    timeoutId = undefined;
-    // clearTimeout(23);
-    // setPendingChanges({});
-  };
-
-  // useEffect(() => {
-  //   console.log('timeoutId changed?');
-  //   return () => {
-  //     clearTimeout(timeoutId);
-  //   };
-  // }, [timeoutId]);
-
-  // useEffect(() => { setTimeoutId(timeoutId);}, [timeoutId])
 
   const today = useMemo(() => new Date(), []);
 
+  const undoChanges = () => {
+    console.log('undoing changes now !!!');
+    clearTimeout(timeoutId);
+    timeoutId = undefined;
+  };
+
   const approveAccount = async id => {
     console.log('about to approve: ' + id);
-    // console.log('timeoutId inside function', timeoutId);
 
     // Start timer
     const timeId = setTimeout(async () => {
-      console.log('update db approve');
-      // console.log("timeoutid: ", timeoutId);
-      // console.log("pending changes: ", pendingChanges);
       try {
         await NPOBackend.put(`/users/approve/${id}`);
       } catch (e) {
         console.log(e);
       }
-      toast({
-        title: `Approved.`,
-        status: 'success',
-        duration: 9000,
-        isClosable: true,
-      });
-      // removeNotificationEntry(notificationBlock.key);
-    // removeEntry(notificationBlock.key);
+      console.log("done approving account!");
       setidToRemove(id);
       console.log('setApproveAfterTimer called');
       setApproveAfterTimer(true);
@@ -76,28 +51,20 @@ const Notifications = () => {
 
   const declineAccount = async id => {
     console.log('about to decline: ' + id);
-    // const newPendingChanges = { accId: id, decline: true };
-    // setPendingChanges(newPendingChanges);
 
     // Start timer
-    const timeId = setTimeout(() => {
-      console.log('update db decline');
-      console.log('timeoutid: ', timeoutId);
-      // console.log("pending changes: ", pendingChanges);
-      // try {
-      //   await NPOBackend.delete(`/users/${id}`);
-      // } catch (e) {
-      //   console.log(e);
-      // }
-      // setPendingChanges({});
+    const timeId = setTimeout(async () => {
+      try {
+        await NPOBackend.delete(`/users/${id}`);
+      } catch (e) {
+        console.log(e);
+      }
+      console.log("done decline account!");
+      setidToRemove(id);
+      console.log('setDeclineAfterTimer called');
+      setDeclineAfterTimer(true);
     }, 5000); // 5 second delay
-    console.log(timeId);
-
-    // try {
-    //   await NPOBackend.delete(`/users/${id}`);
-    // } catch (e) {
-    //   console.log(e);
-    // }
+    timeoutId = timeId;
   };
 
   // const approveAccount = async id => {
@@ -209,6 +176,8 @@ const Notifications = () => {
                       approveAfterTimer={approveAfterTimer}
                       idToRemove={idToRemove}
                       setApproveAfterTimer={setApproveAfterTimer}
+                      declineAfterTimer={declineAfterTimer}
+                      setDeclineAfterTimer={setDeclineAfterTimer}
                     />
                   )}
                   {notificationType === 'event' && (

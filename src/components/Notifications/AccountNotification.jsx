@@ -20,10 +20,12 @@ import {
 const AccountNotification = ({
   notificationBlock,
   today,
-  // removeEntry, add back in after we fix bugs
+  removeEntry,
   approveAfterTimer,
   idToRemove,
   setApproveAfterTimer,
+  declineAfterTimer,
+  setDeclineAfterTimer,
 }) => {
   const toast = useToast();
   const [accounts, setAccounts] = useState(notificationBlock.getNotificationData().accounts);
@@ -33,19 +35,23 @@ const AccountNotification = ({
   const diffTime = today - blockDate;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
+  const [removeNotificationBlock, setRemoveNotificationBlock] = useState(false);
+  let timeoutId = undefined;
+
   const acceptAll = async accounts => {
     console.log('calling accept all function');
-    // setApproveClicked(true);
-    // accounts.map(account => {
-    //   console.log('calling account approve callback now');
-    //   console.log(account);
-    //   account.approveCallback();
-    // });
-    await Promise.all(
-      accounts.map(async account => {
-        await account.approveCallback();
-      }),
-    );
+
+    const timeId = setTimeout(async () => {
+      await Promise.all(
+        accounts.map(async account => {
+          await account.approveCallback();
+        }),
+      );
+      console.log("set remove notif block true");
+      setRemoveNotificationBlock(true);
+      setApproveAfterTimer(true);
+    }, 5000); // set 5 sec timer for accept all requests
+    timeoutId=timeId;
 
     // toast({
     //   title: `Approved ${accounts?.length} accounts.`,
@@ -55,22 +61,23 @@ const AccountNotification = ({
     // });
 
     // removeEntry(notificationBlock.key);
-    // console.log('will remove entry here');
+    console.log('done with accept all');
   };
 
   const declineAll = async accounts => {
     console.log('calling decline all function');
-    // setApproveClicked(true);
-    accounts.map(account => {
-      console.log('calling account decline callback now');
-      console.log(account);
-      account.declineCallback();
-    });
-    // await Promise.all(
-    //   accounts.map(async account => {
-    //     await account.declineCallback();
-    //   }),
-    // );
+
+    const timeId = setTimeout(async () => {
+      await Promise.all(
+        accounts.map(async account => {
+          await account.declineCallback();
+        }),
+      );
+      console.log("set remove notif block true");
+      setRemoveNotificationBlock(true);
+      setDeclineAfterTimer(true);
+    }, 5000); // set 5 sec timer for accept all requests
+    timeoutId=timeId;
 
     // toast({
     //   title: `Declined ${accounts?.length} accounts.`,
@@ -79,49 +86,71 @@ const AccountNotification = ({
     //   isClosable: true,
     // });
     // removeEntry(notificationBlock.key);
-    console.log('will remove entry here');
+    console.log('done with decline all function');
   };
 
-  const undoAll = async accounts => {
+  const undoAll = async () => {
     console.log('calling undo all function');
-    // setApproveClicked(true);
-    accounts.map(account => {
-      console.log('calling account undo callback now');
-      console.log(account);
-      account.undoCallback();
-    });
-    // await Promise.all(
-    //   accounts.map(async account => {
-    //     await account.declineCallback();
-    //   }),
-    // );
-
-    // toast({
-    //   title: `Declined ${accounts?.length} accounts.`,
-    //   status: 'info',
-    //   duration: 9000,
-    //   isClosable: true,
-    // });
-    // removeEntry(notificationBlock.key);
+    console.log("clearing timeoutid from undoall");
+    clearTimeout(timeoutId);
+    timeoutId = undefined;
+    console.log("undo called, set remove notif block false");
+    setRemoveNotificationBlock(false);
+    setApproveAfterTimer(false);
+    setDeclineAfterTimer(false);
     console.log('done undoall function');
   };
 
   // this is really buggy
   useEffect(() => {
-    console.log('checking value of approveAfterTimer', approveAfterTimer);
-    if (approveAfterTimer) {
-      console.log('waited 5 seconds, finish approval and remove from notifications');
+    console.log('approveaftertimer or removenoticationblock value changed', approveAfterTimer, removeNotificationBlock);
+    if (approveAfterTimer && removeNotificationBlock) {
+      console.log('approveafter timer = true and remove notification block = true');
+      console.log("REMOVE NOTIF BLOCK HERE");
+
       toast({
         title: `Approved.`,
         status: 'success',
         duration: 9000,
         isClosable: true,
       });
+
+      removeEntry(notificationBlock.key);
+    } else if (declineAfterTimer && removeNotificationBlock) {
+      console.log('decline after timer = true and remove notification block = true');
+      console.log("REMOVE NOTIF BLOCK HERE");
+
+      toast({
+        title: `Declined.`,
+        status: 'info',
+        duration: 9000,
+        isClosable: true,
+      });
+      removeEntry(notificationBlock.key);
+    } else if (approveAfterTimer) {
+      console.log('approveafter timer = true and remove notification block = false');
+      console.log("remove 1 account here");
       console.log('idToRemove', idToRemove);
       setAccounts(accounts => accounts.filter(account => account.id !== idToRemove));
-      setApproveAfterTimer(false);
+      toast({
+        title: `Approved.`,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+    } else if (declineAfterTimer) {
+      console.log('decline after timer = true and remove notification block = false');
+      console.log("remove 1 account here");
+      console.log('idToRemove', idToRemove);
+      setAccounts(accounts => accounts.filter(account => account.id !== idToRemove));
+      toast({
+        title: `Declined.`,
+        status: 'info',
+        duration: 9000,
+        isClosable: true,
+      });
     }
-  }, [approveAfterTimer]);
+  }, [approveAfterTimer, declineAfterTimer, removeNotificationBlock]);
 
   return (
     <Container p="0" m="0" maxWidth="none" display="flex" flexDirection="column">
@@ -209,7 +238,7 @@ const AccountNotification = ({
                             declineText="Decline"
                             acceptCallback={async () => {
                               await approveCallback();
-                              console.log('check approveAfterTimer');
+                              // console.log('check approveAfterTimer');
 
                               // if (approveAfterTimer) {
                               //   // toast({
@@ -226,15 +255,15 @@ const AccountNotification = ({
                             }}
                             declineCallback={async () => {
                               await declineCallback();
-                              toast({
-                                title: `Declined ${email}.`,
-                                status: 'info',
-                                duration: 9000,
-                                isClosable: true,
-                              });
-                              setAccounts(accounts =>
-                                accounts.filter(account => account.id !== id),
-                              );
+                              // toast({
+                              //   title: `Declined ${email}.`,
+                              //   status: 'info',
+                              //   duration: 9000,
+                              //   isClosable: true,
+                              // });
+                              // setAccounts(accounts =>
+                              //   accounts.filter(account => account.id !== id),
+                              // );
                             }}
                             undoCallback={() => {
                               console.log('but undo function here');
@@ -271,6 +300,8 @@ AccountNotification.propTypes = {
   approveAfterTimer: PropTypes.bool,
   idToRemove: PropTypes.string,
   setApproveAfterTimer: PropTypes.func,
+  declineAfterTimer: PropTypes.bool,
+  setDeclineAfterTimer: PropTypes.func,
 };
 
 const AccountButtonGroup = ({
