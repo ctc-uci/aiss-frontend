@@ -16,6 +16,8 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
         initialState: { currentPage: 1, pageSize: 10 },
         pagesCount: Math.ceil(totalRowCount / 10),
       });
+    const [individualChecked, setIndividualChecked] = useState(new Array(approvedAccounts.length).fill(false));
+    const [checkedAccountIds, setCheckedAccountIds] = useState([]);
 
     useEffect(() => {
         const renderTable = async () => {
@@ -41,27 +43,61 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
         onDeleteOpen();
     }
 
+    const updateAllCheckedAccountIds = (e) => {
+        if (e.target.checked) {
+            let allIds = [];
+            for (let i = 0; i < approvedAccounts.length; i++) {
+                allIds.push(approvedAccounts[i].id)
+            }
+            setCheckedAccountIds(allIds);
+        } else {
+            setCheckedAccountIds([]);
+        }
+    }
+
+    const updateIndividualCheckedAccountIds = (e, id) => {
+        let newCheckedAccountIds = [... checkedAccountIds];
+        if (e.target.checked) {
+            newCheckedAccountIds.push(id);
+            setCheckedAccountIds(newCheckedAccountIds);
+        } else {
+            let index = newCheckedAccountIds.indexOf(id);
+            newCheckedAccountIds.splice(index, 1);
+            setCheckedAccountIds(newCheckedAccountIds);
+        }
+        console.log(newCheckedAccountIds);
+    }
+
     return (
         <Box>
             <TableContainer>
                 <Table variant='simple'>
                     <Thead>
                         <Tr>
-                            <Th width="5%"><Checkbox isDisabled /></Th>
+                            <Th width="5%"><Checkbox onChange={(e) => {setIndividualChecked(new Array(approvedAccounts.length).fill(e.target.checked));
+                                                                      updateAllCheckedAccountIds(e)}}/>
+                            </Th>
                             <Th>Name</Th>
                             <Th>Email</Th>
-                            <Th>Deactivate</Th>
+                            <Th>Deactivate
+                                <Button onClick={() => { handleDeleteClick(checkedAccountIds) }} size='sm' variant='outline'><CloseIcon w={3} h={3} color='gray'/></Button>
+                            </Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                     {
                         approvedAccounts.map((account, i) => (
                             <Tr key={i}>
-                                <Td><Checkbox></Checkbox></Td>
+                                <Td><Checkbox isChecked={individualChecked[i]} onChange={(e) => {const newIndividualChecked = [...individualChecked];
+                                                                                                newIndividualChecked[i] = e.target.checked;
+                                                                                                setIndividualChecked(newIndividualChecked);
+                                                                                                updateIndividualCheckedAccountIds(e, account.id)}}>
+                                    </Checkbox>
+                                </Td>
                                 <Td>{account.firstName} {account.lastName}</Td>
                                 <Td>{account.email}</Td>
                                 <Td>
-                                    <Button onClick={() => { handleDeleteClick(account.id) }} size='sm' variant='outline'><CloseIcon w={3} h={3} color='gray'/></Button>
+                                    <Button onClick={() => { handleDeleteClick([account.id]) }} size='sm' variant='outline'><CloseIcon w={3} h={3} color='gray'/></Button>
                                 </Td>
                             </Tr>
                         ))

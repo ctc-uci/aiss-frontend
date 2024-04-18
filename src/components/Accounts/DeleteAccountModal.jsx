@@ -14,7 +14,9 @@ import { NPOBackend } from '../../utils/auth_utils.js';
 const DeleteAccountModal = ({ isOpen, onClose, deleteItemId}) => {
   const handleConfirmDelete = async idToDelete => {
     try {
-      await NPOBackend.delete(`/users/${idToDelete}`);
+      for (let i = 0; i < idToDelete.length; i++) {
+        await NPOBackend.delete(`/users/${idToDelete[i]}`);
+      }
       onClose();
     } catch (error) {
       console.error(error);
