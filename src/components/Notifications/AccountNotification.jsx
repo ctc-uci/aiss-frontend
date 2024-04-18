@@ -36,12 +36,14 @@ const AccountNotification = ({
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   const [removeNotificationBlock, setRemoveNotificationBlock] = useState(false);
-  let timeoutId = undefined;
+  const [timeoutId, setTimeoutId] = useState(undefined);
+  // let timeoutId = undefined;
 
   const acceptAll = async accounts => {
     console.log('calling accept all function');
 
     const timeId = setTimeout(async () => {
+      console.log("calling approve callback map");
       await Promise.all(
         accounts.map(async account => {
           await account.approveCallback();
@@ -51,7 +53,8 @@ const AccountNotification = ({
       setRemoveNotificationBlock(true);
       setApproveAfterTimer(true);
     }, 5000); // set 5 sec timer for accept all requests
-    timeoutId=timeId;
+    console.log("set timeoutid in accept all: ", timeId);
+    setTimeoutId(timeId);
 
     // toast({
     //   title: `Approved ${accounts?.length} accounts.`,
@@ -77,8 +80,7 @@ const AccountNotification = ({
       setRemoveNotificationBlock(true);
       setDeclineAfterTimer(true);
     }, 5000); // set 5 sec timer for accept all requests
-    timeoutId=timeId;
-
+    setTimeoutId(timeId);
     // toast({
     //   title: `Declined ${accounts?.length} accounts.`,
     //   status: 'info',
@@ -91,9 +93,9 @@ const AccountNotification = ({
 
   const undoAll = async () => {
     console.log('calling undo all function');
-    console.log("clearing timeoutid from undoall");
+    console.log("clearing timeoutid from undoall: ", timeoutId);
     clearTimeout(timeoutId);
-    timeoutId = undefined;
+    setTimeoutId(undefined);
     console.log("undo called, set remove notif block false");
     setRemoveNotificationBlock(false);
     setApproveAfterTimer(false);
