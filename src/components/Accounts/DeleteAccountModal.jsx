@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { NPOBackend } from '../../utils/auth_utils.js';
 
-const DeleteAccountModal = ({ isOpen, onClose, deleteItemId}) => {
+const DeleteAccountModal = ({ isOpen, onClose, deleteItemId, setDataShouldRevalidate}) => {
   const handleConfirmDelete = async idToDelete => {
     try {
       for (let i = 0; i < idToDelete.length; i++) {
@@ -32,7 +32,7 @@ const DeleteAccountModal = ({ isOpen, onClose, deleteItemId}) => {
         <ModalBody>Are you sure? You cannot undo this action afterwards.</ModalBody>
         <ModalFooter gap='3'>
         <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={() => handleConfirmDelete(deleteItemId)} colorScheme='red'>Delete</Button>
+          <Button onClick={() => {handleConfirmDelete(deleteItemId); setDataShouldRevalidate(true);}} colorScheme='red'>Delete</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
@@ -43,6 +43,7 @@ DeleteAccountModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   deleteItemId: PropTypes.string.isRequired,
+  setDataShouldRevalidate: PropTypes.func.isRequired
 };
 
 export default DeleteAccountModal;
