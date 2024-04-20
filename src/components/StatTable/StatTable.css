@@ -1,0 +1,23 @@
+.table-container {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table-container th, .table-container td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.even-row {
+    background-color: #f2f2f2;
+  }
+  
+  .odd-row {
+    background-color: #ffffff;
+  }
+  
+  .divider-row td {
+    border-top: 1px solid #ddd;
+  }
+  

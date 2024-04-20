@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { NPOBackend } from '../../utils/auth_utils';
 import { Select } from '@chakra-ui/react';
+import './StatTable.css';
 
 const StatTable = ({ season = 'spring' }) => {
   const [stats, setStats] = useState([]);
@@ -54,7 +56,7 @@ const StatTable = ({ season = 'spring' }) => {
         <option value="fall">Fall</option>
       </Select>
 
-      <table>
+      <table className='table-container'>
         <thead>
           <tr>
             <th>Event Type</th>
@@ -65,13 +67,18 @@ const StatTable = ({ season = 'spring' }) => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(transformedStats).map(eventType => (
-            <tr key={eventType}>
-              <td>{eventType}</td>
-              {Object.keys(transformedStats[eventType]).map(subject => (
-                <td key={`${eventType}-${subject}`}>{transformedStats[eventType][subject]}</td>
-              ))}
-            </tr>
+          {Object.keys(transformedStats).map((eventType, index) => (
+            <React.Fragment key={eventType}>
+              <tr className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
+                <td>{eventType}</td>
+                {Object.keys(transformedStats[eventType]).map(subject => (
+                  <td key={`${eventType}-${subject}`}>{transformedStats[eventType][subject]}</td>
+                ))}
+              </tr>
+              <tr className="divider-row">
+                <td colSpan={Object.keys(transformedStats[eventType]).length + 1}></td>
+              </tr>
+            </React.Fragment>
           ))}
         </tbody>
       </table>
