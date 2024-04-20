@@ -67,7 +67,7 @@ const PublishedScheduleTable = ({ season }) => {
           color="blue.700"
           borderRadius="10rem"
           position="fixed"
-          bottom="6rem" // Adjust the position as needed
+          bottom="6rem"
           right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
           fontSize="1.25rem"
           w="3rem"
