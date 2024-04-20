@@ -48,16 +48,19 @@ const StatTable = ({ season = 'spring' }) => {
 
   return (
     <div>
+      {/* Render the select dropdown for selecting the season */}
       <Select value={selectedSeason} onChange={handleSeasonChange}>
         <option value="spring">Spring</option>
         <option value="summer">Summer</option>
         <option value="fall">Fall</option>
       </Select>
 
+      {/* Render the table */}
       <table>
         <thead>
           <tr>
             <th>Event Type</th>
+            {/* Render headers for each subject */}
             {Object.keys(transformedStats).length > 0 &&
               Object.keys(transformedStats[Object.keys(transformedStats)[0]]).map(subject => (
                 <th key={subject}>{subject}</th>
@@ -65,9 +68,11 @@ const StatTable = ({ season = 'spring' }) => {
           </tr>
         </thead>
         <tbody>
+          {/* Render rows for each event type */}
           {Object.keys(transformedStats).map(eventType => (
             <tr key={eventType}>
               <td>{eventType}</td>
+              {/* Render cells with count for each subject */}
               {Object.keys(transformedStats[eventType]).map(subject => (
                 <td key={`${eventType}-${subject}`}>{transformedStats[eventType][subject]}</td>
               ))}

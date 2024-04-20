@@ -14,8 +14,8 @@ const StatModal = ({ isOpen, onClose }) => {
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay/>
-        <ModalContent maxWidth="fit-content">
+        <ModalOverlay />
+        <ModalContent>
           <ModalBody>
             <StatTable />
           </ModalBody>
