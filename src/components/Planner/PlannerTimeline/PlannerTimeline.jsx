@@ -1,24 +1,18 @@
 import s from '../PlannerLayout.module.css';
-import { useMemo, useContext, useEffect, useState } from 'react';
+import { useMemo, useContext, useEffect } from 'react';
 import { generateTimestamps, minutesInFormattedTime } from '../chrono';
-import { Badge, Text, Box, IconButton, HStack, useDisclosure } from '@chakra-ui/react';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { Badge, Text, Box, HStack } from '@chakra-ui/react';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent, { convertTimeToMinutes } from '../PlannedEvent';
 import { NPOBackend } from '../../../utils/auth_utils';
-// import PropTypes from 'prop-types';
-import RemoveTimelineEventModal from '../RemoveTimelineEventModal';
+
 
 const PlannerTimeline = () => {
   const { plannedEventsContext, dayId, currEventContext, editContext } = useContext(PlannerContext);
-  const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
 
   const [eventData, setCurrEvent] = currEventContext;
   const [isEdit, setIsEdit] = editContext;
-  const [eventHover, setEventHover] = useState(-2);
-  const [deleteItemId, setDeleteItemId] = useState(-1);
-  //const [addedEvents, setAddedEvents] = useState([]);
 
   const addedEvents = [];
 
@@ -138,8 +132,7 @@ const PlannerTimeline = () => {
                 borderColor={border_color}
                 borderStyle={border_style}
                 borderWidth={border_width}
-                onMouseEnter={() => setEventHover(id)}
-                onMouseLeave={() => setEventHover(-2)}
+                onClick={() => startEditAndSetCurrEventId(id)}
               >
                 <HStack justifyContent='space-between'>
                   <Box>
@@ -153,32 +146,11 @@ const PlannerTimeline = () => {
                       {hostName}
                     </Text>
                   </Box>
-                  {id == eventHover &&
-                    <Box position="absolute" top="0.5rem" right="0.5rem" zIndex={1}>
-                      <IconButton
-                        isRound={true}
-                        icon={<EditIcon />}
-                        onClick={() => startEditAndSetCurrEventId(id)}
-                        size="sm"
-                      />
-                      <IconButton
-                        ml='0.5rem' isRound={true}
-                        icon={<DeleteIcon />}
-                        onClick={() => {
-                          setDeleteItemId(id);
-                          onRemoveOpen();
-                        }}
-                        size="sm"
-                      />
-                      {/* <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={id}/> */}
-                    </Box>
-                  }
                 </HStack>
               </Box>
             </div>
           );
         })}
-        <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={deleteItemId}/>
       </div>
     </div>
   );

@@ -12,7 +12,9 @@ import {
   Heading,
   Flex,
   Text,
-  Stack
+  Stack,
+  Spacer,
+  useDisclosure
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -30,6 +32,7 @@ import Dropdown from '../Dropdown/Dropdown';
 import PropTypes from 'prop-types';
 import { PlannerContext } from '../Planner/PlannerContext';
 import PlannedEvent, { convertTimeToMinutes } from '../Planner/PlannedEvent';
+import RemoveTimelineEventModal from '../Planner/RemoveTimelineEventModal';
 
 const schema = yup.object({
     startTime: yup.string().required('Start time is required'),
@@ -58,6 +61,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
   const [checkboxVal, setCheckboxVal] = useState(undefined);
   const [formData, setFormData] = useState({...eventData});
+  const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
 
   useEffect(() => {
     if (Object.keys(eventData).length === 0) {
@@ -431,10 +435,19 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
             </Box>
         </Box>
         <Stack spacing={2} justifyContent="right" direction="row" pb="1.5rem" mt="0.5rem">
+          {isEdit &&
+            <>
+              <Button mt="1rem" variant='outline' onClick={onRemoveOpen}>Delete</Button>
+              <Spacer />
+            </>
+          }
           <Button htype="submit" mt="1rem" mr="1rem" onClick={handleCancel}>Cancel</Button>
           <Button colorScheme="blue" type="submit" mt="1rem">{isEdit ? 'Save' : 'Add Event'}</Button>
         </Stack>
       </form>
+      {isEdit && Object.keys(eventData).length &&
+        <RemoveTimelineEventModal isOpen={isRemoveOpen} onClose={onRemoveClose} deleteItemId={eventData.id} />
+      }
     </Box>
   );
 };

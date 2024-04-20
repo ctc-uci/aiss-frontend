@@ -23,7 +23,7 @@ const DeleteEventModal = ({ isOpen, onClose, deleteItemId, setDataShouldRevalida
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Remove Event?</ModalHeader>

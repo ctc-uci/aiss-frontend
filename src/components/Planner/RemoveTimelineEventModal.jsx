@@ -38,8 +38,12 @@ const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId }) => {
         duration: 3000,
         isClosable: true,
       });
-      // setDataShouldRevalidate(true);
       onClose();
+
+      // TODO: uncomment to close reset planner form
+      // setCurrEvent({});
+      // setIsEdit(false);
+      // closeForm();
     } catch (error) {
       console.error(error);
     }
