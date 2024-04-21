@@ -1,58 +1,57 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: left;
-}
-
-.select-container {
-  margin-left: 35px;
-  vertical-align: top;
-  margin-bottom: 5px;
-  display: flex;
-  flex-direction: row;;
   align-items: center;
 }
 
-.table-container {
-  margin-top: 25px;
-  margin-bottom: 35px;
-  border: 1.5px solid #ddd;
-  border-collapse: collapse;
-  width: calc(100% - 70px);
-  margin-left: 35px;
-  margin-right: 35px;
+.select-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
 
-.table-container th{
-  background-color: rgb(83, 120, 201);
-  padding: 25px;
+.table-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e1e4e8;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-container th {
+  background-color: #0e509c;
+  color: white;
+  padding: 15px;
   text-align: center;
 }
 
 .table-container tbody td {
-  border: 0px solid #ddd;
-  width: 60%;
-  height: 60%;
+  border-bottom: 1px solid #e1e4e8;
+  padding: 15px;
   text-align: center;
 }
 
-.table-data {
-  height:100px;
+.table-container tbody tr:last-child td:not(:first-child) {
+  background-color: #f0f8ff;
+  color: blue;
 }
 
-.table-body td:last-child {
-  background-color: rgb(241, 160, 129);
-  font-weight: bold;
+.table-container tbody tr:not(:last-child) td:last-child {
+  background-color: #f0f8ff;
+  color: blue;
 }
 
-.table-body td:nth-child(1) {
-  background-color: rgb(83, 120, 201);
-  font-weight: bold;
+.table-container tbody tr:last-child td:last-child {
+  border: none;
 }
 
-.table-body tr:last-child{
-  background-color: rgb(241, 160, 129);
-  font-weight: bold;
+.table-body tr:nth-child(even) {
+  background-color: #f8f9fa;
 }
 
-  
+.table-body tr:hover {
+  background-color: #e2f3ff;
+  transition: background-color 0.3s ease;
+}

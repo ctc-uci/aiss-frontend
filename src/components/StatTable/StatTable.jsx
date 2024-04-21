@@ -5,12 +5,17 @@ import { NPOBackend } from '../../utils/auth_utils';
 import { Select } from '@chakra-ui/react';
 import './StatTable.css';
 
-const StatTable = ({ season }) => {
+const StatTable = ({ season, allSeasons }) => {
+  console.log(allSeasons);
   const [stats, setStats] = useState([]);
   const currSeason = season.split(' ')[0];
   const currYear = season.split(' ')[1]
   const [selectedSeason, setSelectedSeason] = useState(currSeason.toLowerCase());
   const [selectedYear, setSelectedYear] = useState(currYear);
+  const uniqueSeasons = Array.from(new Set(allSeasons.map(season => season.split(' ')[0])));
+  const uniqueYears = Array.from(new Set(allSeasons.map(seasonYear => seasonYear.split(' ')[1])));
+  console.log(uniqueYears)
+
   console.log(season)
   console.log(season.split(' ')[0])
   console.log(season.split(' ')[1])
@@ -61,15 +66,19 @@ const StatTable = ({ season }) => {
   return (
     <div className='container'>
       <div className='select-container'>
-        <Select variant='filled' size='md' width = '200px' marginTop='20px' marginRight='20px' value={selectedSeason} onChange={handleSeasonChange}>
-          <option value="spring">Spring</option>
-          <option value="summer">Summer</option>
-          <option value="fall">Fall</option>
+        <Select variant='filled' size='md' width = '200px' marginTop='20px' marginRight='20px' transition='all 0.3s ease' value={selectedSeason} onChange={handleSeasonChange}>
+          {uniqueSeasons.map((season) => (
+            <option key={season} value={season.toLowerCase()}>
+              {season}
+            </option>
+          ))}
         </Select>
         <Select variant='filled' size='md' width='200px' marginTop='20px' value={selectedYear} onChange={handleYearChange}>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
+          {uniqueYears.map((seasonYear) => (
+            <option key={seasonYear} value={seasonYear}>
+              {seasonYear}
+            </option>
+          ))}
         </Select>
       </div>
       <div className='table-container'>
@@ -104,6 +113,7 @@ const StatTable = ({ season }) => {
 StatTable.propTypes = {
   season: PropTypes.string,
   year: PropTypes.string,
+  allSeasons: PropTypes.array,
 };
 
 export default StatTable;

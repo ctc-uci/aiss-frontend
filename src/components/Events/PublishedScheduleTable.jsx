@@ -13,9 +13,8 @@ import AUTH_ROLES from '../../utils/auth_config.js';
 const { ADMIN_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 
-const PublishedScheduleTable = ({ season }) => {
+const PublishedScheduleTable = ({ season, allSeasons }) => {
   const {currentUser} = useAuthContext();
-
   const [eventsInDay, setEventsInDay] = useState([]);
   const seasonType = season.split(' ')[0];
   const seasonYear = season.split(' ')[1];
@@ -100,7 +99,7 @@ const PublishedScheduleTable = ({ season }) => {
 
       <AddDayModal isOpenDay={isOpenDay} onCloseDay={onCloseDay} setShouldDataRevalidate={setShouldDataRevalidate}/>
 
-      <StatModal isOpen={isOpenStats} onClose={onCloseStats} season={season} />
+      <StatModal isOpen={isOpenStats} onClose={onCloseStats} season={season} allSeasons={allSeasons}/>
 
       <TableContainer borderWidth={1} borderRadius="10px">
         <Table variant="simple">
@@ -139,6 +138,7 @@ const PublishedScheduleTable = ({ season }) => {
 
 PublishedScheduleTable.propTypes = {
   season: PropTypes.string.isRequired,
+  allSeasons: PropTypes.array.isRequired,
 };
 
 export default PublishedScheduleTable;
