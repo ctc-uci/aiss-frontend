@@ -6,8 +6,8 @@ import Catalog from '../../../pages/Catalog/Catalog';
 import PropTypes from 'prop-types';
 import { PlannerContext } from '../PlannerContext';
 import { NPOBackend } from '../../../utils/auth_utils';
-import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
 import AddDayModal from '../../../pages/PublishedSchedule/AddDayModal';
+import AddEventOverlay from './AddEventOverlay';
 
 const PlannerEvents = ({ onClose }) => {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
@@ -80,9 +80,9 @@ const PlannerEvents = ({ onClose }) => {
     <div id={s['planner-events-container']} className={s['gray-scrollbar-vertical']}>
       {/* {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>} */}
       <div id={s['planner-browse']}>
-        <Box hidden={!(isAddingEvent || isEdit)} h={!(isAddingEvent || isEdit) && '0px'}>
-          <AddEventToPublishedScheduleForm closeForm={togglePSForm}/>
-        </Box>
+        {(isAddingEvent || isEdit) &&
+          <AddEventOverlay closeForm={togglePSForm} />
+        }
 
         <Box hidden={isAddingEvent || isEdit} h={(isAddingEvent || isEdit) && '0px'}>
             <HStack>
@@ -125,7 +125,6 @@ const PlannerEvents = ({ onClose }) => {
             backgroundColor="#2c93d1"
             _hover={{ bgColor: '#1b6896' }}
             color="white"
-            isDisabled={!plannedEvents.length}
             onClick={closeModal}
             >
               Save and Exit
