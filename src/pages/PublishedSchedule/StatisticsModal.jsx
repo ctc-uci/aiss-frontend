@@ -4,12 +4,11 @@ import {
   ModalOverlay,
   ModalContent,
   ModalBody,
-  //useDisclosure,
 } from '@chakra-ui/react';
 import StatTable from '../../components/StatTable/StatTable';
 
-const StatModal = ({ isOpen, onClose }) => {
-  //const { isOpen: isOpenStatModal, onOpen: onOpenStatModal, onClose: onCloseStatModal } = useDisclosure();
+const StatModal = ({ isOpen, onClose, season }) => {
+  console.log(season);
 
   return (
     <>
@@ -17,7 +16,7 @@ const StatModal = ({ isOpen, onClose }) => {
         <ModalOverlay />
         <ModalContent maxWidth={'fit-content'}>
           <ModalBody>
-            <StatTable />
+            <StatTable season={season}/>
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -28,6 +27,7 @@ const StatModal = ({ isOpen, onClose }) => {
 StatModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  season: PropTypes.string.isRequired,
 };
 
 export default StatModal;
