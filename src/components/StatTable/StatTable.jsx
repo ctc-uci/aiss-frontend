@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NPOBackend } from '../../utils/auth_utils';
-import { Select } from '@chakra-ui/react';
+import { Select, useToast } from '@chakra-ui/react';
 import './StatTable.css';
 
 const StatTable = ({ season, allSeasons }) => {
-  console.log(allSeasons);
   const [stats, setStats] = useState([]);
   const currSeason = season.split(' ')[0];
   const currYear = season.split(' ')[1]
@@ -14,11 +13,8 @@ const StatTable = ({ season, allSeasons }) => {
   const [selectedYear, setSelectedYear] = useState(currYear);
   const uniqueSeasons = Array.from(new Set(allSeasons.map(season => season.split(' ')[0])));
   const uniqueYears = Array.from(new Set(allSeasons.map(seasonYear => seasonYear.split(' ')[1])));
-  console.log(uniqueYears)
+  const toast = useToast();
 
-  console.log(season)
-  console.log(season.split(' ')[0])
-  console.log(season.split(' ')[1])
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -33,15 +29,29 @@ const StatTable = ({ season, allSeasons }) => {
     fetchStats();
   }, [selectedSeason, selectedYear]);
 
+  const showToast = (title, description) => {
+    toast({
+      title,
+      description,
+      status: 'success',
+      duration: 2000,
+      isClosable: true,
+      position: 'top',
+      colorScheme: 'blue'
+    });
+  };
+  
   const handleSeasonChange = (event) => {
     const newSeason = event.target.value;
     setSelectedSeason(newSeason);
+    showToast('Season Changed', `${newSeason.toUpperCase()}`);
   };
-
+  
   const handleYearChange = (event) => {
     const newYear = event.target.value;
     setSelectedYear(newYear);
-  };
+    showToast('Year Changed', `Selected year changed to ${newYear}`);
+  };  
 
   const transformData = () => {
     const transformedData = {};
