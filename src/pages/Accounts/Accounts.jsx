@@ -5,12 +5,13 @@ import { SearchIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 
 const Accounts = () => {
-    const [approvedKeyword, setApprovedKeyword] = useState("");
+    const [approvedAdminKeyword, setApprovedAdminKeyword] = useState("");
+    const [approvedStudentKeyword, setApprovedStudentKeyword] = useState("");
     const [hasAdminPendingAccounts, setHasAdminPendingAccounts] = useState(true);
     const [hasStudentPendingAccounts, setHasStudentPendingAccounts] = useState(true);
 
     return (
-        <Box marginTop='4vh'>
+        <Box marginTop='4vh' marginBottom='8vh'>
             <Center>
             <Tabs>
                 <TabList>
@@ -23,43 +24,43 @@ const Accounts = () => {
                         { hasAdminPendingAccounts ? (
                             <>
                                 <Heading marginBottom="2vh">Pending Accounts</Heading>
-                                <PendingAccounts accountType="admin" setHasPendingAccounts={setHasAdminPendingAccounts} />
+                                <PendingAccounts accountType="admin" setHasPendingAccounts={setHasAdminPendingAccounts} marginBottom="2vh"/>
                             </>
                             ) : <></>
                         }
-                        <HStack spacing='90vh' marginTop="5vh">
+                        <HStack spacing='90vh' marginTop="2vh">
                             <Box><Heading marginBottom="2vh">Accounts</Heading></Box>
                             <Box>
                                 <InputGroup>
                                     <InputLeftElement pointerEvents='none'>
                                         <SearchIcon color='gray.300' />
                                     </InputLeftElement>
-                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setApprovedKeyword(e.target.value)}/>
+                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setApprovedAdminKeyword(e.target.value)}/>
                                 </InputGroup>
                             </Box>
                         </HStack>
-                        <ApprovedAccounts accountType="admin" searchQuery={approvedKeyword} />
+                        <ApprovedAccounts accountType="admin" searchQuery={approvedAdminKeyword}/>
                     </TabPanel>
                     <TabPanel>
                             { hasStudentPendingAccounts ? (
                                 <>
                                     <Heading marginBottom="2vh">Pending Accounts</Heading>
-                                    <PendingAccounts accountType="student" setHasPendingAccounts={setHasStudentPendingAccounts} />
+                                    <PendingAccounts accountType="student" setHasPendingAccounts={setHasStudentPendingAccounts} marginBottom="2vh" />
                                 </>
                                 ): <></>
                             }
-                        <HStack spacing='90vh' marginTop="5vh">
+                        <HStack spacing='90vh' marginTop="2vh">
                             <Box><Heading marginBottom="2vh">Accounts</Heading></Box>
                             <Box>
                                 <InputGroup>
                                     <InputLeftElement pointerEvents='none'>
                                         <SearchIcon color='gray.300' />
                                     </InputLeftElement>
-                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setApprovedKeyword(e.target.value)}/>
+                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setApprovedStudentKeyword(e.target.value)}/>
                                 </InputGroup>
                             </Box>
                         </HStack>
-                        <Box><ApprovedAccounts accountType="student" /></Box>
+                        <Box><ApprovedAccounts accountType="student" searchQuery={approvedStudentKeyword}/></Box>
                     </TabPanel>
                 </TabPanels>
             </Tabs>

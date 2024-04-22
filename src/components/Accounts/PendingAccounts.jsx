@@ -15,11 +15,10 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
         const renderTable = async () => {
             const { data } = await NPOBackend.get('/users/pending-accounts', {params: {accountType: accountType}});
             setPendingAccounts(data);
-            console.log("ELNGLKNKJ: " + data);
             setHasPendingAccounts(data.length !== 0);
         };
         renderTable();
-    }, [])
+    }, [accountType, setHasPendingAccounts])
 
     useEffect(() => {
         const newAccountStatus = {}
@@ -29,11 +28,21 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
         setAccountStatus(newAccountStatus);
     }, [pendingAccounts])
 
-    const handleApproveUser = async (ids) => {
+    const changeStatus = ((accountid, status) => {
+        let newAccountStatus = {...accountStatus};
+        newAccountStatus[accountid] = status;
+        setAccountStatus(newAccountStatus);
+    });
+
+    const handleApproveDeclineUser = async (ids, option) => {
         try {
             for (let i = 0; i < ids.length; i++) {
-                console.log("approved: " + ids[i]);
-                await NPOBackend.put(`/users/approve/${ids[i]}`);
+                if (option === "approve-option") {
+                    await NPOBackend.put(`/users/approve/${ids[i]}`);
+                }
+                else if (option === "decline-option") {
+                    await NPOBackend.delete(`/users/${ids[i]}`);
+                }
             }
             setIndividualChecked(new Array(pendingAccounts.length).fill(false));
         } catch (error) {
@@ -41,23 +50,26 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
         }
     }
 
-    const handleDeleteUser = async (ids) => {
-        try {
-            for (let i = 0; i < ids.length; i++) {
-                console.log("deleted: " + ids[i]);
-                await NPOBackend.delete(`/users/${ids[i]}`);
+    const updateAllIndividualChecked = (e) => {
+        let newIndividualChecked = [];
+        for (let i = 0; i < pendingAccounts.length; i++) {
+            if (accountStatus[pendingAccounts[i].id] === "pending") {
+                newIndividualChecked.push(e.target.checked);
             }
-            setIndividualChecked(new Array(pendingAccounts.length).fill(false));
-        } catch (error) {
-            console.log(error);
+            else {
+                newIndividualChecked.push(false);
+            }
         }
+        setIndividualChecked(newIndividualChecked);
     }
 
     const updateAllCheckedAccountIds = (e) => {
         if (e.target.checked) {
             let allIds = [];
             for (let i = 0; i < pendingAccounts.length; i++) {
-                allIds.push(pendingAccounts[i].id)
+                if (accountStatus[pendingAccounts[i].id] === "pending") {
+                    allIds.push(pendingAccounts[i].id);
+                }
             }
             setCheckedAccountIds(allIds);
         } else {
@@ -65,7 +77,10 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
         }
     }
 
-    const updateIndividualCheckedAccountIds = (e, id) => {
+    const updateIndividualCheckedAccountIds = (e, id, index) => {
+        const newIndividualChecked = [...individualChecked];
+        newIndividualChecked[index] = e.target.checked;
+        setIndividualChecked(newIndividualChecked);
         let newCheckedAccountIds = [... checkedAccountIds];
         if (e.target.checked) {
             newCheckedAccountIds.push(id);
@@ -75,27 +90,16 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
             newCheckedAccountIds.splice(index, 1);
             setCheckedAccountIds(newCheckedAccountIds);
         }
-        console.log(newCheckedAccountIds);
     }
 
-    useEffect(() => console.log("accountStatus: " + JSON.stringify(accountStatus)), [accountStatus]); 
-
-    const acceptAllClick = () => {
-        handleApproveUser(checkedAccountIds);
+    const acceptDeclineAllClick = (option) => {
+        handleApproveDeclineUser(checkedAccountIds, option);
         const newAccountStatus = {... accountStatus};
         for (let i = 0; i < checkedAccountIds.length; i++) {
-            newAccountStatus[checkedAccountIds[i]] = "approved";
+            newAccountStatus[checkedAccountIds[i]] = option === "approve-option" ? "approved" : "declined";
         }
         setAccountStatus(newAccountStatus);
-    }
-
-    const deleteAllClick = () => {
-        handleDeleteUser(checkedAccountIds);
-        const newAccountStatus = {... accountStatus};
-        for (let i = 0; i < checkedAccountIds.length; i++) {
-            newAccountStatus[checkedAccountIds[i]] = "declined";
-        }
-        setAccountStatus(newAccountStatus);
+        setCheckedAccountIds([]);
     }
 
     return (
@@ -103,15 +107,13 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
             <Table variant='simple'>
                 <Thead>
                     <Tr>
-                        <Th width="5%"><Checkbox onChange={(e) => {setIndividualChecked(new Array(pendingAccounts.length).fill(e.target.checked));
-                                                                   updateAllCheckedAccountIds(e)}}/>
-                        </Th>
-                        <Th>Name</Th>
-                        <Th>Email</Th>
-                        <Th width="0">Action</Th>
-                        <Th>
-                            <Button isDisabled={checkedAccountIds.length === 0} onClick={ acceptAllClick } mr={3} colorScheme='blue'>Accept</Button>
-                            <Button isDisabled={checkedAccountIds.length === 0} onClick={ deleteAllClick }>Decline</Button>
+                        <Th w="5%"><Checkbox onChange={(e) => {updateAllIndividualChecked(e); updateAllCheckedAccountIds(e);}}/></Th>
+                        <Th w="40%">Name</Th>
+                        <Th w="40%">Email</Th>
+                        <Th w="0">Action</Th>
+                        <Th w="15%">
+                            <Button isDisabled={checkedAccountIds.length === 0} onClick={ () => acceptDeclineAllClick("approve-option") } mr={3} colorScheme='blue'>Accept</Button>
+                            <Button isDisabled={checkedAccountIds.length === 0} onClick={ () => acceptDeclineAllClick("decline-option") }>Decline</Button>
                         </Th>
                     </Tr>
                 </Thead>
@@ -119,10 +121,7 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                 {
                     pendingAccounts.map((account, i) => (
                         <Tr key={i}>
-                            <Td><Checkbox isDisabled={accountStatus[account.id] != "pending"} isChecked={individualChecked[i]} onChange={(e) => {const newIndividualChecked = [...individualChecked];
-                                                                                        newIndividualChecked[i] = e.target.checked;
-                                                                                        setIndividualChecked(newIndividualChecked);
-                                                                                        updateIndividualCheckedAccountIds(e, account.id);}}>
+                            <Td><Checkbox isDisabled={accountStatus[account.id] != "pending"} isChecked={individualChecked[i]} onChange={(e) => {updateIndividualCheckedAccountIds(e, account.id, i);}}>
                                 </Checkbox>
                             </Td>
                             <Td color={accountStatus[account.id] === "pending" ? "black" : "gray"}>{account.firstName} {account.lastName}</Td>
@@ -131,14 +130,8 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                             {
                                 accountStatus[account.id] === "pending" ? (
                                     <Td>
-                                        <Button onClick={() => { handleApproveUser([account.id]);
-                                                                        const newAccountStatus = {... accountStatus};
-                                                                        newAccountStatus[account.id] = "approved";
-                                                                        setAccountStatus(newAccountStatus); }} mr={3} colorScheme='blue'>Accept</Button>
-                                        <Button onClick={() => { handleDeleteUser([account.id]);
-                                                                const newAccountStatus = {... accountStatus};
-                                                                newAccountStatus[account.id] = "declined";
-                                                                setAccountStatus(newAccountStatus); }}>Decline</Button>
+                                        <Button onClick={() => { handleApproveDeclineUser([account.id], "approve-option"); changeStatus(account.id, "approved");}} mr={3} colorScheme='blue'>Accept</Button>
+                                        <Button onClick={() => { handleApproveDeclineUser([account.id], "decline-option"); changeStatus(account.id, "declined");}}>Decline</Button>
                                     </Td>
                                 ) : accountStatus[account.id] === "approved" ? (
                                     <Td color="green">Approved</Td>

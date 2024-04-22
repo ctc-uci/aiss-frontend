@@ -18,6 +18,7 @@ const DeleteAccountModal = ({ isOpen, onClose, deleteItemId, setDataShouldRevali
         await NPOBackend.delete(`/users/${idToDelete[i]}`);
       }
       onClose();
+      setDataShouldRevalidate(true);
     } catch (error) {
       console.error(error);
     }
@@ -32,7 +33,7 @@ const DeleteAccountModal = ({ isOpen, onClose, deleteItemId, setDataShouldRevali
         <ModalBody>Are you sure? You cannot undo this action afterwards.</ModalBody>
         <ModalFooter gap='3'>
         <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={() => {handleConfirmDelete(deleteItemId); setDataShouldRevalidate(true);}} colorScheme='red'>Delete</Button>
+          <Button onClick={() => {handleConfirmDelete(deleteItemId)}} colorScheme='red'>Delete</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
@@ -42,7 +43,7 @@ const DeleteAccountModal = ({ isOpen, onClose, deleteItemId, setDataShouldRevali
 DeleteAccountModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  deleteItemId: PropTypes.string.isRequired,
+  deleteItemId: PropTypes.array.isRequired,
   setDataShouldRevalidate: PropTypes.func.isRequired
 };
 

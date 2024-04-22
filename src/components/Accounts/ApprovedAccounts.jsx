@@ -10,34 +10,15 @@ import { usePagination } from '@ajna/pagination';
 const ApprovedAccounts = ( {accountType, searchQuery} ) => {
     const [approvedAccounts, setApprovedAccounts] = useState([]);
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-    const [deleteItemId, setDeleteItemId] = useState("");
+    const [deleteItemId, setDeleteItemId] = useState([]);
     const [totalRowCount, setTotalRowCount] = useState(0);
-    const { currentPage, setCurrentPage, pagesCount, offset, pageSize, setPageSize } = usePagination({
+    const { currentPage, setCurrentPage, pagesCount, offset, pageSize, setPageSize} = usePagination({
         initialState: { currentPage: 1, pageSize: 10 },
-        pagesCount: Math.ceil(totalRowCount / 10),
+        total: totalRowCount,
       });
     const [individualChecked, setIndividualChecked] = useState(new Array(approvedAccounts.length).fill(false));
     const [checkedAccountIds, setCheckedAccountIds] = useState([]);
-    const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
-
-    // useEffect(() => {
-    //     const renderTable = async () => {
-            // try {
-            //     const { data } = await NPOBackend.get(`/users/approved-accounts`, {
-            //         params: {
-            //             keyword: (searchQuery && searchQuery.length) && searchQuery, 
-            //             page: currentPage, 
-            //             limit: pageSize, 
-            //             accountType: accountType}
-            //     });
-            //     setApprovedAccounts(data.accounts);
-            //     setTotalRowCount(Number(data.count[0].count));
-            // } catch (error) {
-            //     console.error('Error fetching data:', error);
-            // }
-    //     };
-    //     renderTable();
-    // }, [searchQuery, totalRowCount, currentPage, pageSize, accountType]);
+    const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);    
 
     const fetchTableData = useCallback(async () => {
         try {
@@ -53,7 +34,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
         } catch (error) {
             console.error('Error fetching data:', error);
         }
-    }, [searchQuery, totalRowCount, currentPage, pageSize, accountType]);
+    }, [searchQuery, currentPage, pageSize, accountType]);
 
     useEffect(() => {
         fetchTableData();
@@ -61,15 +42,21 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
 
     useEffect(() => {
         if (dataShouldRevalidate) {
-            console.log(dataShouldRevalidate);
             fetchTableData();
             setDataShouldRevalidate(false);
+            setIndividualChecked(new Array(totalRowCount).fill(false));
+            setCheckedAccountIds([]);
         }
-    }, [dataShouldRevalidate, fetchTableData]);
+    }, [dataShouldRevalidate, fetchTableData, totalRowCount]);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchQuery, setCurrentPage]);
+    }, [searchQuery, setCurrentPage, pageSize]);
+
+    useEffect(() => {
+        setIndividualChecked(new Array(totalRowCount).fill(false));
+        setCheckedAccountIds([]);
+    }, [searchQuery, currentPage, totalRowCount]);
 
     const handleDeleteClick = id => {
         setDeleteItemId(id);
@@ -77,6 +64,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
     }
 
     const updateAllCheckedAccountIds = (e) => {
+        setIndividualChecked(new Array(approvedAccounts.length).fill(e.target.checked));
         if (e.target.checked) {
             let allIds = [];
             for (let i = 0; i < approvedAccounts.length; i++) {
@@ -88,7 +76,10 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
         }
     }
 
-    const updateIndividualCheckedAccountIds = (e, id) => {
+    const updateIndividualCheckedAccountIds = (e, id, index) => {
+        const newIndividualChecked = [...individualChecked];
+        newIndividualChecked[index] = e.target.checked;
+        setIndividualChecked(newIndividualChecked);
         let newCheckedAccountIds = [... checkedAccountIds];
         if (e.target.checked) {
             newCheckedAccountIds.push(id);
@@ -98,7 +89,6 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
             newCheckedAccountIds.splice(index, 1);
             setCheckedAccountIds(newCheckedAccountIds);
         }
-        console.log(newCheckedAccountIds);
     }
 
     return (
@@ -107,13 +97,11 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
                 <Table variant='simple'>
                     <Thead>
                         <Tr>
-                            <Th w="5%"><Checkbox onChange={(e) => {setIndividualChecked(new Array(approvedAccounts.length).fill(e.target.checked));
-                                                                      updateAllCheckedAccountIds(e)}}/>
-                            </Th>
-                            <Th>Name</Th>
-                            <Th>Email</Th>
+                            <Th w="5%"><Checkbox onChange={(e) => { updateAllCheckedAccountIds(e) }}/></Th>
+                            <Th w="40%">Name</Th>
+                            <Th w="40%">Email</Th>
                             <Th w="0">Deactivate</Th>
-                            <Th>
+                            <Th w="15%">
                                 <Button isDisabled={checkedAccountIds.length === 0}
                                         onClick={() => { handleDeleteClick(checkedAccountIds) }}
                                         size='sm'
@@ -131,10 +119,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
                                 <Td>
                                     <Checkbox
                                         isChecked={individualChecked[i]}
-                                        onChange={(e) => {const newIndividualChecked = [...individualChecked];
-                                                            newIndividualChecked[i] = e.target.checked;
-                                                            setIndividualChecked(newIndividualChecked);
-                                                            updateIndividualCheckedAccountIds(e, account.id)}}>
+                                        onChange={(e) => { updateIndividualCheckedAccountIds(e, account.id, i)}}>
                                     </Checkbox>
                                 </Td>
                                 <Td>{account.firstName} {account.lastName}</Td>
@@ -154,7 +139,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
                 setPageSize={setPageSize}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
-                rangeString={`${offset + 1} - ${offset + Number(pageSize)}`}
+                rangeString={`${offset + 1} - ${offset + approvedAccounts.length}`}
                 />
             </TableContainer>
             <DeleteAccountModal
