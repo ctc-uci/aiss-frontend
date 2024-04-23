@@ -20,9 +20,9 @@ const CatalogTable = ({ tableData, handleActionClick, onDayPlanner, setCurrEvent
     >
       <Thead style={onDayPlanner ? { position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 } : {}}>
         <Tr>
-          <Th textAlign="left">Event</Th>
-          <Th textAlign="left">Host</Th>
-          <Th textAlign="left">Tags</Th>
+          <Th width="20vw" textAlign="left">Event</Th>
+          <Th width="20vw" textAlign="left">Host</Th>
+          <Th width="20vw" textAlign="left">Tags</Th>
           <Th width="8rem"></Th>
         </Tr>
       </Thead>
