@@ -8,6 +8,7 @@ import SignUp from './components/Authentication/SignUp';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
 import AwaitConfirmation from './components/Authentication/AwaitConfirmation';
+import ForgotPasswordConfirmation from './components/Authentication/ForgotPasswordConfirmation';
 import AUTH_ROLES from './utils/auth_config';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Catalog from './pages/Catalog/Catalog';
@@ -55,6 +56,9 @@ const App = () => {
               <Route exact path="/signUp" element={<SignUp />} />
               <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
               <Route exact path="/awaitConfirmation" element={<AwaitConfirmation redirectPath="/" />} />
+              <Route exact path="/forgotPasswordConfirmation" element={<ForgotPasswordConfirmation redirectPath="/" />} />
+
+
               <Route
                 exact
                 path="/catalog"

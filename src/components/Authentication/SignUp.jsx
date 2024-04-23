@@ -21,7 +21,7 @@ const SignUp = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const navigate = useNavigate();
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -47,11 +47,11 @@ const SignUp = () => {
       // register email and password
       await registerWithEmailAndPassword(email, password, USER_ROLE, navigate, '/awaitConfirmation', firstName, lastName);
 
-      // send email to Debbie 
+      // send email to Debbie
       const subject = "New User Created Account";
       const newEmail = email;
       await sendEmail(subject, newEmail, emailtemplate);
-      
+
       setSubmitted(true);
 
     } catch (error) {
@@ -60,7 +60,7 @@ const SignUp = () => {
       setErrorMessage(error.message);
     }
   };
-  
+
   if (userType === null) {
     return (
       <Center h="90vh">
@@ -140,7 +140,7 @@ const SignUp = () => {
       <Box>
         <Box>
         { hasError &&
-          <Alert 
+          <Alert
             status='warning'
             alignItems='center'
             justifyContent='center'
