@@ -161,7 +161,8 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
       variant: 'subtle',
       position: 'top-right',
       containerStyle: {
-        mt: '6rem',
+        mt: '3rem',
+        mr: '2rem'
       },
       duration: 3000,
       isClosable: true,

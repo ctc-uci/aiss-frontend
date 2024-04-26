@@ -47,7 +47,6 @@ const Events = ({ eventData }) => {
 
     const timeDiff = convertTimeToMin(startHour, startMin) - convertTimeToMin(endHour, endMin);
     if (currEnd < nextStart && timeDiff >= 5) {
-      console.log("break");
       eventDataWithBreaks.push({
         id: maxId,
         startTime: currentEvent.endTime,
