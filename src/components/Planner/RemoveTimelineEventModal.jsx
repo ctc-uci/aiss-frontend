@@ -16,10 +16,9 @@ import { PlannerContext } from './PlannerContext';
 
 const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId, closeForm }) => {
 
-  const { plannedEventsContext, editContext, currEventContext } = useContext(PlannerContext);
+  const { plannedEventsContext, currEventContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
   const setCurrEvent = currEventContext[1];
-  const setIsEdit = editContext[1];
 
   const toast = useToast();
 
@@ -42,9 +41,7 @@ const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId, closeForm }) 
       });
       onClose();
 
-      // TODO: uncomment to close reset planner form
       setCurrEvent({});
-      setIsEdit(false);
       closeForm();
     } catch (error) {
       console.error(error);

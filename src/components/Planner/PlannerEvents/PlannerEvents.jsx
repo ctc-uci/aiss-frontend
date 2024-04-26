@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { PlannerContext } from '../PlannerContext';
 import { NPOBackend } from '../../../utils/auth_utils';
 import AddDayModal from '../../../pages/PublishedSchedule/AddDayModal';
-import AddEventOverlay from './AddEventOverlay';
+import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
 
 const PlannerEvents = ({ onClose }) => {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
@@ -81,7 +81,7 @@ const PlannerEvents = ({ onClose }) => {
       {/* {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>} */}
       <div id={s['planner-browse']}>
         {(isAddingEvent || isEdit) &&
-          <AddEventOverlay closeForm={togglePSForm} />
+          <AddEventToPublishedScheduleForm closeForm={togglePSForm} />
         }
 
         <Box hidden={isAddingEvent || isEdit} h={(isAddingEvent || isEdit) && '0px'}>
