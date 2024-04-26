@@ -107,9 +107,12 @@ const PlannerTimeline = () => {
           const formattedEndTime = minutesInFormattedTime(endTime);
 
           let border_color = '#2B93D1';
+          let text_color = '#1A202C';
+          let hover_text_color = '#171923';
           let background_color = '#BEE3F8';
-          let border_style = 'none none none solid';
-          const border_width = '2px 2px 2px 10px'
+          let hover_background_color = '#90CDF4';
+          let border_style = 'solid solid solid solid';
+          const border_width = '1px 1px 1px 10px'
 
           if (isTentative) {
             border_color = '#F69052';
@@ -129,6 +132,8 @@ const PlannerTimeline = () => {
               <Box
                 className={s['timeline-event-container']}
                 bg={background_color}
+                color={text_color}
+                _hover={{ bg: hover_background_color, color: hover_text_color, cursor: "pointer" }}
                 borderColor={border_color}
                 borderStyle={border_style}
                 borderWidth={border_width}

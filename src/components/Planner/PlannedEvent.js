@@ -1,7 +1,7 @@
 import { MINUTES_PER_HOUR } from './chrono';
 
 export default class PlannedEvent {
-  static EARLIEST_HOUR = 6; // 6:00 AM (6:00 military)
+  static EARLIEST_HOUR = 7; // 7:00 AM (7:00 military)
   static LATEST_HOUR = 22; // 10:00 PM (22:00 military time)
   id; // string
   name; // string
