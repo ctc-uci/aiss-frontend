@@ -48,7 +48,7 @@ const SignUp = () => {
       await registerWithEmailAndPassword(email, password, userType, navigate, '/awaitConfirmation', firstName, lastName);
 
       // send email to Debbie 
-      const subject = "placeholder";
+      const subject = "New User Created Account";
       const newEmail = email;
       await sendEmail(subject, newEmail, emailtemplate);
       

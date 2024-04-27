@@ -18,22 +18,44 @@ const getDateFromISOString = isoString => {
 
 const Notifications = () => {
   const [notificationList, setNotificationList] = useState([]);
+  const [approveAfterTimer, setApproveAfterTimer] = useState(false);
+  const [declineAfterTimer, setDeclineAfterTimer] = useState(false);
+  const [idToRemove, setidToRemove] = useState(undefined);
+  let timeoutId = undefined;
+
   const today = useMemo(() => new Date(), []);
 
+  const undoChanges = () => {
+    clearTimeout(timeoutId);
+    timeoutId = undefined;
+  };
+
   const approveAccount = async id => {
-    try {
-      await NPOBackend.put(`/users/approve/${id}`);
-    } catch (e) {
-      console.log(e);
-    }
+    // Start timer
+    const timeId = setTimeout(async () => {
+      try {
+        await NPOBackend.put(`/users/approve/${id}`);
+      } catch (e) {
+        console.log(e);
+      }
+      setidToRemove(id);
+      setApproveAfterTimer(true);
+    }, 5000); // 5 second delay
+    timeoutId = timeId;
   };
 
   const declineAccount = async id => {
-    try {
-      await NPOBackend.delete(`/users/${id}`);
-    } catch (e) {
-      console.log(e);
-    }
+    // Start timer
+    const timeId = setTimeout(async () => {
+      try {
+        await NPOBackend.delete(`/users/${id}`);
+      } catch (e) {
+        console.log(e);
+      }
+      setidToRemove(id);
+      setDeclineAfterTimer(true);
+    }, 5000); // 5 second delay
+    timeoutId = timeId;
   };
 
   const removeNotificationEntry = key => {
@@ -53,7 +75,7 @@ const Notifications = () => {
       // Map MM-DD-YY string to AccountNotificationBlock
       const accountsMap = new Map();
 
-      pendingAccounts.forEach(({ approvedOn, email, id }) => {
+      pendingAccounts.forEach(({ approvedOn, email, id, firstName }) => {
         const { dateObject, formattedDateString } = getDateFromISOString(approvedOn);
         let notificationBlock;
 
@@ -68,6 +90,7 @@ const Notifications = () => {
 
         notificationBlock.addPendingAccount(
           id,
+          firstName,
           email,
           async () => {
             await approveAccount(id);
@@ -75,6 +98,7 @@ const Notifications = () => {
           async () => {
             await declineAccount(id);
           },
+          undoChanges,
         );
         accountsMap.set(formattedDateString, notificationBlock);
       });
@@ -125,6 +149,11 @@ const Notifications = () => {
                       notificationBlock={notificationBlock}
                       today={today}
                       removeEntry={removeNotificationEntry}
+                      approveAfterTimer={approveAfterTimer}
+                      idToRemove={idToRemove}
+                      setApproveAfterTimer={setApproveAfterTimer}
+                      declineAfterTimer={declineAfterTimer}
+                      setDeclineAfterTimer={setDeclineAfterTimer}
                     />
                   )}
                   {notificationType === 'event' && (
