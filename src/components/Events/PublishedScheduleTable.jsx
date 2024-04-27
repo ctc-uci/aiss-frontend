@@ -5,20 +5,22 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box, IconButton, useDisclosure } from '@chakra-ui/react';
 import AddDayModal from '../../pages/PublishedSchedule/AddDayModal.jsx'
+import StatModal from '../../pages/PublishedSchedule/StatisticsModal.jsx';
 import { AddIcon } from '@chakra-ui/icons';
+import { IoStatsChart } from "react-icons/io5";
 import { useAuthContext } from '../../common/AuthContext.jsx';
 import AUTH_ROLES from '../../utils/auth_config.js';
 const { ADMIN_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 
-const PublishedScheduleTable = ({ season }) => {
+const PublishedScheduleTable = ({ season, allSeasons }) => {
   const {currentUser} = useAuthContext();
-
   const [eventsInDay, setEventsInDay] = useState([]);
   const seasonType = season.split(' ')[0];
   const seasonYear = season.split(' ')[1];
   const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
   const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
+  const { isOpen: isOpenStats, onOpen: onOpenStats, onClose: onCloseStats } = useDisclosure();
 
   const renderTable = async () => {
     const { data } = await NPOBackend.get(
@@ -58,6 +60,24 @@ const PublishedScheduleTable = ({ season }) => {
   return (
     <Box>
       {currentUser.type === ADMIN_ROLE &&
+      <>
+        <IconButton
+          bgColor="grey.700"
+          color="blue.700"
+          borderRadius="10rem"
+          position="fixed"
+          bottom="6rem"
+          right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
+          fontSize="1.25rem"
+          w="3rem"
+          h="3rem"
+          _hover={{ bgColor: 'blue.500' }}
+          onClick={onOpenStats}
+          icon={<IoStatsChart />}
+        >
+          Stats
+        </IconButton>
+
         <IconButton
           bgColor="blue.700"
           color="gray.50"
@@ -74,9 +94,13 @@ const PublishedScheduleTable = ({ season }) => {
         >
           Create
         </IconButton>
+      </>
       }
 
       <AddDayModal isOpenDay={isOpenDay} onCloseDay={onCloseDay} setShouldDataRevalidate={setShouldDataRevalidate}/>
+      { season && allSeasons &&
+        <StatModal isOpen={isOpenStats} onClose={onCloseStats} season={season} allSeasons={allSeasons}/>
+      }
 
       <TableContainer borderWidth={1} borderRadius="10px">
         <Table variant="simple">
@@ -115,6 +139,7 @@ const PublishedScheduleTable = ({ season }) => {
 
 PublishedScheduleTable.propTypes = {
   season: PropTypes.string.isRequired,
+  allSeasons: PropTypes.array.isRequired,
 };
 
 export default PublishedScheduleTable;
