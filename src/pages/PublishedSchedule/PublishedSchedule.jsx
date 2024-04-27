@@ -90,9 +90,9 @@ const PublishedSchedule = () => {
 
       {/* tables for each season */}
       {selectedSeason != '' ? (
-        <PublishedScheduleTable season={selectedSeason} />
+        <PublishedScheduleTable season={selectedSeason} allSeasons={allSeasons} />
       ) : (
-        <PublishedScheduleTable season={curSeason} />
+        <PublishedScheduleTable season={curSeason} allSeasons={allSeasons} />
       )}
     </Box>
   );
