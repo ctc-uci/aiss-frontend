@@ -69,8 +69,8 @@ const PublishedScheduleTable = ({ season, allSeasons }) => {
           bottom="6rem"
           right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
           fontSize="1.25rem"
-          w="3rem"
-          h="3rem"
+          w="3.25rem"
+          h="3.25rem"
           _hover={{ bgColor: 'blue.500' }}
           onClick={onOpenStats}
           icon={<IoStatsChart />}
@@ -86,8 +86,8 @@ const PublishedScheduleTable = ({ season, allSeasons }) => {
           bottom="2rem"
           right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
           fontSize="0.75rem"
-          w="3rem"
-          h="3rem"
+          w="3.25rem"
+          h="3.25rem"
           _hover={{ bgColor: 'blue.500' }}
           onClick={onOpenDay}
           icon={<AddIcon />}
@@ -102,7 +102,7 @@ const PublishedScheduleTable = ({ season, allSeasons }) => {
         <StatModal isOpen={isOpenStats} onClose={onCloseStats} season={season} allSeasons={allSeasons}/>
       }
 
-      <TableContainer borderWidth={1} borderRadius="10px">
+      <TableContainer borderWidth={1} borderRadius="10px" mr="2rem">
         <Table variant="simple">
           <Thead>
             <Tr>
