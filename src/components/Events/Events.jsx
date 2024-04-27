@@ -5,6 +5,8 @@ import { Grid } from '@chakra-ui/react';
 
 const Events = ({ eventData }) => {
 
+  // console.log("Event Data", eventData);
+
   const formatDate = (date) => {
     let time = date.split(":");
     let hours = time[0];
@@ -72,6 +74,7 @@ const Events = ({ eventData }) => {
           eventTitle={item.title}
           description={item.description}
           confirmed={item.confirmed}
+          eventId={item.eventId}
         />
       ))}
     </Grid>
