@@ -4,8 +4,7 @@ import {
   ModalOverlay,
   ModalContent,
   ModalBody,
-  Button,
-  Flex,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import StatTable from '../../components/StatTable/StatTable';
 
@@ -15,14 +14,8 @@ const StatModal = ({ isOpen, onClose, season, allSeasons }) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent maxWidth={'fit-content'}>
+          <ModalCloseButton />
           <ModalBody>
-            <Flex justifyContent="space-between" alignItems="center" marginBottom="0rem">
-              <Button colorScheme="blue" onClick={onClose} variant="outline">
-                Close
-              </Button>
-              <h1 style={{ textAlign: 'center', fontWeight:'normal', fontSize: '1.75rem', margin: '0 5rem 0 0' }}>Season Summary</h1>
-              <div></div>
-            </Flex>
             <StatTable season={season} allSeasons={allSeasons}/>
           </ModalBody>
         </ModalContent>

@@ -77,7 +77,7 @@ const PublishedScheduleTable = ({ season, allSeasons }) => {
         >
           Stats
         </IconButton>
-      
+
         <IconButton
           bgColor="blue.700"
           color="gray.50"
@@ -98,8 +98,9 @@ const PublishedScheduleTable = ({ season, allSeasons }) => {
       }
 
       <AddDayModal isOpenDay={isOpenDay} onCloseDay={onCloseDay} setShouldDataRevalidate={setShouldDataRevalidate}/>
-
-      <StatModal isOpen={isOpenStats} onClose={onCloseStats} season={season} allSeasons={allSeasons}/>
+      { season && allSeasons &&
+        <StatModal isOpen={isOpenStats} onClose={onCloseStats} season={season} allSeasons={allSeasons}/>
+      }
 
       <TableContainer borderWidth={1} borderRadius="10px">
         <Table variant="simple">
