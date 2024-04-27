@@ -69,8 +69,8 @@ const PublishedScheduleTable = ({ season, allSeasons }) => {
           bottom="6rem"
           right={{ base: '1rem', lg: '2rem', xl: '3rem' }}
           fontSize="1.25rem"
-          w="3rem"
-          h="3rem"
+          w="3.25rem"
+          h="3.25rem"
           _hover={{ bgColor: 'blue.500' }}
           onClick={onOpenStats}
           icon={<IoStatsChart />}
