@@ -109,8 +109,10 @@ const PlannerTimeline = () => {
           let border_color = '#2B93D1';
           let text_color = '#1A202C';
           let hover_text_color = '#171923';
+          let hover_tentative_text_color = '#652B19';
           let background_color = '#BEE3F8';
           let hover_background_color = '#90CDF4';
+          let hover_tentative_background_color = '#FBD38D';
           let border_style = 'solid solid solid solid';
           const border_width = '1px 1px 1px 10px'
 
@@ -133,7 +135,10 @@ const PlannerTimeline = () => {
                 className={s['timeline-event-container']}
                 bg={background_color}
                 color={text_color}
-                _hover={{ bg: hover_background_color, color: hover_text_color, cursor: "pointer" }}
+                _hover={{ bg: isTentative ? hover_tentative_background_color : hover_background_color,
+                          color: isTentative ? hover_tentative_text_color : hover_text_color,
+                          cursor: "pointer"
+                        }}
                 borderColor={border_color}
                 borderStyle={border_style}
                 borderWidth={border_width}
