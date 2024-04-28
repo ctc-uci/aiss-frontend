@@ -8,6 +8,7 @@ import { PlannerContext } from '../PlannerContext';
 import { NPOBackend } from '../../../utils/auth_utils';
 import AddDayModal from '../../../pages/PublishedSchedule/AddDayModal';
 import AddEventToPublishedScheduleForm from '../../AddEventToPublishedScheduleForm/AddEventToPublishedScheduleForm';
+import EmptyDayModal from '../EmptyDayModal';
 
 const PlannerEvents = ({ onClose }) => {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
@@ -15,6 +16,7 @@ const PlannerEvents = ({ onClose }) => {
   const [dateHeader, setDateHeader] = useState('');
   const [dayData, setDayData] = useState({});
   const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
+  const { isOpen: isOpenEmptyDay, onOpen: onOpenEmptyDay, onClose: onCloseEmptyDay } = useDisclosure();
 
   const { plannedEventsContext, dayId, editContext, currEventContext } = useContext(PlannerContext);
   const [isEdit, setIsEdit] = editContext;
@@ -66,14 +68,10 @@ const PlannerEvents = ({ onClose }) => {
   const closeModal = async () => {
     // delete day if empty
     if (plannedEvents.length === 0) {
-      try {
-        console.log('deleting day!!')
-        await NPOBackend.delete(`/day/${dayId}`);
-      } catch (error) {
-        console.error(error);
-      }
+      onOpenEmptyDay();
+    } else {
+      onClose();
     }
-    onClose();
   }
 
   return (
@@ -131,6 +129,7 @@ const PlannerEvents = ({ onClose }) => {
             </Button>
           </Flex>
         </Box>
+        <EmptyDayModal onClose={onCloseEmptyDay} isOpen={isOpenEmptyDay} onClosePlanner={onClose} />
       </div>
     </div>
   );
