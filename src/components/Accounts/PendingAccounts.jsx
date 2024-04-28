@@ -111,9 +111,9 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                         <Th w="30%">Name</Th>
                         <Th w="30%">Email</Th>
                         <Th w="0" textAlign="right">Action</Th>
-                        {checkedAccountIds.length > 0 && 
+                        {checkedAccountIds.length > 0 &&
                             <Th w="20%" textAlign="right">
-                                <Button 
+                                <Button
                                     onClick={ () => acceptDeclineAllClick("approve-option") }
                                     mr={3}
                                     colorScheme='blue'
@@ -124,7 +124,7 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                                 >
                                     Accept
                                 </Button>
-                                <Button 
+                                <Button
                                     onClick={ () => acceptDeclineAllClick("decline-option") }
                                     fontSize="sm"
                                     h="6"
@@ -146,15 +146,15 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                             </Td>
                             <Td color={accountStatus[account.id] === "pending" ? "black" : "gray"}>{account.firstName} {account.lastName}</Td>
                             <Td color={accountStatus[account.id] === "pending" ? "black" : "gray"}>{account.email}</Td>
-                            {checkedAccountIds.length > 0 && 
+                            {checkedAccountIds.length > 0 &&
                                 <Td></Td>
                             }
                             {
                                 accountStatus[account.id] === "pending" ? (
                                     <Td textAlign="right">
-                                        <Button 
-                                            onClick={() => { handleApproveDeclineUser([account.id], "approve-option"); changeStatus(account.id, "approved");}} 
-                                            mr={3} 
+                                        <Button
+                                            onClick={() => { handleApproveDeclineUser([account.id], "approve-option"); changeStatus(account.id, "approved");}}
+                                            mr={3}
                                             colorScheme='blue'
                                             fontSize="sm"
                                             h="6"
@@ -163,7 +163,7 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                                         >
                                             Accept
                                         </Button>
-                                        <Button 
+                                        <Button
                                             onClick={() => { handleApproveDeclineUser([account.id], "decline-option"); changeStatus(account.id, "declined");}}
                                             fontSize="sm"
                                             h="6"
@@ -174,9 +174,9 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                                         </Button>
                                     </Td>
                                 ) : accountStatus[account.id] === "approved" ? (
-                                    <Td color="green">Approved</Td>
+                                    <Td textAlign="right" color="green">Approved</Td>
                                 ) : (
-                                    <Td color="red">Declined</Td>
+                                    <Td textAlign="right" color="red">Declined</Td>
                                 )
                             }
                         </Tr>

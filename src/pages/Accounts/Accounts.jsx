@@ -37,7 +37,7 @@ const Accounts = () => {
                                     <InputLeftElement pointerEvents="none" h="full">
                                         <SearchIcon />
                                     </InputLeftElement>
-                                    <Input 
+                                    <Input
                                         type="text"
                                         placeholder="Search..."
                                         variant="filled"
@@ -52,10 +52,10 @@ const Accounts = () => {
                     </TabPanel>
                     <TabPanel>
                             { hasStudentPendingAccounts ? (
-                                <>
+                                <Box marginBottom="6vh">
                                     <Heading marginBottom="2vh" fontSize="24px">Pending</Heading>
                                     <PendingAccounts accountType="student" setHasPendingAccounts={setHasStudentPendingAccounts} marginBottom="4vh" />
-                                </>
+                                </Box>
                                 ): <></>
                             }
                         <HStack spacing='90vh' align="start">
@@ -65,8 +65,8 @@ const Accounts = () => {
                                     <InputLeftElement pointerEvents="none" h="full">
                                         <SearchIcon />
                                     </InputLeftElement>
-                                    <Input 
-                                        type="text" 
+                                    <Input
+                                        type="text"
                                         placeholder="Search..."
                                         variant="filled"
                                         bgColor="blackAlpha.200"

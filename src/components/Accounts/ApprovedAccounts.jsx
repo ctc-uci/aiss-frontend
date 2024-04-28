@@ -18,15 +18,15 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
       });
     const [individualChecked, setIndividualChecked] = useState(new Array(approvedAccounts.length).fill(false));
     const [checkedAccountIds, setCheckedAccountIds] = useState([]);
-    const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);    
+    const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
 
     const fetchTableData = useCallback(async () => {
         try {
             const { data } = await NPOBackend.get(`/users/approved-accounts`, {
                 params: {
-                    keyword: (searchQuery && searchQuery.length) && searchQuery, 
-                    page: currentPage, 
-                    limit: pageSize, 
+                    keyword: (searchQuery && searchQuery.length) && searchQuery,
+                    page: currentPage,
+                    limit: pageSize,
                     accountType: accountType}
             });
             setApprovedAccounts(data.accounts);
@@ -93,78 +93,78 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
 
     return (
         <Box>
-            <TableContainer border="1px solid #ededed" borderRadius="10px">
-                <Table variant='simple'>
-                    <Thead>
-                        <Tr>
-                            <Th w="5%" h="50px"><Checkbox onChange={(e) => { updateAllCheckedAccountIds(e) }}/></Th>
-                            <Th w="30%">Name</Th>
-                            <Th w="30%">Email</Th>
-                            <Th w="0" textAlign="right" >Deactivate</Th>
-                            {checkedAccountIds.length > 0 &&
-                                <Th w="20%" textAlign="right">
-                                    <Button isDisabled={checkedAccountIds.length === 0}
-                                            onClick={() => { handleDeleteClick(checkedAccountIds) }}
-                                            size="xs" 
-                                            variant="outline"
-                                            borderRadius="4px"
-                                            borderWidth="1px"
-                                            padding="0"
-                                            borderColor={checkedAccountIds.length != 0 ? 'red' : 'gray.500'}>
-                                            <CloseIcon w="10px" h="10px" color={checkedAccountIds.length != 0 ? 'red' : 'gray'}/>
-                                    </Button>
-                                </Th>
-                            }
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                    {
-                        approvedAccounts.map((account, i) => (
-                            <Tr key={i}>
-                                <Td>
-                                    <Checkbox
-                                        isChecked={individualChecked[i]}
-                                        onChange={(e) => { updateIndividualCheckedAccountIds(e, account.id, i)}}>
-                                    </Checkbox>
-                                </Td>
-                                <Td>{account.firstName} {account.lastName}</Td>
-                                <Td>{account.email}</Td>
-                                {checkedAccountIds.length > 0 &&
-                                    <Td></Td>
-                                }
-                                <Td textAlign="right">
-                                    <Button 
-                                        onClick={() => { handleDeleteClick([account.id]) }} 
-                                        size="xs" 
-                                        variant="outline"
-                                        borderColor="gray.500"
-                                        borderRadius="4px"
-                                        borderWidth="1px"
-                                        padding="0" 
-                                    >
-                                        <CloseIcon w="10px" h="10px" color="gray.500"/>
-                                    </Button>
-                                </Td>
-                            </Tr>
-                        ))
+          <TableContainer border="1px solid #ededed" borderRadius="10px">
+            <Table variant='simple'>
+              <Thead>
+                <Tr>
+                  <Th w="5%" h="50px"><Checkbox onChange={(e) => { updateAllCheckedAccountIds(e) }}/></Th>
+                  <Th w="30%">Name</Th>
+                  <Th w="30%">Email</Th>
+                  <Th w="0" textAlign="right" >Deactivate</Th>
+                  {checkedAccountIds.length > 0 &&
+                    <Th w="20%" textAlign="right">
+                      <Button isDisabled={checkedAccountIds.length === 0}
+                        onClick={() => { handleDeleteClick(checkedAccountIds) }}
+                        size="xs"
+                        variant="outline"
+                        borderRadius="4px"
+                        borderWidth="1px"
+                        padding="0"
+                        borderColor={checkedAccountIds.length != 0 ? 'red' : 'gray.500'}>
+                        <CloseIcon w="10px" h="10px" color={checkedAccountIds.length != 0 ? 'red' : 'gray'}/>
+                      </Button>
+                    </Th>
                     }
-                    </Tbody>
-                </Table>
-                <PaginationFooter
-                pagesCount={pagesCount}
-                totalRowCount={totalRowCount}
-                setPageSize={setPageSize}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                rangeString={`${offset + 1} - ${offset + approvedAccounts.length}`}
-                />
-            </TableContainer>
-            <DeleteAccountModal
-                isOpen={isDeleteOpen}
-                onClose={onDeleteClose}
-                deleteItemId={deleteItemId}
-                setDataShouldRevalidate={setDataShouldRevalidate}
+                </Tr>
+              </Thead>
+              <Tbody>
+              {
+                approvedAccounts.map((account, i) => (
+                  <Tr key={i}>
+                    <Td>
+                      <Checkbox
+                        isChecked={individualChecked[i]}
+                        onChange={(e) => { updateIndividualCheckedAccountIds(e, account.id, i)}}>
+                      </Checkbox>
+                    </Td>
+                    <Td>{account.firstName} {account.lastName}</Td>
+                    <Td>{account.email}</Td>
+                    {checkedAccountIds.length > 0 &&
+                      <Td></Td>
+                    }
+                    <Td textAlign="right">
+                      <Button
+                        onClick={() => { handleDeleteClick([account.id]) }}
+                        size="xs"
+                        variant="outline"
+                        borderColor="gray.500"
+                        borderRadius="4px"
+                        borderWidth="1px"
+                        padding="0"
+                      >
+                        <CloseIcon w="10px" h="10px" color="gray.500"/>
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))
+              }
+              </Tbody>
+            </Table>
+            <PaginationFooter
+              pagesCount={pagesCount}
+              totalRowCount={totalRowCount}
+              setPageSize={setPageSize}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              rangeString={`${offset + 1} - ${offset + approvedAccounts.length}`}
             />
+          </TableContainer>
+          <DeleteAccountModal
+              isOpen={isDeleteOpen}
+              onClose={onDeleteClose}
+              deleteItemId={deleteItemId}
+              setDataShouldRevalidate={setDataShouldRevalidate}
+          />
         </Box>
     )
 }
