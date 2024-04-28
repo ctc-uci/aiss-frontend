@@ -14,7 +14,7 @@ const Accounts = () => {
         <Box marginTop='4vh' marginBottom='8vh'>
             <Center>
             <Tabs>
-                <TabList>
+                <TabList marginBottom='2vh'>
                     <Tab>Admins</Tab>
                     <Tab>Students</Tab>
                 </TabList>
@@ -23,19 +23,28 @@ const Accounts = () => {
                     <TabPanel>
                         { hasAdminPendingAccounts ? (
                             <>
-                                <Heading marginBottom="2vh">Pending Accounts</Heading>
-                                <PendingAccounts accountType="admin" setHasPendingAccounts={setHasAdminPendingAccounts} marginBottom="2vh"/>
+                            <Box marginBottom="6vh">
+                                <Heading marginBottom="2vh" fontSize="24px">Pending</Heading>
+                                <PendingAccounts accountType="admin" setHasPendingAccounts={setHasAdminPendingAccounts}/>
+                            </Box>
                             </>
                             ) : <></>
                         }
-                        <HStack spacing='90vh' marginTop="2vh">
-                            <Box><Heading marginBottom="2vh">Accounts</Heading></Box>
+                        <HStack spacing='90vh' align="start">
+                            <Box><Heading marginBottom="2vh" fontSize="24px">Accounts</Heading></Box>
                             <Box>
-                                <InputGroup>
-                                    <InputLeftElement pointerEvents='none'>
-                                        <SearchIcon color='gray.300' />
+                                <InputGroup width="315px">
+                                    <InputLeftElement pointerEvents="none" h="full">
+                                        <SearchIcon />
                                     </InputLeftElement>
-                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setApprovedAdminKeyword(e.target.value)}/>
+                                    <Input 
+                                        type="text"
+                                        placeholder="Search..."
+                                        variant="filled"
+                                        bgColor="blackAlpha.200"
+                                        h="30px"
+                                        onChange={ (e) => setApprovedAdminKeyword(e.target.value)}
+                                    />
                                 </InputGroup>
                             </Box>
                         </HStack>
@@ -44,19 +53,26 @@ const Accounts = () => {
                     <TabPanel>
                             { hasStudentPendingAccounts ? (
                                 <>
-                                    <Heading marginBottom="2vh">Pending Accounts</Heading>
-                                    <PendingAccounts accountType="student" setHasPendingAccounts={setHasStudentPendingAccounts} marginBottom="2vh" />
+                                    <Heading marginBottom="2vh" fontSize="24px">Pending</Heading>
+                                    <PendingAccounts accountType="student" setHasPendingAccounts={setHasStudentPendingAccounts} marginBottom="4vh" />
                                 </>
                                 ): <></>
                             }
-                        <HStack spacing='90vh' marginTop="2vh">
-                            <Box><Heading marginBottom="2vh">Accounts</Heading></Box>
+                        <HStack spacing='90vh' align="start">
+                            <Box><Heading marginBottom="2vh" fontSize="24px">Accounts</Heading></Box>
                             <Box>
-                                <InputGroup>
-                                    <InputLeftElement pointerEvents='none'>
-                                        <SearchIcon color='gray.300' />
+                                <InputGroup width="315px">
+                                    <InputLeftElement pointerEvents="none" h="full">
+                                        <SearchIcon />
                                     </InputLeftElement>
-                                    <Input type='text' placeholder='Search' variant='filled' onChange={ (e) => setApprovedStudentKeyword(e.target.value)}/>
+                                    <Input 
+                                        type="text" 
+                                        placeholder="Search..."
+                                        variant="filled"
+                                        bgColor="blackAlpha.200"
+                                        h="30px"
+                                        onChange={ (e) => setApprovedStudentKeyword(e.target.value)}
+                                    />
                                 </InputGroup>
                             </Box>
                         </HStack>

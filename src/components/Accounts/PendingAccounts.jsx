@@ -107,14 +107,34 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
             <Table variant='simple'>
                 <Thead>
                     <Tr>
-                        <Th w="5%"><Checkbox onChange={(e) => {updateAllIndividualChecked(e); updateAllCheckedAccountIds(e);}}/></Th>
-                        <Th w="40%">Name</Th>
-                        <Th w="40%">Email</Th>
-                        <Th w="0">Action</Th>
-                        <Th w="15%">
-                            <Button isDisabled={checkedAccountIds.length === 0} onClick={ () => acceptDeclineAllClick("approve-option") } mr={3} colorScheme='blue'>Accept</Button>
-                            <Button isDisabled={checkedAccountIds.length === 0} onClick={ () => acceptDeclineAllClick("decline-option") }>Decline</Button>
-                        </Th>
+                        <Th w="5%" h="50px"><Checkbox onChange={(e) => {updateAllIndividualChecked(e); updateAllCheckedAccountIds(e);}}/></Th>
+                        <Th w="30%">Name</Th>
+                        <Th w="30%">Email</Th>
+                        <Th w="0" textAlign="right">Action</Th>
+                        {checkedAccountIds.length > 0 && 
+                            <Th w="20%" textAlign="right">
+                                <Button 
+                                    onClick={ () => acceptDeclineAllClick("approve-option") }
+                                    mr={3}
+                                    colorScheme='blue'
+                                    fontSize="sm"
+                                    h="6"
+                                    w="16"
+                                    fontWeight="400"
+                                >
+                                    Accept
+                                </Button>
+                                <Button 
+                                    onClick={ () => acceptDeclineAllClick("decline-option") }
+                                    fontSize="sm"
+                                    h="6"
+                                    w="16"
+                                    fontWeight="400"
+                                >
+                                    Decline
+                                </Button>
+                            </Th>
+                        }
                     </Tr>
                 </Thead>
                 <Tbody>
@@ -126,12 +146,32 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                             </Td>
                             <Td color={accountStatus[account.id] === "pending" ? "black" : "gray"}>{account.firstName} {account.lastName}</Td>
                             <Td color={accountStatus[account.id] === "pending" ? "black" : "gray"}>{account.email}</Td>
-                            <Td></Td>
+                            {checkedAccountIds.length > 0 && 
+                                <Td></Td>
+                            }
                             {
                                 accountStatus[account.id] === "pending" ? (
-                                    <Td>
-                                        <Button onClick={() => { handleApproveDeclineUser([account.id], "approve-option"); changeStatus(account.id, "approved");}} mr={3} colorScheme='blue'>Accept</Button>
-                                        <Button onClick={() => { handleApproveDeclineUser([account.id], "decline-option"); changeStatus(account.id, "declined");}}>Decline</Button>
+                                    <Td textAlign="right">
+                                        <Button 
+                                            onClick={() => { handleApproveDeclineUser([account.id], "approve-option"); changeStatus(account.id, "approved");}} 
+                                            mr={3} 
+                                            colorScheme='blue'
+                                            fontSize="sm"
+                                            h="6"
+                                            w="16"
+                                            fontWeight="400"
+                                        >
+                                            Accept
+                                        </Button>
+                                        <Button 
+                                            onClick={() => { handleApproveDeclineUser([account.id], "decline-option"); changeStatus(account.id, "declined");}}
+                                            fontSize="sm"
+                                            h="6"
+                                            w="16"
+                                            fontWeight="400"
+                                        >
+                                            Decline
+                                        </Button>
                                     </Td>
                                 ) : accountStatus[account.id] === "approved" ? (
                                     <Td color="green">Approved</Td>

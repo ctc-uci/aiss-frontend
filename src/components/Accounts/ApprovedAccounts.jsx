@@ -97,19 +97,24 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
                 <Table variant='simple'>
                     <Thead>
                         <Tr>
-                            <Th w="5%"><Checkbox onChange={(e) => { updateAllCheckedAccountIds(e) }}/></Th>
-                            <Th w="40%">Name</Th>
-                            <Th w="40%">Email</Th>
-                            <Th w="0">Deactivate</Th>
-                            <Th w="15%">
-                                <Button isDisabled={checkedAccountIds.length === 0}
-                                        onClick={() => { handleDeleteClick(checkedAccountIds) }}
-                                        size='sm'
-                                        variant='outline'
-                                        borderColor={checkedAccountIds.length != 0 ? 'red' : 'gray'}>
-                                        <CloseIcon w={3} h={3} color={checkedAccountIds.length != 0 ? 'red' : 'gray'}/>
-                                </Button>
-                            </Th>
+                            <Th w="5%" h="50px"><Checkbox onChange={(e) => { updateAllCheckedAccountIds(e) }}/></Th>
+                            <Th w="30%">Name</Th>
+                            <Th w="30%">Email</Th>
+                            <Th w="0" textAlign="right" >Deactivate</Th>
+                            {checkedAccountIds.length > 0 &&
+                                <Th w="20%" textAlign="right">
+                                    <Button isDisabled={checkedAccountIds.length === 0}
+                                            onClick={() => { handleDeleteClick(checkedAccountIds) }}
+                                            size="xs" 
+                                            variant="outline"
+                                            borderRadius="4px"
+                                            borderWidth="1px"
+                                            padding="0"
+                                            borderColor={checkedAccountIds.length != 0 ? 'red' : 'gray.500'}>
+                                            <CloseIcon w="10px" h="10px" color={checkedAccountIds.length != 0 ? 'red' : 'gray'}/>
+                                    </Button>
+                                </Th>
+                            }
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -124,9 +129,21 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
                                 </Td>
                                 <Td>{account.firstName} {account.lastName}</Td>
                                 <Td>{account.email}</Td>
-                                <Td></Td>
-                                <Td>
-                                    <Button onClick={() => { handleDeleteClick([account.id]) }} size='sm' variant='outline'><CloseIcon w={3} h={3} color='gray'/></Button>
+                                {checkedAccountIds.length > 0 &&
+                                    <Td></Td>
+                                }
+                                <Td textAlign="right">
+                                    <Button 
+                                        onClick={() => { handleDeleteClick([account.id]) }} 
+                                        size="xs" 
+                                        variant="outline"
+                                        borderColor="gray.500"
+                                        borderRadius="4px"
+                                        borderWidth="1px"
+                                        padding="0" 
+                                    >
+                                        <CloseIcon w="10px" h="10px" color="gray.500"/>
+                                    </Button>
                                 </Td>
                             </Tr>
                         ))
