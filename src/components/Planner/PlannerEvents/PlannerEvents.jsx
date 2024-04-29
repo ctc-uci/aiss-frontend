@@ -22,13 +22,18 @@ const PlannerEvents = ({ onClose }) => {
   const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
   const plannedEvents = plannedEventsContext[0];
 
+  const getUTCDate = (eventDate) => {
+    const utcDate = new Date(eventDate);
+    return new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+  }
+
   const getDayData = async () => {
     try {
       // console.log('getDayData');
       const response = await NPOBackend.get(`/day/${dayId}`);
       const responseData = response.data[0];
       const [datePart] = responseData.eventDate.split('T');
-      const dateObj = new Date(responseData.eventDate);
+      const dateObj = getUTCDate(responseData.eventDate);
       // console.log(dateObj);
       setDateHeader(dateObj.toLocaleDateString({ year: 'numeric', month: 'short', day: '2-digit' }));
       setDayData({id: responseData.id, eventDate: datePart, location: responseData.location, details: responseData.notes});
