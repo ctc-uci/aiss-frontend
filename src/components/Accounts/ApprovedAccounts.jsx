@@ -6,6 +6,7 @@ import DeleteAccountModal from './DeleteAccountModal.jsx';
 import PropTypes from 'prop-types';
 import PaginationFooter from "../../components/Catalog/PaginationFooter/PaginationFooter";
 import { usePagination } from '@ajna/pagination';
+import { useAuthContext } from '../../common/AuthContext.jsx';
 
 const ApprovedAccounts = ( {accountType, searchQuery} ) => {
     const [approvedAccounts, setApprovedAccounts] = useState([]);
@@ -19,6 +20,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
     const [individualChecked, setIndividualChecked] = useState(new Array(approvedAccounts.length).fill(false));
     const [checkedAccountIds, setCheckedAccountIds] = useState([]);
     const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
+    const {currentUser} = useAuthContext();
 
     const fetchTableData = useCallback(async () => {
         try {
@@ -64,16 +66,22 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
     }
 
     const updateAllCheckedAccountIds = (e) => {
-        setIndividualChecked(new Array(approvedAccounts.length).fill(e.target.checked));
+      let newIndividualChecked = new Array(approvedAccounts.length).fill(e.target.checked);
         if (e.target.checked) {
             let allIds = [];
             for (let i = 0; i < approvedAccounts.length; i++) {
+              if (approvedAccounts[i].id != currentUser.id) {
                 allIds.push(approvedAccounts[i].id)
+              }
+              else {
+                newIndividualChecked[i] = false;
+              }
             }
             setCheckedAccountIds(allIds);
         } else {
             setCheckedAccountIds([]);
         }
+        setIndividualChecked(newIndividualChecked);
     }
 
     const updateIndividualCheckedAccountIds = (e, id, index) => {
@@ -123,12 +131,13 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
                   <Tr key={i}>
                     <Td>
                       <Checkbox
+                        isDisabled={account.id === currentUser.id}
                         isChecked={individualChecked[i]}
                         onChange={(e) => { updateIndividualCheckedAccountIds(e, account.id, i)}}>
                       </Checkbox>
                     </Td>
-                    <Td>{account.firstName} {account.lastName}</Td>
-                    <Td>{account.email}</Td>
+                    <Td color={account.id === currentUser.id ? 'gray' : 'black'}>{account.firstName} {account.lastName}</Td>
+                    <Td color={account.id === currentUser.id ? 'gray' : 'black'}>{account.email}</Td>
                     {checkedAccountIds.length > 0 &&
                       <Td></Td>
                     }
@@ -141,6 +150,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
                         borderRadius="4px"
                         borderWidth="1px"
                         padding="0"
+                        isDisabled={account.id === currentUser.id}
                       >
                         <CloseIcon w="10px" h="10px" color="gray.500"/>
                       </Button>

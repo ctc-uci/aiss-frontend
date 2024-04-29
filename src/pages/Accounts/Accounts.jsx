@@ -1,6 +1,6 @@
 import PendingAccounts from "../../components/Accounts/PendingAccounts";
 import ApprovedAccounts from "../../components/Accounts/ApprovedAccounts";
-import { Box, Heading, Tabs, TabList, TabPanels, Tab, TabPanel, Input, InputGroup, InputLeftElement, HStack, Center } from '@chakra-ui/react'
+import { Box, Heading, Tabs, TabList, TabPanels, Tab, TabPanel, Input, InputGroup, InputLeftElement, HStack, Spacer } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 
@@ -11,8 +11,7 @@ const Accounts = () => {
     const [hasStudentPendingAccounts, setHasStudentPendingAccounts] = useState(true);
 
     return (
-        <Box marginTop='4vh' marginBottom='8vh'>
-            <Center>
+        <Box margin="4vh 10vw 8vh 10vw">
             <Tabs>
                 <TabList marginBottom='2vh'>
                     <Tab>Admins</Tab>
@@ -30,10 +29,11 @@ const Accounts = () => {
                             </>
                             ) : <></>
                         }
-                        <HStack spacing='90vh' align="start">
+                        <HStack align="start">
                             <Box><Heading marginBottom="2vh" fontSize="24px">Accounts</Heading></Box>
+                            <Spacer />
                             <Box>
-                                <InputGroup width="315px">
+                                <InputGroup width="20vw">
                                     <InputLeftElement pointerEvents="none" h="full">
                                         <SearchIcon />
                                     </InputLeftElement>
@@ -58,10 +58,11 @@ const Accounts = () => {
                                 </Box>
                                 ): <></>
                             }
-                        <HStack spacing='90vh' align="start">
+                        <HStack align="start">
                             <Box><Heading marginBottom="2vh" fontSize="24px">Accounts</Heading></Box>
+                            <Spacer />
                             <Box>
-                                <InputGroup width="315px">
+                                <InputGroup width="20vw">
                                     <InputLeftElement pointerEvents="none" h="full">
                                         <SearchIcon />
                                     </InputLeftElement>
@@ -80,7 +81,6 @@ const Accounts = () => {
                     </TabPanel>
                 </TabPanels>
             </Tabs>
-            </Center>
         </Box>
     );
 }
