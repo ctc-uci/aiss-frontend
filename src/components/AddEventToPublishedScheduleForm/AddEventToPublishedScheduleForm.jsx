@@ -35,12 +35,16 @@ import PlannedEvent, { convertTimeToMinutes } from '../Planner/PlannedEvent';
 import RemoveTimelineEventModal from '../Planner/RemoveTimelineEventModal';
 
 const schema = yup.object({
-    startTime: yup.string().required('Start time is required'),
+    startTime: yup.string().required('Start time is required').test('is-after-7-am', 'Start time cannot be earlier than 7 AM', function(startTime) {
+      return startTime && startTime >= "07:00";
+    }),
     endTime: yup.string()
       .required('End time is required')
       .test('is-after', 'End time must be after start time', function(endTime) {
         const startTime = this.parent.startTime;
         return startTime && endTime && startTime < endTime;
+      }).test('is-before-11-pm', 'End time must be earlier than 11 PM', function(endTime) {
+        return endTime && endTime <= "23:00";
       }),
     host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
     title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
@@ -89,7 +93,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
   }, [eventData]);
 
   useEffect(() => {
-    if (formData.startTime && formData.endTime && formData.startTime < formData.endTime) {
+    if (formData.startTime && formData.endTime && formData.startTime < formData.endTime && formData.startTime >= "07:00" && formData.endTime <= "23:00") {
       // if (isEdit) {
       //   // setPlannedEvents([...plannedEvents.filter(e => e.id != -1 && e.id != eventData.id)]);
       // }
