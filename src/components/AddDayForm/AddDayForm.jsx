@@ -19,10 +19,10 @@ import { NPOBackend } from '../../utils/auth_utils';
 
 const schema = yup.object({
   date: yup.date().nullable().transform((curr, orig) => orig === '' ? null : curr).required('Date required'),
-  location: yup.string().required('Location required').max(50, 'Location exceeds 50 character limit'),
+  location: yup.string().required('Location required').max(100, 'Location exceeds 100 character limit'),
   details: yup
     .string()
-    .max(50, 'Details exceeds 50 character limit'),
+    .max(200, 'Details exceeds 200 character limit'),
 });
 
 const AddDayForm = ({ onClose, onOpen, setDayId, dayData, setShouldDataRevalidate }) => {

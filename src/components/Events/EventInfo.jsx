@@ -47,9 +47,10 @@ const EventInfo = ({ dayId, eventDate, day, startTime, endTime, location, notes,
         {day} {startTime} - {endTime}
       </Text>
 
-      <Text mb="1.5rem">{location}</Text>
+      <Text as="b" mb="0.5rem">Location: </Text>
+      <Text whiteSpace="pre-wrap" mb="2rem">{location}</Text>
 
-      <Text mb="0.5rem">Details:</Text>
+      <Text as="b" mb="0.5rem">Details:</Text>
       <Text whiteSpace="pre-wrap" mb="2rem">{notes ? notes : 'No notes.'}</Text>
 
       <HStack mt="auto">

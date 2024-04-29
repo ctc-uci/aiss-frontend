@@ -54,7 +54,7 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEve
 
   const { currentPage, setCurrentPage, pagesCount, offset, pageSize, setPageSize } = usePagination({
     initialState: { currentPage: 1, pageSize: 10 },
-    pagesCount: Math.ceil(totalRowCount / 10),
+    total: totalRowCount
   });
 
   // const handleEditForm = data => {
@@ -116,7 +116,7 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEve
   // Reset pagination on filter change
   useEffect(() => {
     setCurrentPage(1);
-  }, [filterValues, setCurrentPage]);
+  }, [filterValues, setCurrentPage, pageSize, searchTerm]);
 
   return (
     <Container maxW="none" m="0" p="0">
