@@ -12,7 +12,9 @@ import {
   Heading,
   Flex,
   Text,
-  Stack
+  HStack,
+  useDisclosure,
+  Spacer
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -30,14 +32,19 @@ import Dropdown from '../Dropdown/Dropdown';
 import PropTypes from 'prop-types';
 import { PlannerContext } from '../Planner/PlannerContext';
 import PlannedEvent, { convertTimeToMinutes } from '../Planner/PlannedEvent';
+import RemoveTimelineEventModal from '../Planner/RemoveTimelineEventModal';
 
 const schema = yup.object({
-    startTime: yup.string().required('Start time is required'),
+    startTime: yup.string().required('Start time is required').test('is-after-7-am', 'Start time cannot be earlier than 7 AM', function(startTime) {
+      return startTime && startTime >= "07:00";
+    }),
     endTime: yup.string()
       .required('End time is required')
       .test('is-after', 'End time must be after start time', function(endTime) {
         const startTime = this.parent.startTime;
         return startTime && endTime && startTime < endTime;
+      }).test('is-before-11-pm', 'End time must be earlier than 11 PM', function(endTime) {
+        return endTime && endTime <= "23:00";
       }),
     host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
     title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
@@ -58,6 +65,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
   const [checkboxVal, setCheckboxVal] = useState(undefined);
   const [formData, setFormData] = useState({...eventData});
+  const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
 
   useEffect(() => {
     if (Object.keys(eventData).length === 0) {
@@ -85,7 +93,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
   }, [eventData]);
 
   useEffect(() => {
-    if (formData.startTime && formData.endTime && formData.startTime < formData.endTime) {
+    if (formData.startTime && formData.endTime && formData.startTime < formData.endTime && formData.startTime >= "07:00" && formData.endTime <= "23:00") {
       // if (isEdit) {
       //   // setPlannedEvents([...plannedEvents.filter(e => e.id != -1 && e.id != eventData.id)]);
       // }
@@ -264,7 +272,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
   return (
     <Box borderRadius="5px">
-      <form onSubmit={handleSubmit(submitData)}>
+      <form id="add-ps-event-form" onSubmit={handleSubmit(submitData)}>
         <Box bgColor="white" borderRadius="5px" p="1rem">
           <Heading size="md" color="gray.600" mb="0.5rem">Event Information</Heading>
           <Box px="1rem">
@@ -430,11 +438,16 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
               </Box>
             </Box>
         </Box>
-        <Stack spacing={2} justifyContent="right" direction="row" pb="1.5rem" mt="0.5rem">
-          <Button htype="submit" mt="1rem" mr="1rem" onClick={handleCancel}>Cancel</Button>
-          <Button colorScheme="blue" type="submit" mt="1rem">{isEdit ? 'Save' : 'Add Event'}</Button>
-        </Stack>
       </form>
+      <HStack spacing={2} pb="1.5rem" mt="0.5rem">
+        {isEdit &&
+          <Button variant="outline" mt="1rem" mr="1rem" onClick={onRemoveOpen}>Delete</Button>
+        }
+        <Spacer />
+        <Button htype="submit" mt="1rem" mr="1rem" onClick={handleCancel}>Cancel</Button>
+        <Button form="add-ps-event-form" colorScheme="blue" type="submit" mt="1rem">{isEdit ? 'Save' : 'Add Event'}</Button>
+      </HStack>
+      <RemoveTimelineEventModal onClose={onRemoveClose} isOpen={isRemoveOpen} deleteItemId={eventData.id ? eventData.id : -1} closeForm={closeForm}/>
     </Box>
   );
 };
