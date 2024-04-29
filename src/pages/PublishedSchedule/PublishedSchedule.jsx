@@ -38,7 +38,9 @@ const PublishedSchedule = () => {
         data.unshift(curSeason);
       }
 
-      setSelectedSeason(curSeason);
+      if (selectedSeason === '') {
+        setSelectedSeason(curSeason);
+      }
 
       const seasonOrder = ['Fall', 'Summer', 'Spring'];
       data.sort((a, b) => {
@@ -54,7 +56,7 @@ const PublishedSchedule = () => {
 
     };
     renderTable();
-  }, [currentUser, curSeason]);
+  }, [currentUser, curSeason, allSeasons]);
 
   //update chakra table container accordingly
   return (
