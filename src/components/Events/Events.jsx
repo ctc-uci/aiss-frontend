@@ -2,20 +2,7 @@ import DailyEvent from './DailyEvent.jsx';
 import PropTypes from 'prop-types';
 
 import { Grid } from '@chakra-ui/react';
-
 const Events = ({ eventData }) => {
-
-  // console.log("Event Data", eventData);
-
-  const formatDate = (date) => {
-    let time = date.split(":");
-    let hours = time[0];
-    let mins = time[1];
-    let ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    return `${hours}:${mins} ${ampm}`;
-  }
 
   let maxId = eventData.reduce((maxVal, event) => Math.max(maxVal, event.id), -Infinity)+1;
 
@@ -49,7 +36,6 @@ const Events = ({ eventData }) => {
 
     const timeDiff = convertTimeToMin(startHour, startMin) - convertTimeToMin(endHour, endMin);
     if (currEnd < nextStart && timeDiff >= 5) {
-      console.log("break");
       eventDataWithBreaks.push({
         id: maxId,
         startTime: currentEvent.endTime,
@@ -63,19 +49,13 @@ const Events = ({ eventData }) => {
   if (eventData.length > 1) {
     eventDataWithBreaks.push(eventData[eventData.length - 1]);
   }
-  // console.log(eventDataWithBreaks);
+
   return (
     <Grid gap={3}>
       {eventDataWithBreaks.map(item => (
         <DailyEvent
           key={item.id}
-          id={item.id}
-          startTime={formatDate(item.startTime)}
-          endTime={formatDate(item.endTime)}
-          eventTitle={item.title}
-          description={item.description}
-          confirmed={item.confirmed}
-          eventId={item.eventId}
+          event={item}
         />
       ))}
     </Grid>
