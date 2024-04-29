@@ -34,7 +34,7 @@ const Navbar = ({ hasLoaded, isAdmin }) => {
     );
   };
 
-  if (!hasLoaded) {
+  if (!hasLoaded || location.pathname == '/login') {
     return null;
   }
 

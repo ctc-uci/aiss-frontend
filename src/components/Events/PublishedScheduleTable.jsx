@@ -38,7 +38,7 @@ const PublishedScheduleTable = ({ season, allSeasons }) => {
       renderTable();
       setShouldDataRevalidate(false);
     }
-  }, [dataShouldRevalidate])
+  }, [dataShouldRevalidate, renderTable])
 
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 

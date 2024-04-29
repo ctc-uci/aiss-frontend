@@ -11,6 +11,7 @@ const PublishedSchedule = () => {
   const {currentUser} = useAuthContext();
   const [allSeasons, setAllSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState('');
+  const [seasonHover, setSeasonHover] = useState(false);
 
   const getTodaySeason = () => {
     let today = new Date();
@@ -61,22 +62,25 @@ const PublishedSchedule = () => {
   return (
     <Box pt={10} pb={10} pl={100} pr={100}>
       {selectedSeason != '' ? (
-        <Text fontSize="2.5vw" mb="-5vh" fontWeight="bold">
+        <Text fontSize="30px" fontWeight="bold" style={{ textDecoration: seasonHover ? 'underline': 'none' }}>
           {selectedSeason}
         </Text>
       ) : (
-        <Text fontSize="2.5vw" mb="-5vh" fontWeight="bold">
+        <Text fontSize="30px" fontWeight="bold" style={{ textDecoration: seasonHover ? 'underline': 'none' }}>
           {curSeason}
         </Text>
       )}
       <Select
+        mt="-30px"
         mb="3vh"
         variant="unstyled"
         placeholder={allSeasons.indexOf(curSeason) === -1 && curSeason}
         value={selectedSeason}
         textColor="transparent"
         onChange={(e) => setSelectedSeason(e.target.value)}
-        width="23%"
+        width={`${selectedSeason.length*22}px`}
+        onMouseEnter={() => setSeasonHover(true)}
+        onMouseLeave={() => setSeasonHover(false)}
         visibility={currentUser.type === USER_ROLE ? 'hidden' : 'visible'}
       >
         { currentUser.type === ADMIN_ROLE &&

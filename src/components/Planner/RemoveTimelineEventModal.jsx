@@ -14,10 +14,11 @@ import { NPOBackend } from '../../utils/auth_utils';
 import { useContext } from 'react';
 import { PlannerContext } from './PlannerContext';
 
-const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId }) => {
+const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId, closeForm }) => {
 
-  const { plannedEventsContext } = useContext(PlannerContext);
+  const { plannedEventsContext, currEventContext } = useContext(PlannerContext);
   const [plannedEvents, setPlannedEvents] = plannedEventsContext;
+  const setCurrEvent = currEventContext[1];
 
   const toast = useToast();
 
@@ -38,8 +39,10 @@ const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId }) => {
         duration: 3000,
         isClosable: true,
       });
-      // setDataShouldRevalidate(true);
       onClose();
+
+      setCurrEvent({});
+      closeForm();
     } catch (error) {
       console.error(error);
     }
@@ -67,6 +70,7 @@ RemoveTimelineEventModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   deleteItemId: PropTypes.number.isRequired,
+  closeForm: PropTypes.func,
 };
 
 export default RemoveTimelineEventModal;

@@ -52,7 +52,7 @@
 }
 
 .grid-hour-container {
-  min-height: 64px;
+  min-height: 128px;
   position: relative;
   border-top: 2px solid var(--chakra-colors-blackAlpha-400);
 }
