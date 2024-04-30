@@ -6,7 +6,7 @@ import emailtemplate from '../EmailTemplates/emailtemplate';
 import { Box, Heading, Text, FormControl, Button, Center, Link, Input, Alert, AlertDescription } from '@chakra-ui/react';
 import AUTH_ROLES from '../../utils/auth_config';
 
-const { ADMIN_ROLE, USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
+const { USER_ROLE } = AUTH_ROLES.AUTH_ROLES;
 
 const SignUp = () => {
   const [firstName, setFirstName] = useState();
@@ -24,28 +24,14 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setHasError(false);
     try {
-      if (firstName === undefined) {
-        throw new Error("Must enter a first name.");
-      }
-      if (lastName === undefined) {
-        throw new Error("Must enter a last name.");
-      }
-      if (email === undefined) {
-        throw new Error("Must enter an email");
-      }
-      if (password === undefined) {
-        throw new Error("Must enter a password.");
-      }
       if (password !== checkPassword) {
         throw new Error("Passwords don't match.");
       }
-      if (password.length < 6) {
-        throw new Error("Password must be at least 6 characters.");
-      }
 
       // register email and password
-      await registerWithEmailAndPassword(email, password, userType, navigate, '/awaitConfirmation', firstName, lastName);
+      await registerWithEmailAndPassword(email, password, USER_ROLE, navigate, '/awaitConfirmation', firstName, lastName);
 
       // send email to Debbie
       const subject = "New User Created Account";
@@ -54,10 +40,17 @@ const SignUp = () => {
 
       setSubmitted(true);
 
-    } catch (error) {
-      console.log(error);
-      setHasError(true)
-      setErrorMessage(error.message);
+    } catch (err) {
+      setHasError(true);
+      if (err.code === 'auth/email-already-in-use') {
+        setErrorMessage("Account associated with email exists.");
+      }
+      else if (err.code === 'auth/weak-password') {
+        setErrorMessage("Password must be at least 6 characters.");
+      }
+      else {
+        setErrorMessage(err.message);
+      }
     }
   };
 
@@ -86,7 +79,7 @@ const SignUp = () => {
                 }}
               >
                 <Button
-                  onClick={() => setUserType(ADMIN_ROLE)}
+                  onClick={() => setUserType("admin")}
                   type="submit"
                   style={{
                     borderRadius: '30px',
@@ -104,7 +97,7 @@ const SignUp = () => {
                 </Button>
 
                 <Button
-                  onClick={() => setUserType(USER_ROLE)}
+                  onClick={() => setUserType("student")}
                   type="submit"
                   style={{
                     borderRadius: '30px',
@@ -172,6 +165,7 @@ const SignUp = () => {
                 <Input
                   style={{ width: '360px', height: '48px', marginTop: '20px' }}
                   type="firstName"
+                  required={true}
                   onChange={({ target }) => setFirstName(target.value)}
                   placeholder="First Name"
                   borderColor={"#CBD5E0"}
@@ -180,6 +174,7 @@ const SignUp = () => {
                 <Input
                   style={{ width: '360px', height: '48px', marginTop: '20px' }}
                   type="lastName"
+                  required={true}
                   onChange={({ target }) => setLastName(target.value)}
                   placeholder="Last Name"
                   borderColor={"#CBD5E0"}
@@ -188,6 +183,7 @@ const SignUp = () => {
                 <Input
                   style={{ width: '360px', height: '48px', marginTop: '20px' }}
                   type="email"
+                  required={true}
                   onChange={({ target }) => setEmail(target.value)}
                   placeholder="Email"
                   borderColor={"#CBD5E0"}
@@ -196,6 +192,7 @@ const SignUp = () => {
                 <Input
                   style={{ width: '360px', height: '48px', marginTop: '20px' }}
                   type="password"
+                  required={true}
                   onChange={({ target }) => setPassword(target.value)}
                   placeholder="Password"
                   borderColor={"#CBD5E0"}
@@ -204,6 +201,7 @@ const SignUp = () => {
                 <Input
                   style={{ width: '360px', height: '48px', marginTop: '20px' }}
                   type="password"
+                  required={true}
                   onChange={({ target }) => setCheckPassword(target.value)}
                   placeholder="Confirm Password"
                   borderColor={"#CBD5E0"}

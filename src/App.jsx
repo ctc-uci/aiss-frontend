@@ -7,8 +7,11 @@ import Logout from './components/Authentication/Logout';
 import SignUp from './components/Authentication/SignUp';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import EmailAction from './components/Authentication/EmailAction';
+import AccountPendingApproval from './components/Authentication/EmailAction';
 import AwaitConfirmation from './components/Authentication/AwaitConfirmation';
 import ForgotPasswordConfirmation from './components/Authentication/ForgotPasswordConfirmation';
+import CreateNewPasswordConfirmation from './components/Authentication/CreateNewPasswordConfirmation';
+import CreateNewPassword from './components/Authentication/CreateNewPassword';
 import AUTH_ROLES from './utils/auth_config';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Catalog from './pages/Catalog/Catalog';
@@ -54,9 +57,13 @@ const App = () => {
               <Route exact path="/logout" element={<Logout />} />
               <Route exact path="/forgotpassword" element={<ForgotPassword />} />
               <Route exact path="/signUp" element={<SignUp />} />
+              <Route exact path="/signUpConfirmation" element={<AccountPendingApproval redirectPath="/" />} />
+
               <Route exact path="/emailAction" element={<EmailAction redirectPath="/" />} />
               <Route exact path="/awaitConfirmation" element={<AwaitConfirmation redirectPath="/" />} />
               <Route exact path="/forgotPasswordConfirmation" element={<ForgotPasswordConfirmation redirectPath="/" />} />
+              <Route exact path="/createNewPassword" element={<CreateNewPassword redirectPath="/" />} />
+              <Route exact path="/createNewPasswordConfirmation" element={<CreateNewPasswordConfirmation redirectPath="/" />} />
 
 
               <Route
