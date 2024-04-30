@@ -130,7 +130,8 @@ const CatalogTable = ({ tableData, handleActionClick, onDayPlanner, setCurrEvent
             :
               <Td>
                 <IconButton
-                  color="gray.400"
+                  fontSize='24px'
+                  color="gray.500"
                   backgroundColor="transparent"
                   p="0.5rem"
                   h="fit-content"
