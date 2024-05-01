@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import {
   Box,
   FormLabel,
@@ -89,14 +88,10 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
       setValue('startTime', eventData.startTime);
       setValue('endTime', eventData.endTime);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventData]);
 
   useEffect(() => {
     if (formData.startTime && formData.endTime && formData.startTime < formData.endTime && formData.startTime >= "07:00" && formData.endTime <= "23:00") {
-      // if (isEdit) {
-      //   // setPlannedEvents([...plannedEvents.filter(e => e.id != -1 && e.id != eventData.id)]);
-      // }
       const newPlannedEvent = new PlannedEvent(
         -1,
         formData.title,
@@ -109,7 +104,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
     } else {
       setPlannedEvents(plannedEvents.filter(e => e.id != -1));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData])
 
   const toast = useToast();
@@ -125,8 +119,6 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
   const handleCancel = () => {
     if (isEdit) {
-      // let reAddedEvent = plannedEvents.filter(e => e.id == -1)[0];
-      // reAddedEvent.id = eventData.id;
       const reAddedEvent = new PlannedEvent(
         eventData.id,
         eventData.title,
@@ -179,16 +171,12 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
 
   const submitData = async (data) => {
     try {
-      // eslint-disable-next-line no-unused-vars
-      const { title, host, description, tentative, startTime, endTime } = data;
+      const { title, host, description, startTime, endTime } = data;
       const season = filterValues.season;
       const eventType = filterValues.eventType;
       const year = filterValues.year;
       const subject = filterValues.subject;
-      console.log('submmitted data', data, season, eventType, year, subject);
-
       toast.closeAll();
-
       const catalogDataChanged = currentCatalogDataHasChanged(eventData, {
         title,
         host,

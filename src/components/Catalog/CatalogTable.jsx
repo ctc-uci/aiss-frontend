@@ -1,5 +1,5 @@
 import { Container, Badge, IconButton, Table, Thead, Tr, Th, Td, Tbody, Text } from '@chakra-ui/react';
-import { /*EditIcon,*/ DeleteIcon } from '@chakra-ui/icons';  // add 'EditIcon' to reinstate edit button.
+import { DeleteIcon } from '@chakra-ui/icons';  // add 'EditIcon' to reinstate edit button.
 import { IoIosAddCircleOutline } from "react-icons/io";
 import s from './Catalog.module.css';
 import PropTypes from 'prop-types';
@@ -98,25 +98,6 @@ const CatalogTable = ({ tableData, handleActionClick, onDayPlanner, setCurrEvent
             </Td>
             { !onDayPlanner ?
               <Td>
-                {/* <IconButton
-                  color="gray.400"
-                  backgroundColor="transparent"
-                  p="0.5rem"
-                  h="fit-content"
-                  w="fit-content"
-                  icon={<EditIcon />}
-                  onClick={() =>
-                    handleEditForm({
-                      id,
-                      title,
-                      host,
-                      year,
-                      eventType,
-                      subject,
-                      description,
-                    })
-                  }
-                /> */}
                 <IconButton
                   color="gray.400"
                   backgroundColor="transparent"

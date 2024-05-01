@@ -1,4 +1,3 @@
-// import React from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import CreateNewPassword from './CreateNewPassword';

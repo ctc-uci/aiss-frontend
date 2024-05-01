@@ -111,11 +111,8 @@ const createUserInDB = async (email, id, type, signUpWithGoogle, password = null
   try {
     if (signUpWithGoogle) {
       await NPOBackend.post('/users/create', { email, id, type, approved: false, approvedOn: (new Date()).getDate(), firstName, lastName });
-      //old b
-      // await NPOBackend.post('/users/', { email, userId, role, registered: false });
     } else {
       await NPOBackend.post('/users/create', { email, id, type, approved: false, approvedOn: new Date(), firstName, lastName });
-      // await NPOBackend.post('/users/', { email, userId, role, registered: true });
     }
   } catch (err) {
     // Since this route is called after user is created in firebase, if this
@@ -237,10 +234,7 @@ const createUser = async (email, password, role, firstName, lastName) => {
 const registerWithEmailAndPassword = async (email, password, role, navigate, redirectPath, firstName, lastName) => {
   await createUser(email, password, role, firstName, lastName);
   // try logging out here
-  // await signOut(auth);
-  // clearCookies(document.cookie);
   navigate(redirectPath);
-  // window.location.reload(true);
 };
 
 /**

@@ -8,7 +8,6 @@ import { useAuthContext } from '../common/AuthContext';
 const userIsAuthenticated = async (roles, cookies) => {
   try {
     const { accessToken, currentUser } = await refreshToken(cookies);
-    // const accessToken = await refreshToken(cookies);
     if (!accessToken) {
       return false;
     }

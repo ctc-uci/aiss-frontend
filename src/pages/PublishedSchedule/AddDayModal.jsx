@@ -5,7 +5,6 @@ import {
   ModalBody,
   useDisclosure,
 } from '@chakra-ui/react'
-// import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import AddDayForm from '../../components/AddDayForm/AddDayForm.jsx';
 import { useState } from 'react';
 import PlannerModal from '../../components/Planner/PlannerModal.jsx';
