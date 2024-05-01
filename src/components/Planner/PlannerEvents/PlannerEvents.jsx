@@ -12,7 +12,6 @@ import EmptyDayModal from '../EmptyDayModal';
 
 const PlannerEvents = ({ onClose }) => {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
-  // const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
   const [dayData, setDayData] = useState({});
   const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
@@ -31,12 +30,10 @@ const PlannerEvents = ({ onClose }) => {
 
   const getDayData = async () => {
     try {
-      // console.log('getDayData');
       const response = await NPOBackend.get(`/day/${dayId}`);
       const responseData = response.data[0];
       const [datePart] = responseData.eventDate.split('T');
       const dateObj = getUTCDate(responseData.eventDate);
-      // console.log(dateObj);
       setDateHeader(dateObj.toLocaleDateString({ year: 'numeric', month: 'short', day: '2-digit' }));
       setDayData({id: responseData.id, eventDate: datePart, location: responseData.location, details: responseData.notes});
     } catch (error) {
@@ -45,13 +42,11 @@ const PlannerEvents = ({ onClose }) => {
   };
 
   useEffect(() => {
-    // console.log('fetch data first time?')
     getDayData();
   }, [dayId]);
 
   useEffect(() => {
     if (dataShouldRevalidate) {
-      // console.log('reset data');
       getDayData();
       setShouldDataRevalidate(false);
     }
@@ -81,7 +76,6 @@ const PlannerEvents = ({ onClose }) => {
 
   return (
     <div id={s['planner-events-container']} className={s['gray-scrollbar-vertical']}>
-      {/* {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>} */}
       <div id={s['planner-browse']}>
         {(isAddingEvent || isEdit) &&
           <AddEventToPublishedScheduleForm closeForm={togglePSForm} />

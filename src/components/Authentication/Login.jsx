@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { instanceOf } from 'prop-types';
 import { Cookies, withCookies } from '../../utils/cookie_utils';
 import { logInWithEmailAndPassword, useNavigate } from '../../utils/auth_utils';
-// import { logInWithEmailAndPassword , signInWithGoogle, useNavigate } from '../utils/auth_utils';
 import { Box, Heading, Text, FormControl, Input, Button, Center, Link, Alert, AlertDescription } from '@chakra-ui/react';
-// import styles from 
 
 const Login = ({ cookies }) => {
   const navigate = useNavigate();

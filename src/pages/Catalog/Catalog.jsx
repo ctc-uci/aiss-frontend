@@ -32,11 +32,6 @@ import s from '../../components/Planner/PlannerLayout.module.css';
 
 export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEvent }) {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  // const {
-  //   isOpen: isEditFormOpen,
-  //   onOpen: onEditFormOpen,
-  //   onClose: onEditFormClose,
-  // } = useDisclosure();
   const {
     isOpen: isCreateFormOpen,
     onOpen: onCreateFormOpen,
@@ -57,23 +52,16 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEve
     total: totalRowCount
   });
 
-  // const handleEditForm = data => {
-  //   setEditData(data);
-  //   onEditFormOpen();
-  // };
-
   const handleDeleteClick = id => {
     setDeleteItemId(id);
     onDeleteOpen();
   };
 
   const handleSearch = event => {
-    console.log('searching for', event.target.value);
     setSearchTerm(event.target.value);
   };
 
   const fetchTableData = useCallback(async () => {
-    console.log('Fetching Catalog');
 
     const params = {
       title: searchTerm,
@@ -197,7 +185,6 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEve
             <>
               <CatalogTable
                 tableData={tableData}
-                // handleEditForm={handleEditForm}
                 handleActionClick={onDayPlanner ? addExistingEventFunc : handleDeleteClick}
                 onDayPlanner={onDayPlanner}
                 setCurrEvent={setCurrEvent}
@@ -219,12 +206,6 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEve
           onClose={onCreateFormClose}
           setDataShouldRevalidate={setDataShouldRevalidate}
         />
-        {/* <CreateEventFormModal
-          isOpen={isEditFormOpen}
-          onClose={onEditFormClose}
-          eventData={editData}
-          setDataShouldRevalidate={setDataShouldRevalidate}
-        /> */}
         <DeleteEventModal
           isOpen={isDeleteOpen}
           onClose={onDeleteClose}

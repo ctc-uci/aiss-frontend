@@ -56,7 +56,7 @@ const PublishedSchedule = () => {
 
     };
     renderTable();
-  }, [currentUser, curSeason, allSeasons]);
+  }, []);
 
   //update chakra table container accordingly
   return (
