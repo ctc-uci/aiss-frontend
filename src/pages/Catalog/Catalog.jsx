@@ -154,8 +154,8 @@ export default function Catalog({ onDayPlanner, addExistingEventFunc, setCurrEve
           <Flex gap="3" justifyContent="flex-end" w="100%" zIndex={2}>
             <SearchFilter name="Season" options={seasonOptions} filter={seasonFilter} />
             <SearchFilter name="Cohort" options={yearOptions} filter={yearFilter} />
-            <SearchFilter name="Topic" options={subjectOptions} filter={subjectFilter} />
-            <SearchFilter name="Type" options={eventOptions} filter={eventFilter} />
+            <SearchFilter name="Subject" options={subjectOptions} filter={subjectFilter} />
+            <SearchFilter name="Event Type" options={eventOptions} filter={eventFilter} />
             <Link
               fontSize="1rem"
               mr="2"

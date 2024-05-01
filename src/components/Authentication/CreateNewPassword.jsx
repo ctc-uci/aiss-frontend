@@ -1,32 +1,37 @@
 import { useState } from 'react';
-import { sendPasswordReset } from '../../utils/auth_utils';
+import PropTypes from 'prop-types';
+import { confirmNewPassword } from '../../utils/auth_utils';
 import { FormControl, Input, Button, Center, Link, Box, Heading, Text, Alert, AlertDescription} from '@chakra-ui/react';
 
-
-const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+const CreateNewPassword = ({ code }) => {
+  const [password, setPassword] = useState('');
+  const [checkPassword, setCheckPassword] = useState('');
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
 
-  const handleForgotPassword = async e => {
+  const handleResetPassword = async e => {
     try {
       e.preventDefault();
-      await sendPasswordReset(email);
       setHasError(false);
+      if (password !== checkPassword) {
+        throw new Error("Passwords do not match.");
+      }
+      await confirmNewPassword(code, password);
       setErrorMessage('');
-      window.location.replace("/forgotPasswordConfirmation");
+      setPassword('');
+      window.location.replace("/createNewPasswordConfirmation");
     } catch (err) {
-        setHasError(true);
-        if (err.code === 'auth/invalid-email') {
-          setErrorMessage("Email could not be found. Please try again.");
-        }
-        else {
-          setErrorMessage(err.message);
-        }
-      console.log(err)
+      setHasError(true);
+      console.log(err.message);
+      if (err.code === "auth/weak-password"){
+        setErrorMessage("Password must be at least 6 characters.");
+      } else if (err.code === "auth/invalid-action-code"){
+        setErrorMessage("Link has expired.");
+      } else {
+        setErrorMessage(err.message);
+      }
     }
   };
-
   return (
     <Box>
       <Box>
@@ -54,19 +59,30 @@ const ForgotPassword = () => {
             minWidth: '300px',
           }}
         >
-          <Heading as='h1' size='lg'>Reset Password</Heading>
-          <Text as='h2' size='md' mt={2}>Enter email address associated with account</Text>
-          <form onSubmit={handleForgotPassword}>
+          <Heading as='h1' size='lg'>Enter New Password</Heading>
+          <Text as='h2' size='md' mt={2}>Please enter a new password.</Text>
+          <form onSubmit={handleResetPassword}>
             <FormControl>
               <Box>
                 <Input
                   style={{ width: '360px', height: '48px', marginTop: '40px' }}
-                  type="email"
+                  id={"password"}
                   isRequired={true}
-                  onChange={({ target }) => setEmail(target.value)}
-                  placeholder="Email Address"
+                  onChange={({ target }) => setPassword(target.value)}
+                  placeholder="Enter new password"
                   borderColor={"#CBD5E0"}
                   borderRadius= '3px'
+                  type="password"
+                />
+                <Input
+                  style={{ width: '360px', height: '48px', margin: '20px' }}
+                  id={"checkPassword"}
+                  isRequired={true}
+                  onChange={({ target }) => setCheckPassword(target.value)}
+                  placeholder="Re-enter password"
+                  borderColor={"#CBD5E0"}
+                  borderRadius= '3px'
+                  type="password"
                 />
               </Box>
               <Box
@@ -110,7 +126,7 @@ const ForgotPassword = () => {
                   color={'#ffffff'}
                   _hover={{backgroundColor: '#1A2559'}}
                 >
-                  Send Instructions
+                  Reset Password
                 </Button>
 
               </Box>
@@ -119,7 +135,11 @@ const ForgotPassword = () => {
         </Box>
       </Center>
     </Box>
-  );
+    );
 };
 
-export default ForgotPassword;
+CreateNewPassword.propTypes = {
+  code: PropTypes.string.isRequired,
+};
+
+export default CreateNewPassword;

@@ -361,7 +361,7 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
               {/* SUBJECT */}
               <Box mb="1rem">
                 <FormControl>
-                  <FormLabel fontWeight="bold" color="gray.600">Topic</FormLabel>
+                  <FormLabel fontWeight="bold" color="gray.600">Subject</FormLabel>
                   <Dropdown
                     options={subjectOptions}
                     filter={subjectFilter}

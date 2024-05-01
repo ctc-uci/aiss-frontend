@@ -73,6 +73,7 @@ const Dropdown = ({ options, filter, selected, defaults, badgeColor, width }) =>
               borderRadius="10rem"
               fontWeight="normal"
               px="0.5rem"
+              py="0.2rem"
               mr="0.125rem"
             >
               {option}
