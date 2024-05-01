@@ -18,6 +18,7 @@ const DailyEvent = ({ event }) => {
 
   useEffect(() => {
     setEventData(event);
+    setConfirmEvent(event.confirmed);
 
     if (event.year) {
       if( event.year.length == 2)
@@ -73,11 +74,11 @@ const DailyEvent = ({ event }) => {
 
   return (
     <Box
-      bg={eventData.confirmed ? '#F7FAFC' : '#FEF1DC'}
+      bg={confirmEvent ? '#F7FAFC' : '#FEF1DC'}
       p={6}
       borderRadius="7"
       borderLeftWidth="10px"
-      borderColor={eventData.confirmed ? '#2B93D1' : '#F69052'}
+      borderColor={confirmEvent ? '#2B93D1' : '#F69052'}
       boxShadow="md"
     >
       <Flex minWidth="max-content" alignItems="flex-start" gap="50" justifyContent="space-between">
