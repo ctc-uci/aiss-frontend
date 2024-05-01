@@ -21,6 +21,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
     const [checkedAccountIds, setCheckedAccountIds] = useState([]);
     const [dataShouldRevalidate, setDataShouldRevalidate] = useState(false);
     const {currentUser} = useAuthContext();
+    const [isSelectAll, setIsSelectAll] = useState(false);
 
     const fetchTableData = useCallback(async () => {
         try {
@@ -58,6 +59,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
     useEffect(() => {
         setIndividualChecked(new Array(totalRowCount).fill(false));
         setCheckedAccountIds([]);
+        setIsSelectAll(false);
     }, [searchQuery, currentPage, totalRowCount]);
 
     const handleDeleteClick = id => {
@@ -82,6 +84,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
             setCheckedAccountIds([]);
         }
         setIndividualChecked(newIndividualChecked);
+        setIsSelectAll(e.target.checked);
     }
 
     const updateIndividualCheckedAccountIds = (e, id, index) => {
@@ -105,7 +108,7 @@ const ApprovedAccounts = ( {accountType, searchQuery} ) => {
             <Table variant='simple'>
               <Thead>
                 <Tr>
-                  <Th w="5%" h="50px"><Checkbox onChange={(e) => { updateAllCheckedAccountIds(e) }}/></Th>
+                  <Th w="5%" h="50px"><Checkbox isChecked={isSelectAll} onChange={(e) => { updateAllCheckedAccountIds(e) }}/></Th>
                   <Th w="30%">Name</Th>
                   <Th w="30%">Email</Th>
                   <Th w="0" textAlign="right" >Deactivate</Th>

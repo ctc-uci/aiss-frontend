@@ -77,7 +77,7 @@ const Accounts = () => {
                                 </InputGroup>
                             </Box>
                         </HStack>
-                        <Box><ApprovedAccounts accountType="student" searchQuery={approvedStudentKeyword}/></Box>
+                        <ApprovedAccounts accountType="student" searchQuery={approvedStudentKeyword}/>
                     </TabPanel>
                 </TabPanels>
             </Tabs>

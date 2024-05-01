@@ -10,7 +10,6 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
     const [checkedAccountIds, setCheckedAccountIds] = useState([]);
     const [accountStatus, setAccountStatus] = useState({});
 
-
     useEffect(() => {
         const renderTable = async () => {
             const { data } = await NPOBackend.get('/users/pending-accounts', {params: {accountType: accountType}});
@@ -28,12 +27,6 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
         setAccountStatus(newAccountStatus);
     }, [pendingAccounts])
 
-    const changeStatus = ((accountid, status) => {
-        let newAccountStatus = {...accountStatus};
-        newAccountStatus[accountid] = status;
-        setAccountStatus(newAccountStatus);
-    });
-
     const handleApproveDeclineUser = async (ids, option) => {
         try {
             for (let i = 0; i < ids.length; i++) {
@@ -44,7 +37,14 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                     await NPOBackend.delete(`/users/${ids[i]}`);
                 }
             }
+            const newAccountStatus = {... accountStatus};
+            for (let i = 0; i < ids.length; i++) {
+                newAccountStatus[ids[i]] = option === "approve-option" ? "approved" : "declined";
+            }
+            setAccountStatus(newAccountStatus);
+            // Note: if user clicked individual accept/decline, all previously checked items will clear
             setIndividualChecked(new Array(pendingAccounts.length).fill(false));
+            setCheckedAccountIds([]);
         } catch (error) {
             console.log(error);
         }
@@ -92,16 +92,6 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
         }
     }
 
-    const acceptDeclineAllClick = (option) => {
-        handleApproveDeclineUser(checkedAccountIds, option);
-        const newAccountStatus = {... accountStatus};
-        for (let i = 0; i < checkedAccountIds.length; i++) {
-            newAccountStatus[checkedAccountIds[i]] = option === "approve-option" ? "approved" : "declined";
-        }
-        setAccountStatus(newAccountStatus);
-        setCheckedAccountIds([]);
-    }
-
     return (
         <TableContainer border="1px solid #ededed" borderRadius="10px">
             <Table variant='simple'>
@@ -114,7 +104,7 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                         {checkedAccountIds.length > 0 &&
                             <Th w="20%" textAlign="right">
                                 <Button
-                                    onClick={ () => acceptDeclineAllClick("approve-option") }
+                                    onClick={ () => handleApproveDeclineUser(checkedAccountIds, "approve-option") }
                                     mr={3}
                                     colorScheme='blue'
                                     fontSize="sm"
@@ -125,7 +115,7 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                                     Accept
                                 </Button>
                                 <Button
-                                    onClick={ () => acceptDeclineAllClick("decline-option") }
+                                    onClick={ () => handleApproveDeclineUser(checkedAccountIds, "decline-option") }
                                     fontSize="sm"
                                     h="6"
                                     w="16"
@@ -153,7 +143,7 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                                 accountStatus[account.id] === "pending" ? (
                                     <Td textAlign="right">
                                         <Button
-                                            onClick={() => { handleApproveDeclineUser([account.id], "approve-option"); changeStatus(account.id, "approved");}}
+                                            onClick={() => { handleApproveDeclineUser([account.id], "approve-option");}}
                                             mr={3}
                                             colorScheme='blue'
                                             fontSize="sm"
@@ -164,7 +154,7 @@ const PendingAccounts = ( {accountType, setHasPendingAccounts} ) => {
                                             Accept
                                         </Button>
                                         <Button
-                                            onClick={() => { handleApproveDeclineUser([account.id], "decline-option"); changeStatus(account.id, "declined");}}
+                                            onClick={() => { handleApproveDeclineUser([account.id], "decline-option");}}
                                             fontSize="sm"
                                             h="6"
                                             w="16"
