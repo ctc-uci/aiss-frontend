@@ -78,16 +78,16 @@ const DailyEvent = ({ event }) => {
       p={6}
       borderRadius="7"
       borderLeftWidth="10px"
-      borderColor={confirmEvent ? '#2B93D1' : '#F69052'}
+      borderColor={eventData.title === 'Break / Team Time' ? '#CBD5E0' : (confirmEvent ? '#2B93D1' : '#F69052')}
       boxShadow="md"
     >
       <Flex minWidth="max-content" alignItems="flex-start" gap="50" justifyContent="space-between">
-        <Text>
+        <Text width="10vw">
           {formatDate(eventData.startTime)} - {formatDate(eventData.endTime)}
         </Text>
 
         <Grid gap={2}>
-          <Text fontWeight="bold">{eventData.title}</Text>
+          <Text fontWeight={eventData.title === 'Break / Team Time' ? 'normal' : 'bold'}>{eventData.title}</Text>
           <Text maxW="30vw" whiteSpace="pre-wrap">{eventData.description}</Text>
         </Grid>
 
