@@ -10,16 +10,19 @@ import {
   TableContainer,
   Button,
   Checkbox,
+  Text,
+  HStack,
+  Spacer,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
   const [pendingAccounts, setPendingAccounts] = useState([]);
-  const [individualChecked, setIndividualChecked] = useState(
-    new Array(pendingAccounts.length).fill(false),
-  );
   const [checkedAccountIds, setCheckedAccountIds] = useState([]);
   const [accountStatus, setAccountStatus] = useState({});
+  const [timeoutIds, setTimeoutIds] = useState({});
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [isMultiSelect, setIsMultiSelect] = useState(false);
 
   useEffect(() => {
     const renderTable = async () => {
@@ -40,39 +43,78 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
     setAccountStatus(newAccountStatus);
   }, [pendingAccounts]);
 
-  const handleApproveDeclineUser = async (ids, option) => {
-    try {
-      for (let i = 0; i < ids.length; i++) {
-        if (option === 'approve-option') {
-          await NPOBackend.put(`/users/approve/${ids[i]}`);
-        } else if (option === 'decline-option') {
-          await NPOBackend.delete(`/users/${ids[i]}`);
-        }
-      }
-      const newAccountStatus = { ...accountStatus };
-      for (let i = 0; i < ids.length; i++) {
-        newAccountStatus[ids[i]] = option === 'approve-option' ? 'approved' : 'declined';
-      }
-      setAccountStatus(newAccountStatus);
-      // Note: if user clicked individual accept/decline, all previously checked items will clear
-      setIndividualChecked(new Array(pendingAccounts.length).fill(false));
-      setCheckedAccountIds([]);
-    } catch (error) {
-      console.log(error);
+  const undoChanges = (ids) => {
+    console.log(ids.toString());
+    let timeoutKey = ids.toString();
+    clearTimeout(timeoutIds[timeoutKey]);
+    const newTimeoutIds = {... timeoutIds};
+    delete newTimeoutIds[timeoutKey];
+    setTimeoutIds(newTimeoutIds);
+    const newAccountStatus = { ...accountStatus };
+    for (let i = 0; i < ids.length; i++) {
+      newAccountStatus[ids[i]] = 'pending';
     }
+    setAccountStatus(newAccountStatus);
+    if (Object.keys(newTimeoutIds).length === 0) {
+      setIsWaiting(false);
+    }
+    if (ids.length > 1) {
+      setIsMultiSelect(false);
+    }
+    console.log("canceled change!")
+  }
+
+  const handleApproveDeclineUser = async (ids, option, status) => {
+    const timeoutId = setTimeout(async () => {
+      try {
+        let newCheckedAccountIds = checkedAccountIds;
+        for (let i = 0; i < ids.length; i++) {
+          if (option === 'approve-option') {
+            await NPOBackend.put(`/users/approve/${ids[i]}`);            
+          } else if (option === 'decline-option') {
+            await NPOBackend.delete(`/users/${ids[i]}`);
+          }
+          let index = newCheckedAccountIds.indexOf(ids[i]);
+          newCheckedAccountIds.splice(index, 1);
+        }
+        if (JSON.stringify(newCheckedAccountIds) === JSON.stringify(checkedAccountIds)) {
+          setCheckedAccountIds(newCheckedAccountIds);
+        }
+        // const newAccountStatus = { ...accountStatus };
+        // for (let i = 0; i < ids.length; i++) {
+        //   newAccountStatus[ids[i]] = option === 'approve-option' ? 'approved' : 'declined';
+        // }
+        const newAccountStatus = status;
+        for (let i = 0; i < ids.length; i++) {
+          newAccountStatus[ids[i]] = option === 'approve-option' ? 'approved' : 'declined';
+        }
+        setAccountStatus(newAccountStatus);
+        if (Object.keys(timeoutIds).length === 0) {
+          setIsWaiting(false);
+        }
+        if (ids.length > 1) {
+          setIsMultiSelect(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }, 5000);
+    setIsWaiting(true);
+    // Initiate waiting state
+    const waitingAccountStatus = { ...accountStatus };
+    for (let i = 0; i < ids.length; i++) {
+      waitingAccountStatus[ids[i]] = option === 'approve-option' ? 'waiting-approved' : 'waiting-declined';
+    }
+    setAccountStatus(waitingAccountStatus);
+    const newTimeoutIds = {... timeoutIds};
+    newTimeoutIds[ids.toString()] = timeoutId;
+    setTimeoutIds(newTimeoutIds);
   };
 
-  const updateAllIndividualChecked = e => {
-    let newIndividualChecked = [];
-    for (let i = 0; i < pendingAccounts.length; i++) {
-      if (accountStatus[pendingAccounts[i].id] === 'pending') {
-        newIndividualChecked.push(e.target.checked);
-      } else {
-        newIndividualChecked.push(false);
-      }
-    }
-    setIndividualChecked(newIndividualChecked);
-  };
+  const handleMultiSelect = async (ids, option, status) => {
+    setIsMultiSelect(true);
+    handleApproveDeclineUser(ids, option, status);
+  }
 
   const updateAllCheckedAccountIds = e => {
     if (e.target.checked) {
@@ -88,10 +130,27 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
     }
   };
 
-  const updateIndividualCheckedAccountIds = (e, id, index) => {
-    const newIndividualChecked = [...individualChecked];
-    newIndividualChecked[index] = e.target.checked;
-    setIndividualChecked(newIndividualChecked);
+  useEffect(() => {
+    console.log(checkedAccountIds);
+  }, [checkedAccountIds]);
+
+  useEffect(() => {
+    console.log(timeoutIds);
+  }, [timeoutIds]);
+
+  useEffect(() => {
+    console.log(accountStatus);
+}, [accountStatus])
+
+  useEffect(() => {
+    console.log(`isMultiSelect: ${isMultiSelect}`);
+  }, [isMultiSelect])
+
+  useEffect(() => {
+    console.log(`isWaiting ${isWaiting}`);
+  }, [isWaiting])
+
+  const updateIndividualCheckedAccountIds = (e, id) => {
     let newCheckedAccountIds = [...checkedAccountIds];
     if (e.target.checked) {
       newCheckedAccountIds.push(id);
@@ -111,7 +170,6 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
             <Th w="5%" h="50px">
               <Checkbox
                 onChange={e => {
-                  updateAllIndividualChecked(e);
                   updateAllCheckedAccountIds(e);
                 }}
               />
@@ -121,10 +179,10 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
             <Th w="0" textAlign="right">
               Action
             </Th>
-            {checkedAccountIds.length > 0 && (
+            {checkedAccountIds.length > 0 && !isWaiting ? (
               <Th w="20%" textAlign="right">
                 <Button
-                  onClick={() => handleApproveDeclineUser(checkedAccountIds, 'approve-option')}
+                  onClick={() => handleMultiSelect([...checkedAccountIds], 'approve-option', {...accountStatus})}
                   mr={3}
                   colorScheme="blue"
                   fontSize="sm"
@@ -135,7 +193,7 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
                   Accept
                 </Button>
                 <Button
-                  onClick={() => handleApproveDeclineUser(checkedAccountIds, 'decline-option')}
+                  onClick={() => handleMultiSelect([...checkedAccountIds], 'decline-option', {...accountStatus})}
                   fontSize="sm"
                   h="6"
                   w="16"
@@ -144,6 +202,22 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
                   Decline
                 </Button>
               </Th>
+            ) : isMultiSelect ? (
+              <Th w="20%" textAlign="right">
+                <Button 
+                  onClick={() => { undoChanges([...checkedAccountIds]) }}
+                  fontSize="sm"
+                  h="6"
+                  w="16"
+                  fontWeight="400"
+                >
+                  Undo
+                </Button>
+              </Th>
+            // ) : isWaiting ? (
+            //   <Th w="20%" textAlign="right"></Th>
+            ) : (
+              <></>
             )}
           </Tr>
         </Thead>
@@ -153,9 +227,9 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
               <Td>
                 <Checkbox
                   isDisabled={accountStatus[account.id] != 'pending'}
-                  isChecked={individualChecked[i]}
+                  isChecked={checkedAccountIds.includes(account.id)}
                   onChange={e => {
-                    updateIndividualCheckedAccountIds(e, account.id, i);
+                    updateIndividualCheckedAccountIds(e, account.id);
                   }}
                 ></Checkbox>
               </Td>
@@ -170,7 +244,7 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
                 <Td textAlign="right">
                   <Button
                     onClick={() => {
-                      handleApproveDeclineUser([account.id], 'approve-option');
+                      handleApproveDeclineUser([account.id], 'approve-option', {...accountStatus});
                     }}
                     mr={3}
                     colorScheme="blue"
@@ -183,7 +257,7 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
                   </Button>
                   <Button
                     onClick={() => {
-                      handleApproveDeclineUser([account.id], 'decline-option');
+                      handleApproveDeclineUser([account.id], 'decline-option', {...accountStatus});
                     }}
                     fontSize="sm"
                     h="6"
@@ -193,7 +267,39 @@ const PendingAccounts = ({ accountType, setHasPendingAccounts }) => {
                     Decline
                   </Button>
                 </Td>
-              ) : accountStatus[account.id] === 'approved' ? (
+              ) : !isMultiSelect && accountStatus[account.id] === 'waiting-approved' ?(
+                <Td>
+                  <HStack>
+                    <Spacer />
+                    <Text color="green">Approved</Text>
+                    <Button 
+                      onClick={() => { undoChanges([account.id]) }}
+                      fontSize="sm"
+                      h="6"
+                      w="16"
+                      fontWeight="400"
+                    >
+                      Undo
+                    </Button>
+                  </HStack>
+                </Td>
+              ) : !isMultiSelect && accountStatus[account.id] === 'waiting-declined' ?(
+                <Td>
+                  <HStack>
+                    <Spacer />
+                    <Text color="red">Declined</Text>
+                    <Button 
+                      onClick={() => { undoChanges([account.id]) }}
+                      fontSize="sm"
+                      h="6"
+                      w="16"
+                      fontWeight="400"
+                    >
+                      Undo
+                    </Button>
+                  </HStack>
+                </Td>
+              ) : accountStatus[account.id] === 'approved' ||  accountStatus[account.id] === 'waiting-approved' ? (
                 <Td textAlign="right" color="green">
                   Approved
                 </Td>
