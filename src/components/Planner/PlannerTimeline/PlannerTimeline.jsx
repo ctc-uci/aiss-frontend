@@ -25,7 +25,6 @@ const PlannerTimeline = () => {
   }
 
   const startEditAndSetCurrEventId = (id) => {
-    // console.log('selected', id);
     if (isEdit) {
       // add back the original state of the currently edited event
       const reAddedEvent = new PlannedEvent(
@@ -48,14 +47,11 @@ const PlannerTimeline = () => {
   }
 
   useEffect(() => {
-    // console.log('updating timeline!');
     updateTimeline();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateTimeline = async () => {
     const psEvents = await fetchDayInfo(dayId);
-    // console.log(psEvents);
     if (psEvents && psEvents[0].id) {
       setPlannedEvents(psEvents.map((data) => new PlannedEvent(
         data.id,
@@ -91,14 +87,11 @@ const PlannerTimeline = () => {
     );
   }, []);
 
-  // console.log(plannedEvents);
-
   return (
     <div id={s['planner-timeline-container']}>
       <div className={`${s['timeline-grid']} ${s['gray-scrollbar-vertical']}`}>
         {timelineBlocks}
         {plannedEvents.map(plannedEvent => {
-          // console.log(plannedEvent);
           const { id, name, startTime, endTime, hostName, isTentative } = plannedEvent;
           const gridStyles = plannedEvent.calculateGridStyles(addedEvents);
           addedEvents.push({startTime, endTime});

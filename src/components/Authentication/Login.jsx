@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { instanceOf } from 'prop-types';
 import { Cookies, withCookies } from '../../utils/cookie_utils';
 import { logInWithEmailAndPassword, useNavigate } from '../../utils/auth_utils';
-// import { logInWithEmailAndPassword , signInWithGoogle, useNavigate } from '../utils/auth_utils';
 import { Box, Heading, Text, FormControl, Input, Button, Center, Link, Alert, AlertDescription } from '@chakra-ui/react';
-// import styles from 
 
 const Login = ({ cookies }) => {
   const navigate = useNavigate();
@@ -20,7 +18,12 @@ const Login = ({ cookies }) => {
       window.location.reload(true);
     } catch (err) {
       setHasError(true);
-      setErrorMessage(err.message);
+      if (err.code === 'auth/invalid-credential') {
+        setErrorMessage("Account could not be found with given information. Please check your username or password and try again.");
+      }
+      else {
+        setErrorMessage(err.message);
+      }
     }
   };
 
@@ -28,7 +31,7 @@ const Login = ({ cookies }) => {
     <Box>
       <Box>
         { hasError &&
-          <Alert 
+          <Alert
             status='warning'
             alignItems='center'
             justifyContent='center'
@@ -60,6 +63,7 @@ const Login = ({ cookies }) => {
                 <Input
                   style={{ width: '360px', height: '48px', marginTop: '20px' }}
                   type="email"
+                  isRequired={true}
                   onChange={({ target }) => setEmail(target.value)}
                   placeholder="Email"
                   borderColor={"#CBD5E0"}
@@ -68,6 +72,7 @@ const Login = ({ cookies }) => {
                 <Input
                   style={{ width: '360px', height: '48px', margin: '20px' }}
                   type="password"
+                  isRequired={true}
                   onChange={({ target }) => setPassword(target.value)}
                   placeholder="Password"
                   borderColor={"#CBD5E0"}
@@ -97,7 +102,7 @@ const Login = ({ cookies }) => {
                     color={'#155696'}
                     variant='outline'
                     onMouseOver={(e) => {
-                      e.target.style.backgroundColor = '#E0E0E0'; 
+                      e.target.style.backgroundColor = '#E0E0E0';
                     }}
                     onMouseOut={(e) => {
                       e.target.style.backgroundColor = '#FFFFFF';
@@ -119,7 +124,7 @@ const Login = ({ cookies }) => {
                   backgroundColor={'#243268'}
                   color={'#ffffff'}
                   onMouseOver={(e) => {
-                    e.target.style.backgroundColor = '#1A2559'; 
+                    e.target.style.backgroundColor = '#1A2559';
                   }}
                   onMouseOut={(e) => {
                     e.target.style.backgroundColor = '#243268';

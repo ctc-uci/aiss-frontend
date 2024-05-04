@@ -57,8 +57,6 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
 
     // make post request to catalog backend route
     try {
-      // let response;
-      // let id;
       if (eventData) {
         await NPOBackend.put(`/catalog/${eventData.id}`, {
           host: host,
@@ -69,7 +67,6 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
           description: description,
           year: year,
         });
-        // id = response.data[0].id;
       } else {
         await NPOBackend.post(`/catalog`, {
           host: host,
@@ -80,7 +77,6 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
           description: description,
           year: year,
         });
-        // id = response.data.id;
       }
       reset();
       toast({
@@ -117,7 +113,6 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
 
   return (
     <Box width="80%" m="auto" mt="20px">
-    {/* <Heading size="lg" color="gray.600" mb="20px">Event Form</Heading> */}
     <Box p="20px" border="1px" borderRadius="10px" borderColor="gray.200">
       <form onSubmit={handleSubmit(data => submitData(data))}>
         <Heading size="md" color="gray.600">Event Information</Heading>
@@ -246,7 +241,6 @@ CreateEventForm.propTypes = {
   setDataShouldRevalidate: PropTypes.func,
   closeModal: PropTypes.func,
 };
-//   dayId: PropTypes.number,
 
 
 CreateEventForm.defaultProps = {

@@ -1,8 +1,5 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useState } from 'react';
 import axios from 'axios';
 import { renderEmail } from 'react-html-email';
-//import { sendEmail } from '../../utils/utils';
 
 const AISSBackend = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_HOST,

@@ -12,6 +12,8 @@ const PublishedSchedule = () => {
   const [allSeasons, setAllSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState('');
   const [seasonHover, setSeasonHover] = useState(false);
+  const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
+
 
   const getTodaySeason = () => {
     let today = new Date();
@@ -31,30 +33,38 @@ const PublishedSchedule = () => {
 
   const curSeason = getTodaySeason();
 
-  useEffect(() => {
-    const renderTable = async () => {
-      const { data } = await NPOBackend.get('/published-schedule/all-seasons');
-      if (data.indexOf(curSeason) == -1) {
-        data.unshift(curSeason);
+  const renderSeasons = async () => {
+    const { data } = await NPOBackend.get('/published-schedule/all-seasons');
+    if (data.indexOf(curSeason) == -1) {
+      data.unshift(curSeason);
+    }
+
+    const seasonOrder = ['Fall', 'Summer', 'Spring'];
+    data.sort((a, b) => {
+      // Compare years first
+      if (a.split(' ')[1] !== b.split(' ')[1]) {
+        return b.split(' ')[1] - a.split(' ')[1];
+      } else {
+        return seasonOrder.indexOf(a.split(' ')[0]) - seasonOrder.indexOf(b.split(' ')[0]);
       }
+    });
 
+    setAllSeasons(data);
+  };
+
+  useEffect(() => {
+    if (selectedSeason === '') {
       setSelectedSeason(curSeason);
+    }
+    renderSeasons();
+  }, []);
 
-      const seasonOrder = ['Fall', 'Summer', 'Spring'];
-      data.sort((a, b) => {
-        // Compare years first
-        if (a.split(' ')[1] !== b.split(' ')[1]) {
-          return b.split(' ')[1] - a.split(' ')[1];
-        } else {
-          return seasonOrder.indexOf(a.split(' ')[0]) - seasonOrder.indexOf(b.split(' ')[0]);
-        }
-      });
-
-      setAllSeasons(data);
-
-    };
-    renderTable();
-  }, [currentUser, curSeason]);
+  useEffect(() => {
+    if (dataShouldRevalidate) {
+      renderSeasons();
+      setShouldDataRevalidate(false);
+    }
+  }, [dataShouldRevalidate, renderSeasons])
 
   //update chakra table container accordingly
   return (
@@ -92,9 +102,9 @@ const PublishedSchedule = () => {
 
       {/* tables for each season */}
       {selectedSeason != '' ? (
-        <PublishedScheduleTable season={selectedSeason} allSeasons={allSeasons} />
+        <PublishedScheduleTable season={selectedSeason} allSeasons={allSeasons} dataShouldRevalidate={dataShouldRevalidate} setShouldDataRevalidate={setShouldDataRevalidate} />
       ) : (
-        <PublishedScheduleTable season={curSeason} allSeasons={allSeasons} />
+        <PublishedScheduleTable season={curSeason} allSeasons={allSeasons} dataShouldRevalidate={dataShouldRevalidate} setShouldDataRevalidate={setShouldDataRevalidate} />
       )}
     </Box>
   );

@@ -17,7 +17,6 @@ const Logout = ({ cookies }) => {
 
   return (
     <div>
-      {/* <h2 style={{ color: 'white' }}>Logout</h2> */}
       {errorMessage && <p>{errorMessage}</p>}
       <button type="submit" style={{ color: 'white' }} onClick={handleLogout}>
         Log out

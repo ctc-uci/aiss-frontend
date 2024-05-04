@@ -12,7 +12,6 @@ import EmptyDayModal from '../EmptyDayModal';
 
 const PlannerEvents = ({ onClose }) => {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
-  // const [existingEventData, setExistingEventData] = useState({});
   const [dateHeader, setDateHeader] = useState('');
   const [dayData, setDayData] = useState({});
   const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
@@ -24,14 +23,17 @@ const PlannerEvents = ({ onClose }) => {
   const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
   const plannedEvents = plannedEventsContext[0];
 
+  const getUTCDate = (eventDate) => {
+    const utcDate = new Date(eventDate);
+    return new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+  }
+
   const getDayData = async () => {
     try {
-      // console.log('getDayData');
       const response = await NPOBackend.get(`/day/${dayId}`);
       const responseData = response.data[0];
       const [datePart] = responseData.eventDate.split('T');
-      const dateObj = new Date(responseData.eventDate);
-      // console.log(dateObj);
+      const dateObj = getUTCDate(responseData.eventDate);
       setDateHeader(dateObj.toLocaleDateString({ year: 'numeric', month: 'short', day: '2-digit' }));
       setDayData({id: responseData.id, eventDate: datePart, location: responseData.location, details: responseData.notes});
     } catch (error) {
@@ -40,13 +42,11 @@ const PlannerEvents = ({ onClose }) => {
   };
 
   useEffect(() => {
-    // console.log('fetch data first time?')
     getDayData();
   }, [dayId]);
 
   useEffect(() => {
     if (dataShouldRevalidate) {
-      // console.log('reset data');
       getDayData();
       setShouldDataRevalidate(false);
     }
@@ -76,7 +76,6 @@ const PlannerEvents = ({ onClose }) => {
 
   return (
     <div id={s['planner-events-container']} className={s['gray-scrollbar-vertical']}>
-      {/* {overlayIsVisible && <AddEventOverlay eventData={existingEventData} setOverlayIsVisible={openPSEventForm}/>} */}
       <div id={s['planner-browse']}>
         {(isAddingEvent || isEdit) &&
           <AddEventToPublishedScheduleForm closeForm={togglePSForm} />

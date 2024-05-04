@@ -24,7 +24,6 @@ const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId, closeForm }) 
 
   const handleConfirmDelete = async idToDelete => {
     try {
-      console.log('id to delete:', idToDelete);
       toast.closeAll();
       await NPOBackend.delete(`/published-schedule/${idToDelete}`);
       setPlannedEvents(plannedEvents.filter(e => (e.id != -1 && e.id != idToDelete)));
@@ -47,8 +46,6 @@ const RemoveTimelineEventModal = ({ isOpen, onClose, deleteItemId, closeForm }) 
       console.error(error);
     }
   };
-
-  // console.log(deleteItemId);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>

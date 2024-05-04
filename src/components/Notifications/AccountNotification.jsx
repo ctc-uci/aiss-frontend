@@ -14,7 +14,6 @@ import {
   GridItem,
   Text,
   Link,
-  // useToast,
 } from '@chakra-ui/react';
 
 const AccountNotification = ({
@@ -27,7 +26,7 @@ const AccountNotification = ({
   declineAfterTimer,
   setDeclineAfterTimer,
 }) => {
-  // const toast = useToast();
+
   const [accounts, setAccounts] = useState(notificationBlock.getNotificationData().accounts);
   const [disableChildrenButtons, setDisableChildrenButtons] = useState(false);
 
@@ -75,36 +74,12 @@ const AccountNotification = ({
   useEffect(() => {
     if (approveAfterTimer && removeNotificationBlock) {
       removeEntry(notificationBlock.key);
-      // toast({
-      //   title: `Approved.`,
-      //   status: 'success',
-      //   duration: 9000,
-      //   isClosable: true,
-      // });
     } else if (declineAfterTimer && removeNotificationBlock) {
       removeEntry(notificationBlock.key);
-      // toast({
-      //   title: `Declined.`,
-      //   status: 'info',
-      //   duration: 9000,
-      //   isClosable: true,
-      // });
     } else if (approveAfterTimer) {
       setAccounts(accounts => accounts.filter(account => account.id !== idToRemove));
-      // toast({
-      //   title: `Approved.`,
-      //   status: 'success',
-      //   duration: 9000,
-      //   isClosable: true,
-      // });
     } else if (declineAfterTimer) {
       setAccounts(accounts => accounts.filter(account => account.id !== idToRemove));
-      // toast({
-      //   title: `Declined.`,
-      //   status: 'info',
-      //   duration: 9000,
-      //   isClosable: true,
-      // });
     }
   }, [approveAfterTimer, declineAfterTimer, removeNotificationBlock]);
 
