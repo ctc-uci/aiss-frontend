@@ -76,6 +76,7 @@
 /* PLANNER EVENTS */
 #planner-events-container {
   padding: 2rem;
+  padding-top: 1.5rem;
   /* padding-right: max(5%, 2rem); */
   flex-grow: 1;
   background-color: #edf2f7;
