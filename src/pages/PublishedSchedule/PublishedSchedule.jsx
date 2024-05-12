@@ -4,7 +4,7 @@ import AUTH_ROLES from '../../utils/auth_config.js';
 import { useAuthContext } from '../../common/AuthContext.jsx';
 import { useEffect, useState } from 'react';
 import { Box, HStack, IconButton, Input, InputGroup, InputLeftElement, Select, Spacer, Text, useDisclosure } from '@chakra-ui/react';
-import { AddIcon, SearchIcon } from '@chakra-ui/icons';
+import { AddIcon, CloseIcon, SearchIcon } from '@chakra-ui/icons';
 import AddDayModal from './AddDayModal.jsx';
 import StatModal from './StatisticsModal.jsx';
 import { IoStatsChart } from 'react-icons/io5';
@@ -180,22 +180,31 @@ const PublishedSchedule = () => {
 
         <Spacer />
 
-        <InputGroup size="sm" maxW="sm" mr="2rem" w="20vw">
+        <InputGroup size="sm" maxW="sm" mr="2rem" w="15vw">
           <InputLeftElement>
-            <SearchIcon
-              position="absolute"
-              left="1rem"
-              top="50%"
-              transform="translateY(-50%)"
-              color="gray.600"
-              zIndex="10"
-            />
+            {searchedDate.length ?
+              <IconButton
+                background="transparent"
+                size="sm"
+                icon={<CloseIcon/>}
+                onClick={() => setSearchedDate('')}
+              /> :
+              <SearchIcon
+                position="absolute"
+                left="1rem"
+                top="50%"
+                transform="translateY(-50%)"
+                color="gray.600"
+                zIndex="10"
+              />
+            }
           </InputLeftElement>
           <Input
             bgColor="blackAlpha.200"
             borderRadius="6px"
             pl="2.5rem"
             type="date"
+            value={searchedDate}
             onChange={e => setSearchedDate(e.target.value)}
           />
         </InputGroup>
