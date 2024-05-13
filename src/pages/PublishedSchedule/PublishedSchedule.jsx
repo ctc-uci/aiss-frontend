@@ -157,7 +157,7 @@ const PublishedSchedule = () => {
             {selectedSeason}
           </Text>
           <Select
-            mt="-30px"
+            mt="-35px"
             variant="unstyled"
             placeholder={allSeasons.indexOf(curSeason) === -1 && curSeason}
             value={selectedSeason}
@@ -185,9 +185,11 @@ const PublishedSchedule = () => {
             {searchedDate.length ?
               <IconButton
                 background="transparent"
-                size="sm"
+                size="xs"
                 icon={<CloseIcon/>}
                 onClick={() => setSearchedDate('')}
+                color="gray.600"
+                ml="0.5rem"
               /> :
               <SearchIcon
                 position="absolute"
