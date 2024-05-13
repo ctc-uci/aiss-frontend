@@ -21,7 +21,7 @@
 }
 
 .table-container th {
-  background-color: #0e509c;
+  background-color: #243268;
   color: white;
   padding: 15px;
   text-align: center;
@@ -34,12 +34,12 @@
 }
 
 .table-container tbody tr:last-child td:not(:first-child) {
-  background-color: #f0f8ff;
+  font-weight: 700;
   color: blue;
 }
 
 .table-container tbody tr:not(:last-child) td:last-child {
-  background-color: #f0f8ff;
+  font-weight: 700;
   color: blue;
 }
 
