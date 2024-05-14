@@ -1,5 +1,5 @@
 import { Table, Tbody, Tr, Td, TableContainer } from '@chakra-ui/react';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { NPOBackend } from '../../utils/auth_utils';
 import { AccountNotificationBlock, EventNotificationBlock } from './NotificationElement';
 import AccountNotification from './AccountNotification';
@@ -21,13 +21,13 @@ const Notifications = () => {
   const [approveAfterTimer, setApproveAfterTimer] = useState(false);
   const [declineAfterTimer, setDeclineAfterTimer] = useState(false);
   const [idToRemove, setidToRemove] = useState(undefined);
-  let timeoutId = undefined;
+  const timeoutIds = useRef({});
 
   const today = useMemo(() => new Date(), []);
 
-  const undoChanges = () => {
-    clearTimeout(timeoutId);
-    timeoutId = undefined;
+  const undoChanges = id => {
+    clearTimeout(timeoutIds.current[id]);
+    delete timeoutIds.current[id];
   };
 
   const approveAccount = async id => {
@@ -41,7 +41,7 @@ const Notifications = () => {
       setidToRemove(id);
       setApproveAfterTimer(true);
     }, 5000); // 5 second delay
-    timeoutId = timeId;
+    timeoutIds.current[id] = timeId;
   };
 
   const declineAccount = async id => {
@@ -55,7 +55,7 @@ const Notifications = () => {
       setidToRemove(id);
       setDeclineAfterTimer(true);
     }, 5000); // 5 second delay
-    timeoutId = timeId;
+    timeoutIds.current[id] = timeId;
   };
 
   const removeNotificationEntry = key => {
@@ -98,7 +98,7 @@ const Notifications = () => {
           async () => {
             await declineAccount(id);
           },
-          undoChanges,
+          () => undoChanges(id),
         );
         accountsMap.set(formattedDateString, notificationBlock);
       });

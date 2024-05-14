@@ -1,10 +1,13 @@
 import s from '../PlannerLayout.module.css';
-import { useMemo, useContext, useEffect } from 'react';
+import { useMemo, useContext, useEffect, useState } from 'react';
 import { generateTimestamps, minutesInFormattedTime } from '../chrono';
-import { Badge, Text, Box, HStack } from '@chakra-ui/react';
+import { Badge, Box, Heading, HStack, Icon, IconButton, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 import { PlannerContext } from '../PlannerContext';
 import PlannedEvent, { convertTimeToMinutes } from '../PlannedEvent';
 import { NPOBackend } from '../../../utils/auth_utils';
+import { EditIcon } from '@chakra-ui/icons';
+import AddDayModal from '../../../pages/PublishedSchedule/AddDayModal';
+import { FaLocationDot } from "react-icons/fa6";
 
 
 const PlannerTimeline = () => {
@@ -13,6 +16,11 @@ const PlannerTimeline = () => {
 
   const [eventData, setCurrEvent] = currEventContext;
   const [isEdit, setIsEdit] = editContext;
+
+  const [dateHeader, setDateHeader] = useState('');
+  const [dayData, setDayData] = useState({});
+  const { isOpen: isOpenDay, onOpen: onOpenDay, onClose: onCloseDay } = useDisclosure();
+  const [dataShouldRevalidate, setShouldDataRevalidate] = useState(false);
 
   const addedEvents = [];
 
@@ -48,7 +56,15 @@ const PlannerTimeline = () => {
 
   useEffect(() => {
     updateTimeline();
+    getDayData();
   }, []);
+
+  useEffect(() => {
+    if (dataShouldRevalidate) {
+      getDayData();
+      setShouldDataRevalidate(false);
+    }
+  }, [dataShouldRevalidate])
 
   const updateTimeline = async () => {
     const psEvents = await fetchDayInfo(dayId);
@@ -63,6 +79,24 @@ const PlannerTimeline = () => {
       )));
     }
   }
+
+  const getUTCDate = (eventDate) => {
+    const utcDate = new Date(eventDate);
+    return new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+  }
+
+  const getDayData = async () => {
+    try {
+      const response = await NPOBackend.get(`/day/${dayId}`);
+      const responseData = response.data[0];
+      const [datePart] = responseData.eventDate.split('T');
+      const dateObj = getUTCDate(responseData.eventDate);
+      setDateHeader(dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", }));
+      setDayData({id: responseData.id, eventDate: datePart, location: responseData.location, details: responseData.notes});
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // Memoize function call for time labels to increase efficiency between component re-renders
   const timelineBlocks = useMemo(() => {
@@ -89,6 +123,18 @@ const PlannerTimeline = () => {
 
   return (
     <div id={s['planner-timeline-container']}>
+      <Box bg="gray.100" pl="2rem" pr="0.5rem" py="1rem" color="blue.800" borderBottom="2px solid var(--chakra-colors-gray-300)">
+        <HStack>
+          <Heading size="md">{dateHeader}</Heading>
+          <Spacer />
+          <IconButton icon={<EditIcon />} onClick={onOpenDay} color="gray.600" />
+        </HStack>
+        <HStack>
+          <Icon as={FaLocationDot} />
+          <Text> {dayData.location}</Text>
+        </HStack>
+        <AddDayModal isOpenDay={isOpenDay} onCloseDay={onCloseDay} isEdit={true} dayData={dayData} setShouldDataRevalidate={setShouldDataRevalidate}/>
+      </Box>
       <div className={`${s['timeline-grid']} ${s['gray-scrollbar-vertical']}`}>
         {timelineBlocks}
         {plannedEvents.map(plannedEvent => {

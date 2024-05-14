@@ -14,6 +14,9 @@ const subjectOptions = [
   { value: 'engineering', name: 'Engineering' },
   { value: 'math', name: 'Math' },
   { value: 'college readiness', name: 'College Readiness' },
+  { value: 'soft skills', name: 'Soft Skills' },
+  { value: 'writing', name: 'Writing' },
+  { value: 'other', name: 'Other' },
 ];
 const eventOptions = [
   { value: 'guest speaker', name: 'Guest Speaker' },

@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NPOBackend } from '../../utils/auth_utils';
-import { Box, Select } from '@chakra-ui/react';
+import { Box, Select, Text, IconButton, useDisclosure, Heading, Flex } from '@chakra-ui/react';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import './StatTable.css';
+import MoreInfoModal from './MoreInfoModal';
 
 const StatTable = ({ season, allSeasons }) => {
   const [stats, setStats] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(season);
+  const [tableWidth, setTableWidth] = useState(0);
+  const tableRef = useRef(null);
+  const { isOpen: isOpenMoreInfo, onOpen: onOpenMoreInfio, onClose: onCloseMoreInfo } = useDisclosure();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -17,6 +22,9 @@ const StatTable = ({ season, allSeasons }) => {
         const response = await NPOBackend.get(`/published-schedule/stats?season=${curSeason.toLowerCase()}&year=${curYear}`);
         const data = response.data;
         setStats(data);
+        if (tableRef.current) {
+          setTableWidth(tableRef.current.offsetWidth);
+        }
       } catch (error) {
         console.error('Error fetching statistics:', error);
       }
@@ -46,21 +54,26 @@ const StatTable = ({ season, allSeasons }) => {
   const transformedStats = transformData();
 
   return (
-    <Box>
+    <Box ref={tableRef} mt="40px">
       <Box mt="1rem">
-        <Select
-          textColor="black"
-          value={selectedSeason}
-          onChange={(e) => setSelectedSeason(e.target.value)}
-          width="max-content"
-        >
-          {allSeasons.map(item => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))
-          }
-        </Select>
+        <Flex justify="space-between">
+          <Heading fontSize="30px">
+            Event Breakdown
+          </Heading>
+          <Select
+            textColor="black"
+            value={selectedSeason}
+            onChange={(e) => setSelectedSeason(e.target.value)}
+            width="max-content"
+          >
+            {allSeasons.map(item => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))
+            }
+          </Select>
+        </Flex>
       </Box>
       <div className='table-container'>
         <table>
@@ -87,6 +100,14 @@ const StatTable = ({ season, allSeasons }) => {
           </tbody>
         </table>
       </div>
+      <Box background="#3182CE1A" padding="16px" mb="12px" maxWidth={tableWidth} borderRadius="5px">
+        <Text >
+          * Totals reflect the actual number of events. However, individual events
+          may appear within the table more than once if it is tagged with more than one subject
+          <IconButton color="#3182CE" size="sm" _hover={{bg: "transparent"}} icon={<InfoOutlineIcon/>} onClick={onOpenMoreInfio}/>
+        </Text>
+      </Box>
+      <MoreInfoModal isOpen={isOpenMoreInfo} onClose={onCloseMoreInfo}/>
     </Box>
   );
 };

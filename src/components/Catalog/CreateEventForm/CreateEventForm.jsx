@@ -23,6 +23,7 @@ import {
 } from '../../Catalog/SearchFilter/filterOptions';
 import useSearchFilters from '../../Catalog/SearchFilter/useSearchFilters';
 import Dropdown from '../../Dropdown/Dropdown';
+import { useEffect } from 'react';
 
 const schema = yup.object({
   host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
@@ -32,11 +33,14 @@ const schema = yup.object({
     .max(256, 'Description exceeds 256 character limit')
     .default('')
     .nullable(),
+  subject: yup.array().min(1, 'Please select at least one subject').required(),
+  eventType: yup.array().min(1, 'Please select at least one event type').required(),
 });
 
 const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => {
   const toast = useToast();
   const {
+    setValue,
     handleSubmit,
     register,
     reset,
@@ -48,6 +52,7 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
 
   const submitData = async data => {
     const { host, title, description } = data;
+    console.log(data);
     const season = filterValues.season;
     const eventType = filterValues.eventType;
     const year = filterValues.year;
@@ -111,6 +116,13 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
   const { filters, filterValues } = useSearchFilters();
   const [seasonFilter, yearFilter, subjectFilter, eventFilter] = filters;
 
+  useEffect(() => {
+    setValue('season', filterValues.season);
+    setValue('year', filterValues.year);
+    setValue('subject', filterValues.subject);
+    setValue('eventType', filterValues.eventType);
+  }, [filterValues]);
+
   return (
     <Box width="80%" m="auto" mt="20px">
     <Box p="20px" border="1px" borderRadius="10px" borderColor="gray.200">
@@ -170,8 +182,8 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
           <Flex justifyContent="space-between">
             {/* SUBJECT */}
             <Box mb="15px">
-              <FormControl>
-                <FormLabel fontWeight="bold" color="gray.600">Subject</FormLabel>
+              <FormControl isInvalid={errors && errors.subject}>
+                <FormLabel fontWeight="bold" color="gray.600">Subject *</FormLabel>
                 <Dropdown
                   options={subjectOptions}
                   filter={subjectFilter}
@@ -179,13 +191,16 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
                   defaults={eventData && eventData.subject}
                   badgeColor="#E8D7FF"
                 />
+                <FormErrorMessage>
+                  {errors.subject && errors.subject.message}
+                </FormErrorMessage>
               </FormControl>
             </Box>
 
             {/* EVENT TYPE */}
             <Box mb="15px">
-              <FormControl>
-                <FormLabel fontWeight="bold" color="gray.600">Event Type</FormLabel>
+              <FormControl isInvalid={errors && errors.eventType}>
+                <FormLabel fontWeight="bold" color="gray.600">Event Type *</FormLabel>
                 <Dropdown
                   options={eventOptions}
                   filter={eventFilter}
@@ -193,6 +208,9 @@ const CreateEventForm = ({ eventData, setDataShouldRevalidate, closeModal }) => 
                   defaults={eventData && eventData.eventType}
                   badgeColor="#CFDCFF"
                 />
+                <FormErrorMessage>
+                  {errors.eventType && errors.eventType.message}
+                </FormErrorMessage>
               </FormControl>
             </Box>
           </Flex>
