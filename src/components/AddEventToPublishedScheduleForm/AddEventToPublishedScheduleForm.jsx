@@ -34,25 +34,27 @@ import PlannedEvent, { convertTimeToMinutes } from '../Planner/PlannedEvent';
 import RemoveTimelineEventModal from '../Planner/RemoveTimelineEventModal';
 
 const schema = yup.object({
-    startTime: yup.string().required('Start time is required').test('is-after-7-am', 'Start time cannot be earlier than 7 AM', function(startTime) {
-      return startTime && startTime >= "07:00";
+  startTime: yup.string().required('Start time is required').test('is-after-7-am', 'Start time cannot be earlier than 7 AM', function(startTime) {
+    return startTime && startTime >= "07:00";
+  }),
+  endTime: yup.string()
+    .required('End time is required')
+    .test('is-after', 'End time must be after start time', function(endTime) {
+      const startTime = this.parent.startTime;
+      return startTime && endTime && startTime < endTime;
+    }).test('is-before-11-pm', 'End time must be earlier than 11 PM', function(endTime) {
+      return endTime && endTime <= "23:00";
     }),
-    endTime: yup.string()
-      .required('End time is required')
-      .test('is-after', 'End time must be after start time', function(endTime) {
-        const startTime = this.parent.startTime;
-        return startTime && endTime && startTime < endTime;
-      }).test('is-before-11-pm', 'End time must be earlier than 11 PM', function(endTime) {
-        return endTime && endTime <= "23:00";
-      }),
-    host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
-    title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
-    description: yup
-      .string()
-      .max(256, 'Description exceeds 256 character limit')
-      .default('')
-      .nullable(),
-    tentative: yup.boolean()
+  subject: yup.array().min(1, 'Please select at least one subject').required(),
+  eventType: yup.array().min(1, 'Please select at least one event type').required(),
+  host: yup.string().max(50, 'Host exceeds 50 character limit').default('').nullable(),
+  title: yup.string().required('Title Required').max(50, 'Title exceeds 50 character limit'),
+  description: yup
+    .string()
+    .max(256, 'Description exceeds 256 character limit')
+    .default('')
+    .nullable(),
+  tentative: yup.boolean()
 });
 
 const AddEventToPublishedScheduleForm = ({ closeForm }) => {
@@ -104,7 +106,14 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
     } else {
       setPlannedEvents(plannedEvents.filter(e => e.id != -1));
     }
-  }, [formData])
+  }, [formData]);
+
+  useEffect(() => {
+    setValue('season', filterValues.season);
+    setValue('year', filterValues.year);
+    setValue('subject', filterValues.subject);
+    setValue('eventType', filterValues.eventType);
+  }, [filterValues]);
 
   const toast = useToast();
   const {
@@ -360,8 +369,8 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
             <Flex justifyContent="space-between">
               {/* SUBJECT */}
               <Box mb="1rem">
-                <FormControl>
-                  <FormLabel fontWeight="bold" color="gray.600">Subject</FormLabel>
+                <FormControl isInvalid={errors && errors.subject}>
+                  <FormLabel fontWeight="bold" color="gray.600">Subject *</FormLabel>
                   <Dropdown
                     options={subjectOptions}
                     filter={subjectFilter}
@@ -370,13 +379,16 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
                     badgeColor="#E8D7FF"
                     width="28vw"
                   />
+                  <FormErrorMessage>
+                    {errors.subject && errors.subject.message}
+                  </FormErrorMessage>
                 </FormControl>
               </Box>
 
               {/* EVENT TYPE */}
               <Box mb="1rem">
-                <FormControl>
-                  <FormLabel fontWeight="bold" color="gray.600">Event Type</FormLabel>
+                <FormControl isInvalid={errors && errors.eventType}>
+                  <FormLabel fontWeight="bold" color="gray.600">Event Type *</FormLabel>
                   <Dropdown
                     options={eventOptions}
                     filter={eventFilter}
@@ -385,6 +397,9 @@ const AddEventToPublishedScheduleForm = ({ closeForm }) => {
                     badgeColor="#CFDCFF"
                     width="28vw"
                   />
+                  <FormErrorMessage>
+                    {errors.eventType && errors.eventType.message}
+                  </FormErrorMessage>
                 </FormControl>
               </Box>
             </Flex>
