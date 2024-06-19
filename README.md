@@ -1,6 +1,6 @@
-# npo-frontend-template
+# Achievement Institute for STEM Scholars Frontend
 
-This template will be used to create all NPO frontend repos
+This is the frontend for the Achievement Institute for STEM Scholars project.
 
 ## Setting up development environment
 
